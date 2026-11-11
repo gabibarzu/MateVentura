@@ -73,7 +73,7 @@
   }
 </header>
 
-<main class="workspace">
+<main class="workspace" [class.workspace--playing]="status() === 'playing'">
   @if (status() !== 'idle') {
     <section class="questions" aria-label="Exerciții">
       @for (item of visibleQuestions(); track item.question.id; let i = $index) {

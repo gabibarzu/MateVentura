@@ -47,6 +47,8 @@ const SCROLL_MARGIN_TOP_PX = 36;
 /** Bigger at the bottom: the card's 3D shadow (~26px) is not part of its height. */
 const SCROLL_MARGIN_BOTTOM_PX = 40;
 
+const isTouchScreen = () => window.matchMedia('(pointer: coarse)').matches;
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -113,10 +115,7 @@ export class App {
 
     // On phones the virtual keyboard opening/closing resizes the visible area (and can cancel a smooth scroll):
     // keep the active card visible whenever that happens.
-    const onViewportResize = () => {
-      this.updateKeyboardInset();
-      this.bringActiveCardIntoView(false);
-    };
+    const onViewportResize = () => this.bringActiveCardIntoView(false);
     afterNextRender(() => window.visualViewport?.addEventListener('resize', onViewportResize));
 
     inject(DestroyRef).onDestroy(() => {
@@ -229,18 +228,6 @@ export class App {
   }
 
   /**
-   * Browsers that draw the keyboard over the page (instead of honoring `interactive-widget=resizes-content`)
-   * don't make the page scrollable any further, so the last card can't move above the keyboard.
-   * Expose the covered height so the page can add that much room at the bottom.
-   */
-  private updateKeyboardInset(): void {
-    const viewport = window.visualViewport;
-    // Ignore pinch-zoom: the visible area is then smaller for reasons other than the keyboard.
-    const inset = viewport && viewport.scale < 1.01 ? Math.max(0, Math.round(window.innerHeight - viewport.height)) : 0;
-    document.documentElement.style.setProperty('--keyboard-inset', `${inset}px`);
-  }
-
-  /**
    * Scrolls just enough to show the whole active card between the sticky header and the bottom of the
    * *visible* area. Uses the visual viewport, so the area covered by a phone's keyboard counts as hidden
    * (`scrollIntoView` treats it as visible and therefore often doesn't scroll on mobile).
@@ -266,8 +253,15 @@ export class App {
 
     const topOverflow = cardTop - visibleTop; // < 0: top is hidden under the header
     const bottomOverflow = cardBottom - visibleBottom; // > 0: bottom is hidden (screen edge or keyboard)
-    // Never scroll so far that the top of the card (the exercise) goes under the header.
-    const delta = topOverflow < 0 ? topOverflow : Math.min(Math.max(bottomOverflow, 0), topOverflow);
+    // Touch screens: always pin the card right under the header. In-app browsers (Messenger, ...) often pan
+    // the whole window for the keyboard without telling the page, so the keyboard can't be measured; at the
+    // top of the screen the card stays clear of it anyway.
+    // Elsewhere: never scroll so far that the top of the card (the exercise) goes under the header.
+    const delta = isTouchScreen()
+      ? topOverflow
+      : topOverflow < 0
+        ? topOverflow
+        : Math.min(Math.max(bottomOverflow, 0), topOverflow);
 
     if (Math.abs(delta) >= 1) {
       window.scrollBy({ top: delta, behavior: smooth ? 'smooth' : 'auto' });

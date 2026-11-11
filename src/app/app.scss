@@ -139,8 +139,16 @@
   width: 100%;
   max-width: 820px;
   margin: 0 auto;
-  padding: 32px 16px calc(32px + var(--keyboard-inset, 0px));
+  padding: 32px 16px;
   box-sizing: border-box;
+}
+
+// Touch screens pin the active card under the header: leave enough room below the last card to scroll it
+// up there (above where the keyboard opens).
+@media (pointer: coarse) {
+  .workspace--playing {
+    padding-bottom: 70vh;
+  }
 }
 
 .questions {
