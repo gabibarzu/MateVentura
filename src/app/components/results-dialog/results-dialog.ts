@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { GameResult, ResultsDialogAction } from '../../models/game.models';
+import { GameResult, isLevel, LEVELS, MODE_LABELS, ResultsDialogAction } from '../../models/game.models';
 import { LeaderboardService, PLAYER_NAME_MAX_LENGTH } from '../../services/leaderboard.service';
 import { formatTime } from '../../utils/format-time';
 
@@ -36,6 +36,11 @@ export class ResultsDialog {
   /** Rank in the leaderboard after saving, `null` if outside the top list. */
   protected readonly rank = signal<number | null>(null);
 
+  protected readonly modeLabel = MODE_LABELS[this.result.settings.mode];
+  /** Only level games (Ușor / Mediu / Greu) go into the leaderboard. */
+  protected readonly level = isLevel(this.result.settings.mode) ? this.result.settings.mode : null;
+  protected readonly levelName = LEVELS.find((l) => l.id === this.level)?.name ?? '';
+
   protected readonly accuracy = computed(() =>
     this.result.total === 0 ? 0 : this.result.correct / this.result.total,
   );
@@ -65,17 +70,17 @@ export class ResultsDialog {
   protected readonly totalTime = formatTime(this.result.elapsedSeconds);
 
   protected save(): void {
-    if (this.saved() || this.nameControl.invalid) {
+    if (!this.level || this.saved() || this.nameControl.invalid) {
       this.nameControl.markAsTouched();
       return;
     }
-    this.rank.set(this.leaderboard.save(this.result, this.nameControl.value));
+    this.rank.set(this.leaderboard.save(this.result, this.nameControl.value, this.level));
     this.saved.set(true);
   }
 
   /** Saves automatically (if a name was entered) so a forgotten click doesn't lose the score. */
   protected close(action: ResultsDialogAction): void {
-    if (!this.saved() && this.nameControl.valid) {
+    if (this.level && !this.saved() && this.nameControl.valid) {
       this.save();
     }
     this.dialogRef.close(action);

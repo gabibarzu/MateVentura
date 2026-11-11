@@ -16,7 +16,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { QuestionState } from '../../models/game.models';
-import { MotionService } from '../../services/motion.service';
 
 const MAX_ANSWER_LENGTH = 3;
 const EDITING_KEYS = new Set(['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab']);
@@ -40,7 +39,6 @@ export class QuestionCard {
   readonly answered = output<number>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly motion = inject(MotionService);
   private readonly answerInput = viewChild<ElementRef<HTMLInputElement>>('answerInput');
 
   protected readonly maxLength = MAX_ANSWER_LENGTH;
@@ -67,19 +65,17 @@ export class QuestionCard {
   });
 
   constructor() {
-    // Each card is rendered for the first time when it becomes the active question:
-    // bring it into view and focus the answer input.
+    // Each card is rendered for the first time when it becomes the active question: focus its input.
+    // (Scrolling is handled by the App, which knows about the sticky header and the mobile keyboard.)
     afterNextRender(() => {
-      if (!this.active()) {
-        return;
+      if (this.active()) {
+        this.focus();
       }
-      // 'nearest' only scrolls when the card isn't fully visible (no artificial page padding needed).
-      this.host.nativeElement.scrollIntoView({
-        behavior: this.motion.enabled() ? 'smooth' : 'auto',
-        block: 'nearest',
-      });
-      this.focus();
     });
+  }
+
+  get element(): HTMLElement {
+    return this.host.nativeElement;
   }
 
   focus(): void {
@@ -104,10 +100,16 @@ export class QuestionCard {
     }
   }
 
-  /** Strips anything that is not a digit (e.g. pasted text or mobile keyboard input). */
+  /**
+   * Keeps only digits (e.g. pasted text or mobile keyboard input) and drops leading zeros
+   * ("05" -> "5", "000" -> "0"; a single "0" stays, it's a valid subtraction result).
+   */
   protected sanitize(): void {
     const value = this.answerControl.value;
-    const digitsOnly = value.replace(/\D/g, '').slice(0, MAX_ANSWER_LENGTH);
+    const digitsOnly = value
+      .replace(/\D/g, '')
+      .replace(/^0+(?=\d)/, '')
+      .slice(0, MAX_ANSWER_LENGTH);
     if (digitsOnly !== value) {
       this.answerControl.setValue(digitsOnly);
     }

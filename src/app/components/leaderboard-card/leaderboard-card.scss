@@ -11,7 +11,6 @@
   border: 3px solid $robins-egg;
   background: #fff;
   box-shadow: 0 8px 0 color.change($robins-egg, $alpha: 0.35);
-  animation: board-enter $t-slow $ease-bounce backwards;
 }
 
 // Inside a dialog the dialog surface already provides the frame.
@@ -19,7 +18,6 @@
   padding: 0;
   border: none;
   box-shadow: none;
-  animation: none;
 }
 
 .board__header {
@@ -48,20 +46,45 @@
   color: $bright-yarrow;
 }
 
-.board__category {
-  min-width: 260px;
-  --mat-form-field-outlined-container-shape: 16px;
-  --mat-form-field-outlined-outline-color: #{$robins-egg};
-  --mat-form-field-outlined-focus-outline-color: #{$exodus-fruit};
+.board__levels {
+  display: flex;
+  gap: 6px;
+  border: none;
+  overflow: visible;
+  background: transparent;
 }
 
-.board__category-chip {
-  padding: 6px 14px;
+// Nested under `.board__levels` to beat Material's `.mat-button-toggle + .mat-button-toggle`
+// divider rule, which otherwise replaces the left border with a thin gray line.
+.board__levels .board__level {
+  border: 3px solid $city-lights;
   border-radius: 999px;
-  background: $sour-lemon;
-  border: 2px solid $bright-yarrow;
+  background: #fff;
   font-weight: 700;
-  color: #2d3436;
+
+  mat-icon {
+    margin-right: 4px;
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    vertical-align: middle;
+  }
+
+  @each $level, $color in $level-colors {
+    &[data-level='#{$level}'] {
+      color: $color;
+
+      &:hover {
+        border-color: $color;
+      }
+
+      &.mat-button-toggle-checked {
+        border-color: $color;
+        background: $color;
+        color: #fff;
+      }
+    }
+  }
 }
 
 .board__table {
@@ -72,7 +95,7 @@
 
 .board__row {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) 110px 110px 110px;
+  grid-template-columns: 72px minmax(0, 1fr) 100px 100px 160px;
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
@@ -82,16 +105,6 @@
   font-size: 1.15rem;
   font-weight: 700;
   color: #2d3436;
-  animation: row-enter $t-med $ease-bounce backwards;
-  animation-delay: calc(var(--i, 0) * 60ms);
-  transition:
-    transform $t-fast $ease-bounce,
-    box-shadow $t-fast $ease-smooth;
-
-  &:not(.board__row--head):hover {
-    transform: scale(1.015);
-    box-shadow: 0 4px 0 color.change($exodus-fruit, $alpha: 0.15);
-  }
 
   &--head {
     padding-block: 4px;
@@ -101,7 +114,6 @@
     color: #636e72;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    animation: none;
   }
 
   &--gold {
@@ -123,9 +135,6 @@
   &--new {
     outline: 3px solid $mint-leaf;
     outline-offset: 2px;
-    animation:
-      row-enter $t-med $ease-bounce backwards,
-      glow 1.6s ease-in-out 3;
   }
 }
 
@@ -213,38 +222,6 @@
   }
 }
 
-@keyframes board-enter {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes row-enter {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color.change($mint-leaf, $alpha: 0);
-  }
-  50% {
-    box-shadow: 0 0 0 8px color.change($mint-leaf, $alpha: 0.35);
-  }
-}
-
 @media (max-width: 600px) {
   .board {
     padding: 16px;
@@ -259,8 +236,11 @@
     display: none;
   }
 
-  .board__category {
-    min-width: 0;
+  .board__levels {
     width: 100%;
+
+    .board__level {
+      flex: 1 1 0;
+    }
   }
 }

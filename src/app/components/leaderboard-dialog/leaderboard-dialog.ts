@@ -10,10 +10,10 @@ import { LeaderboardCard } from '../leaderboard-card/leaderboard-card';
   imports: [MatDialogModule, MatButtonModule, MatIconModule, LeaderboardCard],
   template: `
     <mat-dialog-content class="leaderboard-dialog__content">
-      <app-leaderboard-card [preferredCategory]="data.categoryKey" />
+      <app-leaderboard-card [preferredLevel]="data.level" />
     </mat-dialog-content>
     <mat-dialog-actions class="leaderboard-dialog__actions">
-      <button mat-flat-button type="button" class="big-btn btn-purple" mat-dialog-close cdkFocusInitial>
+      <button mat-flat-button type="button" class="big-btn btn-purple" mat-dialog-close>
         <mat-icon>close</mat-icon>
         Închide
       </button>

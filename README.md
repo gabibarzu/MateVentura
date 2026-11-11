@@ -6,14 +6,13 @@ Built with Angular 22 (standalone components, Signals, Reactive Forms) and Angul
 
 ## Features
 
-- **Game setup dialog**: max sum (10 / 20 / 50 / 100), operation (Adunare / Scădere / Mix), number of questions (5–20) and an optional counting-dot hint.
+- **Start screen**: one-tap **Joc rapid** (5 mixed exercises up to 20), three levels (**Ușor / Mediu / Greu**) and a **Personalizat** mode with all settings (max sum, operation, number of questions, counting-dot hint).
 - **Question cards**: big numbers, digits-only answer input with autofocus, ENTER to submit, green/red feedback and smooth transition to the next exercise.
 - **Counting dots hint** (max sum ≤ 20): joined dots for addition, crossed-out dots for subtraction.
-- **Top bar**: timer, progress, correct answers, leaderboard, animations toggle, sound toggle, "Joc Nou".
+- **Top bar**: timer, progress, correct answers, leaderboard, sound toggle, "Joc Nou".
 - **Results dialog**: 1–3 stars by accuracy, score and total time, confetti, save to leaderboard.
-- **Leaderboard (Clasament)**: stored in `localStorage`, grouped by game type, ranked by correct answers then time (top 10 per category).
+- **Leaderboard (Clasament)**: stored in `localStorage`, one list per level (top 10), ranked by correct answers then time. Quick and custom games are not ranked.
 - **Sound effects** generated with the Web Audio API (no audio files).
-- **Animations** respect the OS "reduce motion" setting and can be toggled in the app.
 
 ## Getting started
 
@@ -42,7 +41,7 @@ src/
     components/      # setup, question card, results, leaderboard (card + dialog)
     directives/      # bump-on-change animation
     models/          # game interfaces and constants
-    services/        # question generator, sound, confetti, leaderboard, motion
+    services/        # question generator, sound, confetti, leaderboard
     utils/           # time formatting
   styles/_palette.scss   # color palette and motion tokens
   styles.scss            # Material theme, big buttons, global styles
@@ -55,4 +54,3 @@ src/
 | `mate-aventura:leaderboard` | Saved scores                     |
 | `mate-aventura:player`      | Last player name                 |
 | `mate-aventura:muted`       | Sound on/off                     |
-| `mate-aventura:animations`  | Animations on/off                |

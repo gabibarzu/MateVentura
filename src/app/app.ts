@@ -1,11 +1,14 @@
 import {
   afterNextRender,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   signal,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +17,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { LeaderboardCard } from './components/leaderboard-card/leaderboard-card';
 import { LeaderboardDialog } from './components/leaderboard-dialog/leaderboard-dialog';
 import { QuestionCard } from './components/question-card/question-card';
 import { ResultsDialog } from './components/results-dialog/results-dialog';
@@ -26,6 +28,7 @@ import {
   GameSettings,
   GameStatus,
   HINTS_MAX_SUM,
+  isLevel,
   LeaderboardDialogData,
   QuestionState,
   ResultsDialogAction,
@@ -33,13 +36,16 @@ import {
 } from './models/game.models';
 import { ConfettiService } from './services/confetti.service';
 import { LeaderboardService } from './services/leaderboard.service';
-import { MotionService } from './services/motion.service';
 import { QuestionGeneratorService } from './services/question-generator.service';
 import { SoundService } from './services/sound.service';
 import { formatTime } from './utils/format-time';
 
 /** How long the correct/wrong highlight stays on the active card before moving on. */
 const FEEDBACK_DELAY_MS = 1200;
+/** Space kept between the active card and the header (top) / bottom of the visible area. */
+const SCROLL_MARGIN_TOP_PX = 12;
+/** Bigger at the bottom: the card's 3D shadow (~26px) is not part of its height. */
+const SCROLL_MARGIN_BOTTOM_PX = 40;
 
 @Component({
   selector: 'app-root',
@@ -50,7 +56,6 @@ const FEEDBACK_DELAY_MS = 1200;
     MatTooltipModule,
     MatProgressBarModule,
     QuestionCard,
-    LeaderboardCard,
     BumpOnChange,
   ],
   templateUrl: './app.html',
@@ -63,9 +68,9 @@ export class App {
   private readonly confetti = inject(ConfettiService);
   private readonly leaderboard = inject(LeaderboardService);
   protected readonly sound = inject(SoundService);
-  protected readonly motion = inject(MotionService);
 
   private readonly cards = viewChildren(QuestionCard);
+  private readonly header = viewChild.required<ElementRef<HTMLElement>>('header');
 
   protected readonly settings = signal<GameSettings | null>(null);
   protected readonly questions = signal<QuestionState[]>([]);
@@ -84,13 +89,10 @@ export class App {
     const settings = this.settings();
     return !!settings?.showHints && settings.maxSum <= HINTS_MAX_SUM;
   });
-  protected readonly hasScores = computed(() => this.leaderboard.entries().length > 0);
-  /** Leaderboard category matching the current/last game settings. */
-  protected readonly categoryKey = computed(() => {
-    const settings = this.settings();
-    return settings
-      ? this.leaderboard.categoryKey(settings.operation, settings.maxSum, settings.questionCount)
-      : null;
+  /** Level of the current/last game (leaderboard tab shown first), `null` for quick/custom games. */
+  protected readonly preferredLevel = computed(() => {
+    const mode = this.settings()?.mode;
+    return mode && isLevel(mode) ? mode : null;
   });
 
   private timerId: ReturnType<typeof setInterval> | null = null;
@@ -99,16 +101,29 @@ export class App {
   constructor() {
     afterNextRender(() => this.openSetupDialog());
 
+    // Bring the new active card into view once it has been rendered.
+    afterRenderEffect(() => {
+      this.currentIndex();
+      this.cards();
+      this.bringActiveCardIntoView(true);
+    });
+
+    // On phones the virtual keyboard opening/closing resizes the visible area (and can cancel a smooth scroll):
+    // keep the active card visible whenever that happens.
+    const onViewportResize = () => this.bringActiveCardIntoView(false);
+    afterNextRender(() => window.visualViewport?.addEventListener('resize', onViewportResize));
+
     inject(DestroyRef).onDestroy(() => {
       this.stopTimer();
       this.clearAdvanceTimeout();
+      window.visualViewport?.removeEventListener('resize', onViewportResize);
     });
   }
 
   protected openSetupDialog(): void {
     const isMidGame = this.status() === 'playing';
     const data: SetupDialogData = {
-      settings: this.settings() ?? DEFAULT_SETTINGS,
+      settings: this.settings(),
       canCancel: isMidGame,
     };
 
@@ -125,6 +140,8 @@ export class App {
         maxHeight: '95vh',
         disableClose: !data.canCancel,
         restoreFocus: false,
+        // Focus the dialog itself: auto-focusing the first button shows a keyboard focus ring on open.
+        autoFocus: 'dialog',
         panelClass: 'kid-dialog',
       })
       .afterClosed()
@@ -145,11 +162,12 @@ export class App {
 
     this.dialog
       .open<LeaderboardDialog, LeaderboardDialogData>(LeaderboardDialog, {
-        data: { categoryKey: this.categoryKey() },
+        data: { level: this.preferredLevel() },
         width: '760px',
         maxWidth: '95vw',
         maxHeight: '95vh',
         restoreFocus: false,
+        autoFocus: 'dialog',
         panelClass: 'kid-dialog',
       })
       .afterClosed()
@@ -204,6 +222,40 @@ export class App {
     this.clearAdvanceTimeout();
   }
 
+  /**
+   * Scrolls just enough to show the whole active card between the sticky header and the bottom of the
+   * *visible* area. Uses the visual viewport, so the area covered by a phone's keyboard counts as hidden
+   * (`scrollIntoView` treats it as visible and therefore often doesn't scroll on mobile).
+   */
+  private bringActiveCardIntoView(smooth: boolean): void {
+    const card = this.cards().at(-1)?.element;
+    if (!card || this.status() !== 'playing') {
+      return;
+    }
+
+    const visibleTop = this.header().nativeElement.getBoundingClientRect().bottom + SCROLL_MARGIN_TOP_PX;
+    const viewport = window.visualViewport;
+    const visibleBottom =
+      (viewport ? viewport.offsetTop + viewport.height : window.innerHeight) - SCROLL_MARGIN_BOTTOM_PX;
+
+    // Layout position (offsetTop/offsetHeight) ignores the card's enter animation transform.
+    let documentTop = 0;
+    for (let node: HTMLElement | null = card; node; node = node.offsetParent as HTMLElement | null) {
+      documentTop += node.offsetTop;
+    }
+    const cardTop = documentTop - window.scrollY;
+    const cardBottom = cardTop + card.offsetHeight;
+
+    const topOverflow = cardTop - visibleTop; // < 0: top is hidden under the header
+    const bottomOverflow = cardBottom - visibleBottom; // > 0: bottom is hidden (screen edge or keyboard)
+    // Never scroll so far that the top of the card (the exercise) goes under the header.
+    const delta = topOverflow < 0 ? topOverflow : Math.min(Math.max(bottomOverflow, 0), topOverflow);
+
+    if (Math.abs(delta) >= 1) {
+      window.scrollBy({ top: delta, behavior: smooth ? 'smooth' : 'auto' });
+    }
+  }
+
   /** Continues the game after a dialog opened mid-game was closed. */
   private resumeGame(): void {
     const currentAnswered = this.questions()[this.currentIndex()]?.status !== 'pending';
@@ -252,6 +304,8 @@ export class App {
         maxHeight: '95vh',
         disableClose: true,
         restoreFocus: false,
+        // Level games: focus the name field (cdkFocusInitial). Otherwise focus the dialog (no focus ring on a button).
+        autoFocus: isLevel(result.settings.mode) ? 'first-tabbable' : 'dialog',
         panelClass: 'kid-dialog',
       })
       .afterClosed()

@@ -31,6 +31,40 @@
   max-height: calc(95vh - 190px);
 }
 
+// Game type chip ("Nivel Mediu", "Joc rapid", ...)
+.results__mode {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: $exodus-fruit;
+  font-weight: 800;
+  color: #fff;
+
+  @each $level, $color in $level-colors {
+    &[data-level='#{$level}'] {
+      background: $color;
+    }
+  }
+}
+
+.results__no-board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 12px;
+  border-radius: $radius-md;
+  border: 2px dashed $robins-egg;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $electron-blue;
+
+  mat-icon {
+    flex-shrink: 0;
+  }
+}
+
 .results__stars {
   display: flex;
   justify-content: center;
@@ -44,12 +78,6 @@
   height: 4rem;
   color: $soothing-breeze;
   animation: star-pop 500ms $ease-bounce backwards;
-  transition: transform $t-med $ease-bounce;
-  cursor: default;
-
-  &:hover {
-    transform: scale(1.2) rotate(18deg);
-  }
 
   &--filled {
     color: $bright-yarrow;
@@ -80,29 +108,11 @@
   border-radius: $radius-md;
   font-size: 1.3rem;
   color: #2d3436;
-  animation: slide-up 400ms $ease-bounce 400ms backwards;
-  transition:
-    transform $t-fast $ease-bounce,
-    box-shadow $t-fast $ease-smooth;
-
-  &:hover {
-    transform: scale(1.03);
-    box-shadow: 0 6px 0 color.change($exodus-fruit, $alpha: 0.15);
-  }
-
-  & + & {
-    animation-delay: 520ms;
-  }
 
   mat-icon {
     font-size: 2rem;
     width: 2rem;
     height: 2rem;
-    transition: transform $t-med $ease-bounce;
-  }
-
-  &:hover mat-icon {
-    transform: rotate(-15deg) scale(1.15);
   }
 
   &--score {
@@ -135,7 +145,6 @@
   border-radius: $radius-md;
   border: 2px dashed $robins-egg;
   background: color.change($robins-egg, $alpha: 0.08);
-  animation: slide-up 400ms $ease-bounce 640ms backwards;
 }
 
 .results__name {
@@ -164,7 +173,6 @@
   font-size: 1.3rem;
   font-weight: 700;
   color: $mint-leaf;
-  animation: slide-up $t-med $ease-bounce;
 
   mat-icon {
     font-size: 2rem;
@@ -188,17 +196,6 @@
 @media (max-width: 520px) {
   .results__details {
     grid-template-columns: 1fr;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 

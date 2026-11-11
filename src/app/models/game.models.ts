@@ -19,6 +19,7 @@ export const OPERATION_OPTIONS: readonly OperationOption[] = [
 ];
 
 export interface GameSettings {
+  mode: GameMode;
   maxSum: MaxSumOption;
   operation: OperationType;
   questionCount: QuestionCountOption;
@@ -28,12 +29,68 @@ export interface GameSettings {
 /** Counting-dot hints are only offered for small numbers. */
 export const HINTS_MAX_SUM = 20;
 
-export const DEFAULT_SETTINGS: GameSettings = {
-  maxSum: 10,
-  operation: 'add',
-  questionCount: 10,
-  showHints: true,
+export type LevelId = 'easy' | 'medium' | 'hard';
+/** Levels have fixed settings (and a leaderboard); `quick` and `custom` games don't. */
+export type GameMode = LevelId | 'quick' | 'custom';
+
+export interface LevelPreset {
+  id: LevelId;
+  name: string;
+  icon: string;
+  age: string;
+  description: string;
+  settings: GameSettings;
+}
+
+export const LEVELS: readonly LevelPreset[] = [
+  {
+    id: 'easy',
+    name: 'Ușor',
+    icon: 'eco',
+    age: '5–6 ani',
+    description: 'Adunări până la 10 · 5 exerciții · cu bulinuțe',
+    settings: { mode: 'easy', maxSum: 10, operation: 'add', questionCount: 5, showHints: true },
+  },
+  {
+    id: 'medium',
+    name: 'Mediu',
+    icon: 'star',
+    age: '6–7 ani',
+    description: 'Adunări și scăderi până la 20 · 10 exerciții',
+    settings: { mode: 'medium', maxSum: 20, operation: 'mix', questionCount: 10, showHints: false },
+  },
+  {
+    id: 'hard',
+    name: 'Greu',
+    icon: 'local_fire_department',
+    age: '7–8 ani',
+    description: 'Adunări și scăderi până la 100 · 10 exerciții',
+    settings: { mode: 'hard', maxSum: 100, operation: 'mix', questionCount: 10, showHints: false },
+  },
+];
+
+export const QUICK_GAME_SETTINGS: GameSettings = {
+  mode: 'quick',
+  maxSum: 20,
+  operation: 'mix',
+  questionCount: 5,
+  showHints: false,
 };
+
+/** Initial values of the custom game form when nothing was played yet. */
+export const DEFAULT_SETTINGS: GameSettings = LEVELS[0].settings;
+
+export const MODE_LABELS: Record<GameMode, string> = {
+  easy: 'Nivel Ușor',
+  medium: 'Nivel Mediu',
+  hard: 'Nivel Greu',
+  quick: 'Joc rapid',
+  custom: 'Joc personalizat',
+};
+
+export function isLevel(mode: GameMode): mode is LevelId {
+  return LEVELS.some((level) => level.id === mode);
+}
 
 export interface MathQuestion {
   id: number;
@@ -54,7 +111,8 @@ export interface QuestionState {
 export type GameStatus = 'idle' | 'playing' | 'finished';
 
 export interface SetupDialogData {
-  settings: GameSettings;
+  /** Settings of the last game, if any (highlights the last level and pre-fills the custom form). */
+  settings: GameSettings | null;
   canCancel: boolean;
 }
 
@@ -67,14 +125,6 @@ export interface GameResult {
 
 export type ResultsDialogAction = 'new-game' | 'retry';
 
-/** Scores are only compared between games with the same operation, max sum and number of questions. */
-export interface LeaderboardCategory {
-  key: string;
-  operation: OperationType;
-  maxSum: MaxSumOption;
-  total: number;
-}
-
 export interface LeaderboardEntry {
   id: string;
   name: string;
@@ -83,10 +133,12 @@ export interface LeaderboardEntry {
   elapsedSeconds: number;
   operation: OperationType;
   maxSum: MaxSumOption;
+  /** Missing on scores saved before levels existed; derived from the settings when they match a level. */
+  level?: LevelId;
   /** ISO date string. */
   date: string;
 }
 
 export interface LeaderboardDialogData {
-  categoryKey: string | null;
+  level: LevelId | null;
 }

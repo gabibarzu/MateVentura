@@ -1,4 +1,4 @@
-<header class="app-header">
+<header class="app-header" #header>
   <mat-toolbar class="topbar">
     <div class="topbar__brand">
       <mat-icon class="topbar__logo topbar__logo--robot">smart_toy</mat-icon>
@@ -8,22 +8,26 @@
 
     <span class="topbar__spacer"></span>
 
-    <div class="topbar__info">
-      @if (status() !== 'idle') {
+    @if (status() !== 'idle') {
+      <div class="topbar__stats">
         <span class="pill pill--timer">
           <mat-icon>timer</mat-icon>
-          Timp: {{ formattedTime() }}
+          <span class="pill__label">Timp: </span>{{ formattedTime() }}
         </span>
         <span class="pill pill--progress">
           <mat-icon>stars</mat-icon>
-          Exercițiul <span [appBumpOnChange]="exerciseNumber()">{{ exerciseNumber() }}</span> / {{ total() }}
+          <span class="pill__label">Exercițiul </span>
+          <span [appBumpOnChange]="exerciseNumber()">{{ exerciseNumber() }}</span>&nbsp;/ {{ total() }}
         </span>
         <span class="pill pill--score">
           <mat-icon>check_circle</mat-icon>
-          Corecte: <span [appBumpOnChange]="correctCount()">{{ correctCount() }}</span>
+          <span class="pill__label">Corecte: </span>
+          <span [appBumpOnChange]="correctCount()">{{ correctCount() }}</span>
         </span>
-      }
+      </div>
+    }
 
+    <div class="topbar__actions">
       <button
         mat-icon-button
         type="button"
@@ -33,21 +37,6 @@
         aria-label="Clasament"
       >
         <mat-icon>emoji_events</mat-icon>
-      </button>
-
-      <button
-        mat-icon-button
-        type="button"
-        class="topbar__motion"
-        (click)="motion.toggle()"
-        [matTooltip]="motion.enabled() ? 'Oprește animațiile' : 'Pornește animațiile'"
-        [attr.aria-label]="motion.enabled() ? 'Oprește animațiile' : 'Pornește animațiile'"
-      >
-        @if (motion.enabled()) {
-          <mat-icon>animation</mat-icon>
-        } @else {
-          <mat-icon>motion_photos_off</mat-icon>
-        }
       </button>
 
       <button
@@ -65,9 +54,16 @@
         }
       </button>
 
-      <button mat-flat-button type="button" class="big-btn btn-pink topbar__new" (click)="openSetupDialog()">
+      <button
+        mat-flat-button
+        type="button"
+        class="big-btn btn-pink topbar__new"
+        (click)="openSetupDialog()"
+        matTooltip="Joc Nou"
+        matTooltipShowDelay="600"
+      >
         <mat-icon>rocket_launch</mat-icon>
-        Joc Nou
+        <span class="topbar__new-label">Joc Nou</span>
       </button>
     </div>
   </mat-toolbar>
@@ -78,21 +74,7 @@
 </header>
 
 <main class="workspace">
-  @if (status() === 'idle') {
-    <section class="welcome">
-      <mat-icon class="welcome__icon">smart_toy</mat-icon>
-      <h2 class="welcome__title">Bine ai venit la Mate-Aventura!</h2>
-      <p class="welcome__text">Rezolvă adunări și scăderi, câștigă stele și devino campion!</p>
-      <button mat-flat-button type="button" class="big-btn btn-green" (click)="openSetupDialog()">
-        <mat-icon>rocket_launch</mat-icon>
-        Joc Nou
-      </button>
-    </section>
-
-    @if (hasScores()) {
-      <app-leaderboard-card class="workspace__board" [preferredCategory]="categoryKey()" />
-    }
-  } @else {
+  @if (status() !== 'idle') {
     <section class="questions" aria-label="Exerciții">
       @for (item of visibleQuestions(); track item.question.id; let i = $index) {
         <app-question-card

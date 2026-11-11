@@ -1,20 +1,23 @@
 import { computed, Injectable, signal } from '@angular/core';
 import {
   GameResult,
-  LeaderboardCategory,
   LeaderboardEntry,
+  LEVELS,
+  LevelId,
   MAX_SUM_OPTIONS,
   MaxSumOption,
   OPERATION_OPTIONS,
-  OperationType,
 } from '../models/game.models';
 
 const STORAGE_KEY = 'mate-aventura:leaderboard';
 const PLAYER_KEY = 'mate-aventura:player';
-const MAX_ENTRIES_PER_CATEGORY = 10;
+const MAX_ENTRIES_PER_LEVEL = 10;
 export const PLAYER_NAME_MAX_LENGTH = 20;
 
-/** Leaderboard persisted in localStorage, ranked by correct answers (desc) then time (asc). */
+/**
+ * Leaderboard persisted in localStorage: one list per level (Ușor / Mediu / Greu),
+ * ranked by correct answers (desc) then time (asc).
+ */
 @Injectable({ providedIn: 'root' })
 export class LeaderboardService {
   private readonly entriesState = signal<LeaderboardEntry[]>(this.load());
@@ -23,39 +26,26 @@ export class LeaderboardService {
   readonly entries = this.entriesState.asReadonly();
   readonly lastSavedId = this.lastSavedIdState.asReadonly();
 
-  /** Categories that have at least one score, most recently played first. */
-  readonly categories = computed<LeaderboardCategory[]>(() => {
-    const byKey = new Map<string, { category: LeaderboardCategory; lastPlayed: string }>();
+  /** Levels that have at least one score. */
+  readonly levelsWithScores = computed(() => {
+    const levels = new Set<LevelId>();
     for (const entry of this.entriesState()) {
-      const key = this.categoryKey(entry.operation, entry.maxSum, entry.total);
-      const existing = byKey.get(key);
-      if (!existing || entry.date > existing.lastPlayed) {
-        byKey.set(key, {
-          category: { key, operation: entry.operation, maxSum: entry.maxSum, total: entry.total },
-          lastPlayed: entry.date,
-        });
+      const level = levelOf(entry);
+      if (level) {
+        levels.add(level);
       }
     }
-    return [...byKey.values()].sort((a, b) => b.lastPlayed.localeCompare(a.lastPlayed)).map((c) => c.category);
+    return levels;
   });
 
-  categoryKey(operation: OperationType, maxSum: number, total: number): string {
-    return `${operation}-${maxSum}-${total}`;
-  }
-
-  categoryLabel(category: LeaderboardCategory): string {
-    const operation = OPERATION_OPTIONS.find((o) => o.value === category.operation)?.label ?? category.operation;
-    return `${operation} · max ${category.maxSum} · ${category.total} întrebări`;
-  }
-
-  ranked(categoryKey: string): LeaderboardEntry[] {
+  ranked(level: LevelId): LeaderboardEntry[] {
     return this.entriesState()
-      .filter((e) => this.categoryKey(e.operation, e.maxSum, e.total) === categoryKey)
+      .filter((e) => levelOf(e) === level)
       .sort(compareEntries);
   }
 
-  /** Saves a score and returns its 1-based rank, or `null` if it didn't make the top list. */
-  save(result: GameResult, rawName: string): number | null {
+  /** Saves a score and returns its 1-based rank in the level, or `null` if it didn't make the top list. */
+  save(result: GameResult, rawName: string, level: LevelId): number | null {
     const name = rawName.trim().slice(0, PLAYER_NAME_MAX_LENGTH);
     const entry: LeaderboardEntry = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
@@ -65,19 +55,19 @@ export class LeaderboardService {
       elapsedSeconds: result.elapsedSeconds,
       operation: result.settings.operation,
       maxSum: result.settings.maxSum,
+      level,
       date: new Date().toISOString(),
     };
-    const key = this.categoryKey(entry.operation, entry.maxSum, entry.total);
 
-    // Keep only the top entries of this category.
-    const others = this.entriesState().filter((e) => this.categoryKey(e.operation, e.maxSum, e.total) !== key);
-    const category = [...this.ranked(key), entry].sort(compareEntries).slice(0, MAX_ENTRIES_PER_CATEGORY);
+    // Keep only the top entries of this level (entries that don't belong to any level are left untouched).
+    const others = this.entriesState().filter((e) => levelOf(e) !== level);
+    const top = [...this.ranked(level), entry].sort(compareEntries).slice(0, MAX_ENTRIES_PER_LEVEL);
 
-    this.entriesState.set([...others, ...category]);
+    this.entriesState.set([...others, ...top]);
     this.persist();
     this.savePlayerName(name);
 
-    const index = category.findIndex((e) => e.id === entry.id);
+    const index = top.findIndex((e) => e.id === entry.id);
     if (index === -1) {
       return null;
     }
@@ -123,6 +113,20 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry): number {
   return b.correct - a.correct || a.elapsedSeconds - b.elapsedSeconds || a.date.localeCompare(b.date);
 }
 
+/** Level of a score; older scores (saved before levels existed) count only if their settings match a level. */
+function levelOf(entry: LeaderboardEntry): LevelId | null {
+  if (entry.level) {
+    return entry.level;
+  }
+  const match = LEVELS.find(
+    (level) =>
+      level.settings.operation === entry.operation &&
+      level.settings.maxSum === entry.maxSum &&
+      level.settings.questionCount === entry.total,
+  );
+  return match?.id ?? null;
+}
+
 /** Data comes from localStorage, which the user can edit: validate every field. */
 function isValidEntry(value: unknown): value is LeaderboardEntry {
   if (typeof value !== 'object' || value === null) {
@@ -141,6 +145,7 @@ function isValidEntry(value: unknown): value is LeaderboardEntry {
     (e['elapsedSeconds'] as number) >= 0 &&
     OPERATION_OPTIONS.some((o) => o.value === e['operation']) &&
     MAX_SUM_OPTIONS.includes(e['maxSum'] as MaxSumOption) &&
+    (e['level'] === undefined || LEVELS.some((level) => level.id === e['level'])) &&
     typeof e['date'] === 'string' &&
     !Number.isNaN(Date.parse(e['date']))
   );

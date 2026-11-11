@@ -1,14 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal } from '@angular/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
+import { LEVELS, LevelId } from '../../models/game.models';
 import { LeaderboardService } from '../../services/leaderboard.service';
 import { formatTime } from '../../utils/format-time';
 
 @Component({
   selector: 'app-leaderboard-card',
-  imports: [DatePipe, MatCardModule, MatIconModule, MatSelectModule],
+  imports: [DatePipe, MatButtonToggleModule, MatCardModule, MatIconModule],
   templateUrl: './leaderboard-card.html',
   styleUrl: './leaderboard-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,27 +17,27 @@ import { formatTime } from '../../utils/format-time';
 export class LeaderboardCard {
   private readonly leaderboard = inject(LeaderboardService);
 
-  /** Category shown first (e.g. the one matching the current game settings), if it has scores. */
-  readonly preferredCategory = input<string | null>(null);
+  /** Level shown first (e.g. the level of the current game). */
+  readonly preferredLevel = input<LevelId | null>(null);
 
-  protected readonly categories = this.leaderboard.categories;
+  protected readonly levels = LEVELS;
   protected readonly lastSavedId = this.leaderboard.lastSavedId;
 
-  protected readonly selectedKey = linkedSignal<string | null>(() => {
-    const preferred = this.preferredCategory();
-    const categories = this.categories();
-    return categories.some((c) => c.key === preferred) ? preferred : (categories[0]?.key ?? null);
+  /** Preferred level, otherwise the first level that has scores, otherwise Ușor. */
+  protected readonly selectedLevel = linkedSignal<LevelId>(() => {
+    const preferred = this.preferredLevel();
+    if (preferred) {
+      return preferred;
+    }
+    const withScores = this.leaderboard.levelsWithScores();
+    return LEVELS.find((level) => withScores.has(level.id))?.id ?? LEVELS[0].id;
   });
 
-  protected readonly rows = computed(() => {
-    const key = this.selectedKey();
-    return key ? this.leaderboard.ranked(key) : [];
-  });
+  protected readonly selectedLevelName = computed(
+    () => LEVELS.find((level) => level.id === this.selectedLevel())?.name ?? '',
+  );
+
+  protected readonly rows = computed(() => this.leaderboard.ranked(this.selectedLevel()));
 
   protected readonly formatTime = formatTime;
-
-  protected label(key: string): string {
-    const category = this.categories().find((c) => c.key === key);
-    return category ? this.leaderboard.categoryLabel(category) : '';
-  }
 }

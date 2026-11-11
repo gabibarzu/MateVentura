@@ -1,5 +1,4 @@
-import { Directive, effect, ElementRef, inject, input, untracked } from '@angular/core';
-import { MotionService } from '../services/motion.service';
+import { Directive, effect, ElementRef, inject, input } from '@angular/core';
 
 const KEYFRAMES: Keyframe[] = [
   { transform: 'scale(1)' },
@@ -17,7 +16,6 @@ export class BumpOnChange {
   readonly appBumpOnChange = input.required<unknown>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly motion = inject(MotionService);
   private initialized = false;
 
   constructor() {
@@ -25,9 +23,6 @@ export class BumpOnChange {
       this.appBumpOnChange();
       if (!this.initialized) {
         this.initialized = true;
-        return;
-      }
-      if (!untracked(this.motion.enabled)) {
         return;
       }
       this.host.nativeElement.animate(KEYFRAMES, OPTIONS);

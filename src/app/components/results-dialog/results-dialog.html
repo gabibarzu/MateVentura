@@ -5,6 +5,8 @@
 </h2>
 
 <mat-dialog-content class="results__content">
+  <span class="results__mode" [attr.data-level]="level">{{ modeLabel }}</span>
+
   <div class="results__stars" role="img" [attr.aria-label]="'Ai obținut ' + starCount() + ' din 3 stele'">
     @for (filled of stars(); track $index) {
       <mat-icon class="results__star" [class.results__star--filled]="filled" [style.animation-delay.ms]="$index * 180">
@@ -26,36 +28,43 @@
     </div>
   </div>
 
-  <section class="results__save" aria-live="polite">
-    @if (!saved()) {
-      <mat-form-field appearance="outline" class="results__name" subscriptSizing="dynamic">
-        <mat-label>Numele tău pentru clasament</mat-label>
-        <mat-icon matPrefix>person</mat-icon>
-        <input
-          matInput
-          [formControl]="nameControl"
-          [maxLength]="nameMaxLength"
-          autocomplete="off"
-          cdkFocusInitial
-          (keydown.enter)="save()"
-        />
-      </mat-form-field>
-      <button mat-flat-button type="button" class="big-btn btn-blue" (click)="save()">
-        <mat-icon>emoji_events</mat-icon>
-        Salvează
-      </button>
-    } @else if (rank(); as place) {
-      <p class="results__rank">
-        <mat-icon>emoji_events</mat-icon>
-        Scor salvat! Ești pe locul <strong>{{ place }}</strong> în clasament!
-      </p>
-    } @else {
-      <p class="results__rank results__rank--outside">
-        <mat-icon>emoji_events</mat-icon>
-        Scor salvat! De data asta nu ai intrat în top 10 — mai încearcă!
-      </p>
-    }
-  </section>
+  @if (level) {
+    <section class="results__save" aria-live="polite">
+      @if (!saved()) {
+        <mat-form-field appearance="outline" class="results__name" subscriptSizing="dynamic">
+          <mat-label>Numele tău pentru clasament</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input
+            matInput
+            [formControl]="nameControl"
+            [maxLength]="nameMaxLength"
+            autocomplete="off"
+            cdkFocusInitial
+            (keydown.enter)="save()"
+          />
+        </mat-form-field>
+        <button mat-flat-button type="button" class="big-btn btn-blue" (click)="save()">
+          <mat-icon>emoji_events</mat-icon>
+          Salvează
+        </button>
+      } @else if (rank(); as place) {
+        <p class="results__rank">
+          <mat-icon>emoji_events</mat-icon>
+          Scor salvat! Ești pe locul <strong>{{ place }}</strong> la nivelul {{ levelName }}!
+        </p>
+      } @else {
+        <p class="results__rank results__rank--outside">
+          <mat-icon>emoji_events</mat-icon>
+          Scor salvat! De data asta nu ai intrat în top 10 — mai încearcă!
+        </p>
+      }
+    </section>
+  } @else {
+    <p class="results__no-board">
+      <mat-icon>info</mat-icon>
+      Vrei în clasament? Alege un nivel: Ușor, Mediu sau Greu!
+    </p>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions class="results__actions">

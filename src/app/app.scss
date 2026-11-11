@@ -28,21 +28,6 @@
   align-items: center;
   gap: 10px;
   cursor: default;
-
-  &:hover {
-    .topbar__title {
-      transform: scale(1.05) rotate(-2deg);
-      text-shadow: 0 5px 0 $prunus-avium;
-    }
-
-    .topbar__logo--robot {
-      animation: spin 700ms $ease-bounce;
-    }
-
-    .topbar__logo--rocket {
-      animation: blast-off 900ms $ease-smooth;
-    }
-  }
 }
 
 .topbar__title {
@@ -51,9 +36,6 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-shadow: 0 3px 0 $prunus-avium;
-  transition:
-    transform $t-med $ease-bounce,
-    text-shadow $t-med $ease-smooth;
 }
 
 .topbar__logo {
@@ -63,12 +45,10 @@
 
   &--robot {
     color: $robins-egg;
-    animation: wobble 2.5s ease-in-out infinite;
   }
 
   &--rocket {
     color: $bright-yarrow;
-    animation: hover-rocket 1.8s ease-in-out infinite;
   }
 }
 
@@ -76,7 +56,8 @@
   flex: 1 1 auto;
 }
 
-.topbar__info {
+.topbar__stats,
+.topbar__actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -84,11 +65,13 @@
 }
 
 .topbar__sound,
-.topbar__motion,
 .topbar__trophy {
   --mat-icon-button-icon-color: #fff;
   --mat-icon-button-state-layer-size: 52px;
   background: color-mix(in srgb, #fff 18%, transparent);
+  transition:
+    background-color 200ms ease,
+    transform 100ms ease;
 
   &:hover {
     background: color-mix(in srgb, #fff 32%, transparent);
@@ -96,17 +79,11 @@
 
   mat-icon {
     color: #fff;
-    animation: pop-in $t-med $ease-bounce;
   }
 }
 
 .topbar__trophy mat-icon {
   color: $bright-yarrow;
-}
-
-.workspace__board {
-  display: block;
-  margin-top: 24px;
 }
 
 .pill {
@@ -120,34 +97,11 @@
   line-height: 1;
   white-space: nowrap;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12);
-  animation: pop-in $t-slow $ease-bounce backwards;
-  transition:
-    transform $t-fast $ease-bounce,
-    box-shadow $t-fast $ease-smooth,
-    background-color $t-med $ease-smooth;
-
-  &:hover {
-    transform: scale(1.06);
-    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
-  }
-
-  &:nth-child(2) {
-    animation-delay: 80ms;
-  }
-
-  &:nth-child(3) {
-    animation-delay: 160ms;
-  }
 
   mat-icon {
     font-size: 1.4rem;
     width: 1.4rem;
     height: 1.4rem;
-    transition: transform $t-med $ease-bounce;
-  }
-
-  &:hover mat-icon {
-    transform: rotate(-15deg) scale(1.15);
   }
 
   &--timer {
@@ -193,114 +147,6 @@
   gap: 24px;
 }
 
-.welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-top: 0;
-  padding: 40px 24px;
-  border-radius: $radius-lg;
-  background: #fff;
-  border: 4px dashed $robins-egg;
-  text-align: center;
-  animation: pop-in 600ms $ease-bounce backwards;
-  transition:
-    transform $t-med $ease-bounce,
-    border-color $t-med $ease-smooth,
-    box-shadow $t-med $ease-smooth;
-
-  &:hover {
-    border-style: solid;
-    border-color: $exodus-fruit;
-    box-shadow: 0 12px 0 color-mix(in srgb, #{$exodus-fruit} 20%, transparent);
-  }
-}
-
-.welcome__icon {
-  font-size: 6rem;
-  width: 6rem;
-  height: 6rem;
-  color: $exodus-fruit;
-  animation: wobble 2.5s ease-in-out infinite;
-}
-
-.welcome__title {
-  margin: 0;
-  font-size: 2rem;
-  color: $exodus-fruit;
-}
-
-.welcome__text {
-  margin: 0 0 12px;
-  font-size: 1.25rem;
-  color: #636e72;
-}
-
-@keyframes wobble {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  25% {
-    transform: rotate(-10deg);
-  }
-  75% {
-    transform: rotate(10deg);
-  }
-}
-
-@keyframes hover-rocket {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0) scale(1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.2);
-  }
-  to {
-    transform: rotate(360deg) scale(1);
-  }
-}
-
-@keyframes blast-off {
-  0% {
-    transform: translate(0, 0) rotate(0);
-  }
-  45% {
-    transform: translate(14px, -24px) rotate(15deg);
-    opacity: 0;
-  }
-  55% {
-    transform: translate(-14px, 24px);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(0, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes pop-in {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
 @media (max-width: 720px) {
   .topbar {
     justify-content: center;
@@ -310,11 +156,88 @@
     display: none;
   }
 
-  .topbar__info {
+  .topbar__stats,
+  .topbar__actions {
     justify-content: center;
   }
 
   .topbar__title {
     font-size: 1.7rem;
+  }
+}
+
+// Phones: keep the header short (logo + buttons on one row, compact stats below)
+// so the active question still fits on screen when the keyboard is open.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    min-height: 0;
+    padding: 6px 10px;
+    gap: 6px 8px;
+    justify-content: space-between;
+  }
+
+  .topbar__brand {
+    gap: 6px;
+  }
+
+  .topbar__title {
+    font-size: 1.35rem;
+    letter-spacing: 0;
+    text-shadow: 0 2px 0 $prunus-avium;
+  }
+
+  .topbar__logo {
+    font-size: 1.8rem;
+    width: 1.8rem;
+    height: 1.8rem;
+
+    &--rocket {
+      display: none;
+    }
+  }
+
+  .topbar__actions {
+    gap: 4px;
+  }
+
+  .topbar__sound,
+  .topbar__trophy {
+    --mat-icon-button-state-layer-size: 40px;
+  }
+
+  .topbar__actions .topbar__new {
+    min-height: 40px;
+    padding: 0 12px;
+
+    > .mat-icon {
+      margin: 0;
+    }
+  }
+
+  .topbar__new-label,
+  .pill__label {
+    @include visually-hidden;
+  }
+
+  .topbar__stats {
+    order: 3;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .pill {
+    padding: 5px 10px;
+    font-size: 0.95rem;
   }
 }

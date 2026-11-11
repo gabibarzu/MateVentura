@@ -81,6 +81,12 @@ body {
   color: #2d3436;
 }
 
+// ---------- All Material buttons: smooth hover ----------
+// Material's hover tint (state layer) appears instantly by default; fade it in/out instead.
+.mat-mdc-button-base .mat-mdc-button-persistent-ripple::before {
+  transition: opacity 200ms ease;
+}
+
 // ---------- Big buttons (mat-raised-button / mat-flat-button) ----------
 .mat-mdc-button-base:is(.mat-mdc-raised-button, .mat-mdc-unelevated-button) {
   min-height: 56px;
@@ -90,32 +96,19 @@ body {
   border-radius: $radius-lg;
   white-space: normal;
   line-height: 1.2;
+  // Subtle: Material's own hover tint + a short "press" on click. No scaling/rotation on hover.
   transition:
-    transform $t-fast $ease-bounce,
-    box-shadow $t-fast $ease-smooth,
-    background-color $t-med $ease-smooth,
-    color $t-med $ease-smooth;
+    transform 100ms ease,
+    box-shadow 100ms ease;
 
   > .mat-icon {
     font-size: 1.7rem;
     width: 1.7rem;
     height: 1.7rem;
-    transition: transform $t-med $ease-bounce;
-  }
-
-  // Hover/press only scale (never translate): moving the button away from the cursor
-  // makes hover flicker on/off in a loop near the edges.
-  &:not(:disabled):hover {
-    transform: scale(1.04);
-
-    > .mat-icon {
-      transform: rotate(-12deg) scale(1.2);
-    }
   }
 
   &:not(:disabled):active {
     transform: scale(0.98);
-    transition-duration: 80ms;
   }
 
   &:focus-visible {
@@ -124,23 +117,9 @@ body {
   }
 }
 
-// Round icon buttons (e.g. mute toggle).
+// Round icon buttons (e.g. mute toggle): Material's hover tint + short press.
 .mat-mdc-icon-button {
-  transition:
-    transform $t-fast $ease-bounce,
-    background-color $t-med $ease-smooth;
-
-  .mat-icon {
-    transition: transform $t-med $ease-bounce;
-  }
-
-  &:hover {
-    transform: scale(1.12);
-
-    .mat-icon {
-      transform: rotate(-10deg);
-    }
-  }
+  transition: transform 100ms ease;
 
   &:active {
     transform: scale(0.94);
@@ -152,19 +131,39 @@ body {
   }
 }
 
+// ---------- Toggle buttons (mat-button-toggle): same feel as the buttons above ----------
+.mat-button-toggle {
+  // Clip the hover overlay and click ripple to the rounded shape (no square corners).
+  overflow: hidden;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 100ms ease;
+
+  .mat-button-toggle-focus-overlay {
+    transition: opacity 200ms ease;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
 @mixin button-color($bg, $text: #fff) {
   --mat-button-filled-container-color: #{$bg};
   --mat-button-filled-label-text-color: #{$text};
   --mat-button-protected-container-color: #{$bg};
   --mat-button-protected-label-text-color: #{$text};
+  // Hover tint in the text color (white lightens, dark darkens) so it's visible on every button color.
+  --mat-button-filled-state-layer-color: #{$text};
+  --mat-button-protected-state-layer-color: #{$text};
+  --mat-button-filled-hover-state-layer-opacity: 0.14;
+  --mat-button-protected-hover-state-layer-opacity: 0.14;
   box-shadow: 0 5px 0 color.adjust($bg, $lightness: -12%);
 
-  &:not(:disabled):hover {
-    box-shadow: 0 8px 0 color.adjust($bg, $lightness: -12%);
-  }
-
   &:not(:disabled):active {
-    box-shadow: 0 1px 0 color.adjust($bg, $lightness: -12%);
+    box-shadow: 0 2px 0 color.adjust($bg, $lightness: -12%);
   }
 }
 
@@ -202,6 +201,11 @@ body {
   box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
 }
 
+// A dialog temporarily replaced by another one (e.g. setup -> leaderboard).
+.kid-dialog--hidden {
+  visibility: hidden;
+}
+
 .cdk-overlay-dark-backdrop {
   background: color.change($exodus-fruit, $alpha: 0.45);
 }
@@ -210,19 +214,4 @@ body {
 .mat-mdc-tooltip {
   --mat-tooltip-container-color: #{$exodus-fruit};
   --mat-tooltip-supporting-text-size: 1rem;
-}
-
-// ---------- Accessibility: reduced motion ----------
-// The `reduce-motion` class is set by MotionService (system preference by default, can be toggled in the app).
-html.reduce-motion {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    transition-delay: 0ms !important;
-    scroll-behavior: auto !important;
-  }
 }

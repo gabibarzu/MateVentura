@@ -15,9 +15,13 @@ $soothing-breeze: #b2bec3; // Gray / disabled
 $radius-lg: 28px;
 $radius-md: 20px;
 
+// Game levels (Ușor / Mediu / Greu)
+$level-colors: (
+  easy: $mint-leaf,
+  medium: $electron-blue,
+  hard: $prunus-avium,
+);
+
 // Motion
 $ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-$ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-$t-fast: 180ms;
 $t-med: 300ms;
-$t-slow: 450ms;

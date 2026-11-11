@@ -3,9 +3,8 @@
 
 :host {
   display: block;
-  // Keep the card clear of the sticky header (top) and the window edge (bottom) when scrolled into view.
-  scroll-margin: 120px 0 24px;
-  animation: card-enter $t-slow $ease-bounce backwards;
+  // New exercise: short, subtle fade-in.
+  animation: card-enter 250ms ease-out backwards;
 }
 
 .card {
@@ -14,25 +13,18 @@
   border: 3px solid $city-lights;
   background: #fff;
   color: #2d3436;
+  // Only the answer feedback (colors) and the "answered" fade are animated.
   transition:
-    background-color $t-med $ease-smooth,
-    border-color $t-med $ease-smooth,
-    color $t-med $ease-smooth,
-    opacity $t-slow $ease-smooth,
-    transform $t-slow $ease-bounce,
-    box-shadow $t-med $ease-smooth;
+    background-color $t-med ease,
+    border-color $t-med ease,
+    color $t-med ease,
+    opacity $t-med ease;
 
   &--active {
     border-color: $exodus-fruit;
     box-shadow:
       0 10px 0 color.change($exodus-fruit, $alpha: 0.18),
       0 16px 32px color.change($exodus-fruit, $alpha: 0.18);
-
-    &:hover {
-      box-shadow:
-        0 13px 0 color.change($exodus-fruit, $alpha: 0.22),
-        0 22px 40px color.change($exodus-fruit, $alpha: 0.22);
-    }
   }
 
   // Answered + still active: full-color feedback highlight.
@@ -40,27 +32,19 @@
     background: $mint-leaf;
     border-color: $mint-leaf;
     color: #fff;
-    animation: celebrate 550ms $ease-bounce;
   }
 
   &--active.card--wrong {
     background: $chi-gong;
     border-color: $chi-gong;
     color: #fff;
-    animation: wiggle 450ms $ease-smooth;
   }
 
-  // Answered + moved on: grayed out (comes back to life a bit on hover).
+  // Answered + moved on: grayed out.
   &--done {
     opacity: 0.6;
-    transform: scale(0.94);
     background: $city-lights;
     box-shadow: none;
-
-    &:hover {
-      opacity: 0.9;
-      transform: scale(0.97);
-    }
 
     &.card--correct {
       border-color: $mint-leaf;
@@ -90,13 +74,6 @@
   color: #fff;
   font-weight: 700;
   font-size: 1rem;
-  transition:
-    background-color $t-med $ease-smooth,
-    transform $t-fast $ease-bounce;
-
-  .card:hover & {
-    transform: rotate(-3deg) scale(1.05);
-  }
 
   .card--done & {
     background: $soothing-breeze;
@@ -107,7 +84,6 @@
   font-size: 2.6rem;
   width: 2.6rem;
   height: 2.6rem;
-  animation: pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   &--correct {
     color: $mint-leaf;
@@ -143,13 +119,7 @@
   font-size: 4rem;
   font-weight: 700;
   line-height: 80px;
-  transition:
-    color $t-med $ease-smooth,
-    transform $t-med $ease-bounce;
-
-  &:hover {
-    transform: scale(1.15) rotate(-4deg);
-  }
+  transition: color $t-med ease;
 }
 
 .card__number {
@@ -200,8 +170,8 @@
   background: $sour-lemon;
   border: 2px dashed $bright-yarrow;
   transition:
-    background-color $t-med $ease-smooth,
-    border-color $t-med $ease-smooth;
+    background-color $t-med ease,
+    border-color $t-med ease;
 
   .card--active.card--correct &,
   .card--active.card--wrong & {
@@ -235,16 +205,9 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  animation: pop $t-med $ease-bounce backwards;
-  animation-delay: calc(var(--i, 0) * 40ms);
   transition:
-    background-color $t-med $ease-smooth,
-    border-color $t-med $ease-smooth,
-    transform $t-fast $ease-bounce;
-
-  &:hover {
-    transform: scale(1.5);
-  }
+    background-color $t-med ease,
+    border-color $t-med ease;
 
   &--a {
     background: $robins-egg;
@@ -340,7 +303,6 @@
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  animation: slide-up $t-med $ease-bounce;
 
   &--correct {
     color: $mint-leaf;
@@ -357,7 +319,6 @@
 
 .card__hint {
   color: #636e72;
-  animation: slide-up $t-med $ease-bounce;
 
   kbd {
     display: inline-block;
@@ -369,31 +330,10 @@
     font-weight: 700;
     color: #2d3436;
     box-shadow: 0 3px 0 $bright-yarrow;
-    animation: key-press 2s ease-in-out 1s infinite;
   }
 }
 
 @keyframes card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes pop {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes slide-up {
   from {
     opacity: 0;
     transform: translateY(12px);
@@ -401,42 +341,6 @@
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes celebrate {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.04);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes key-press {
-  0%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  88% {
-    transform: translateY(3px);
-  }
-}
-
-@keyframes wiggle {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  25% {
-    transform: rotate(-1.5deg);
-  }
-  75% {
-    transform: rotate(1.5deg);
   }
 }
 

@@ -5,18 +5,20 @@
       Clasament
     </h2>
 
-    @if (categories().length > 1) {
-      <mat-form-field appearance="outline" class="board__category" subscriptSizing="dynamic">
-        <mat-label>Categorie</mat-label>
-        <mat-select [value]="selectedKey()" (selectionChange)="selectedKey.set($event.value)">
-          @for (category of categories(); track category.key) {
-            <mat-option [value]="category.key">{{ label(category.key) }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    } @else if (selectedKey(); as key) {
-      <span class="board__category-chip">{{ label(key) }}</span>
-    }
+    <mat-button-toggle-group
+      class="board__levels"
+      aria-label="Nivel"
+      hideSingleSelectionIndicator
+      [value]="selectedLevel()"
+      (change)="selectedLevel.set($event.value)"
+    >
+      @for (level of levels; track level.id) {
+        <mat-button-toggle [value]="level.id" class="board__level" [attr.data-level]="level.id">
+          <mat-icon>{{ level.icon }}</mat-icon>
+          {{ level.name }}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
   </div>
 
   @if (rows().length) {
@@ -26,7 +28,7 @@
         <span role="columnheader">Nume</span>
         <span role="columnheader">Scor</span>
         <span role="columnheader">Timp</span>
-        <span role="columnheader" class="board__date">Data</span>
+        <span role="columnheader" class="board__date">Jucat la</span>
       </div>
 
       @for (entry of rows(); track entry.id; let i = $index) {
@@ -37,7 +39,6 @@
           [class.board__row--silver]="i === 1"
           [class.board__row--bronze]="i === 2"
           [class.board__row--new]="entry.id === lastSavedId()"
-          [style.--i]="i"
         >
           <span class="board__rank" role="cell">
             @if (i < 3) {
@@ -54,14 +55,14 @@
             <mat-icon>timer</mat-icon>
             {{ formatTime(entry.elapsedSeconds) }}
           </span>
-          <span class="board__date" role="cell">{{ entry.date | date: 'dd.MM.yyyy' }}</span>
+          <span class="board__date" role="cell">{{ entry.date | date: 'dd.MM.yyyy, HH:mm' }}</span>
         </div>
       }
     </div>
   } @else {
     <div class="board__empty">
       <mat-icon>smart_toy</mat-icon>
-      <p>Încă nu există scoruri. Termină un joc și salvează-ți numele în clasament!</p>
+      <p>Încă nu există scoruri la nivelul <strong>{{ selectedLevelName() }}</strong>. Joacă și intră în clasament!</p>
     </div>
   }
 </mat-card>
