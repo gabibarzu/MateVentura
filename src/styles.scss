@@ -204,6 +204,12 @@ body {
   margin-right: 6px;
 }
 
+// Material shows the focus state layer on any focus, so the grey circle stays after a click:
+// keep it for keyboard focus only (hover still shows it).
+.mat-mdc-checkbox .mdc-checkbox:not(:hover) > .mdc-checkbox__native-control:focus:not(:focus-visible) + .mdc-checkbox__ripple {
+  opacity: 0;
+}
+
 .kid-dialog .mat-mdc-dialog-surface {
   border: 4px solid $robins-egg;
   box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
