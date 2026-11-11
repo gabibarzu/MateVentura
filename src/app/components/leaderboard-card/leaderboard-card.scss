@@ -91,6 +91,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  // Room for the "just saved" row outline (it sits 5px outside the row); the dialog's
+  // scrolling content area would otherwise clip it.
+  padding: 6px;
 }
 
 .board__row {
