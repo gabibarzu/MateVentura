@@ -1,0 +1,67 @@
+<mat-card class="board" appearance="outlined">
+  <div class="board__header">
+    <h2 class="board__title">
+      <mat-icon class="board__title-icon">emoji_events</mat-icon>
+      Clasament
+    </h2>
+
+    @if (categories().length > 1) {
+      <mat-form-field appearance="outline" class="board__category" subscriptSizing="dynamic">
+        <mat-label>Categorie</mat-label>
+        <mat-select [value]="selectedKey()" (selectionChange)="selectedKey.set($event.value)">
+          @for (category of categories(); track category.key) {
+            <mat-option [value]="category.key">{{ label(category.key) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    } @else if (selectedKey(); as key) {
+      <span class="board__category-chip">{{ label(key) }}</span>
+    }
+  </div>
+
+  @if (rows().length) {
+    <div class="board__table" role="table" aria-label="Clasament">
+      <div class="board__row board__row--head" role="row">
+        <span role="columnheader">Loc</span>
+        <span role="columnheader">Nume</span>
+        <span role="columnheader">Scor</span>
+        <span role="columnheader">Timp</span>
+        <span role="columnheader" class="board__date">Data</span>
+      </div>
+
+      @for (entry of rows(); track entry.id; let i = $index) {
+        <div
+          class="board__row"
+          role="row"
+          [class.board__row--gold]="i === 0"
+          [class.board__row--silver]="i === 1"
+          [class.board__row--bronze]="i === 2"
+          [class.board__row--new]="entry.id === lastSavedId()"
+          [style.--i]="i"
+        >
+          <span class="board__rank" role="cell">
+            @if (i < 3) {
+              <mat-icon class="board__medal">emoji_events</mat-icon>
+            }
+            {{ i + 1 }}
+          </span>
+          <span class="board__name" role="cell">{{ entry.name }}</span>
+          <span class="board__score" role="cell">
+            <mat-icon>check_circle</mat-icon>
+            {{ entry.correct }} / {{ entry.total }}
+          </span>
+          <span class="board__time" role="cell">
+            <mat-icon>timer</mat-icon>
+            {{ formatTime(entry.elapsedSeconds) }}
+          </span>
+          <span class="board__date" role="cell">{{ entry.date | date: 'dd.MM.yyyy' }}</span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="board__empty">
+      <mat-icon>smart_toy</mat-icon>
+      <p>Încă nu există scoruri. Termină un joc și salvează-ți numele în clasament!</p>
+    </div>
+  }
+</mat-card>

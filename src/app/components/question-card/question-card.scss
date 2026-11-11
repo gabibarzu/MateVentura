@@ -1,0 +1,473 @@
+@use 'sass:color';
+@use '../../../styles/palette' as *;
+
+:host {
+  display: block;
+  scroll-margin: 120px;
+  animation: card-enter $t-slow $ease-bounce backwards;
+}
+
+.card {
+  padding: 20px 24px;
+  border-radius: $radius-lg;
+  border: 3px solid $city-lights;
+  background: #fff;
+  color: #2d3436;
+  transition:
+    background-color $t-med $ease-smooth,
+    border-color $t-med $ease-smooth,
+    color $t-med $ease-smooth,
+    opacity $t-slow $ease-smooth,
+    transform $t-slow $ease-bounce,
+    box-shadow $t-med $ease-smooth;
+
+  &--active {
+    border-color: $exodus-fruit;
+    box-shadow:
+      0 10px 0 color.change($exodus-fruit, $alpha: 0.18),
+      0 16px 32px color.change($exodus-fruit, $alpha: 0.18);
+
+    &:hover {
+      box-shadow:
+        0 13px 0 color.change($exodus-fruit, $alpha: 0.22),
+        0 22px 40px color.change($exodus-fruit, $alpha: 0.22);
+    }
+  }
+
+  // Answered + still active: full-color feedback highlight.
+  &--active.card--correct {
+    background: $mint-leaf;
+    border-color: $mint-leaf;
+    color: #fff;
+    animation: celebrate 550ms $ease-bounce;
+  }
+
+  &--active.card--wrong {
+    background: $chi-gong;
+    border-color: $chi-gong;
+    color: #fff;
+    animation: wiggle 450ms $ease-smooth;
+  }
+
+  // Answered + moved on: grayed out (comes back to life a bit on hover).
+  &--done {
+    opacity: 0.6;
+    transform: scale(0.94);
+    background: $city-lights;
+    box-shadow: none;
+
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.97);
+    }
+
+    &.card--correct {
+      border-color: $mint-leaf;
+    }
+
+    &.card--wrong {
+      border-color: $chi-gong;
+    }
+  }
+
+  &--shake {
+    animation: shake 400ms ease;
+  }
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.card__badge {
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: $pico-pink;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  transition:
+    background-color $t-med $ease-smooth,
+    transform $t-fast $ease-bounce;
+
+  .card:hover & {
+    transform: rotate(-3deg) scale(1.05);
+  }
+
+  .card--done & {
+    background: $soothing-breeze;
+  }
+}
+
+.card__status {
+  font-size: 2.6rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  animation: pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  &--correct {
+    color: $mint-leaf;
+  }
+
+  &--wrong {
+    color: $chi-gong;
+  }
+
+  .card--active & {
+    color: #fff;
+  }
+}
+
+.card__equation {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.card__answer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card__number,
+.card__operator {
+  display: inline-block;
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 80px;
+  transition:
+    color $t-med $ease-smooth,
+    transform $t-med $ease-bounce;
+
+  &:hover {
+    transform: scale(1.15) rotate(-4deg);
+  }
+}
+
+.card__number {
+  color: $electron-blue;
+  text-underline-offset: 10px;
+  text-decoration-thickness: 6px;
+
+  // Color markers that link each number to its dots in the helper tray.
+  &--mark-a {
+    text-decoration-line: underline;
+    text-decoration-color: $robins-egg;
+  }
+
+  &--mark-b {
+    text-decoration-line: underline;
+    text-decoration-color: $bright-yarrow;
+  }
+
+  &--mark-taken {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: $pink-glamour;
+  }
+
+  .card--active.card--correct &,
+  .card--active.card--wrong & {
+    color: inherit;
+    text-decoration-color: color.change(#fff, $alpha: 0.7);
+  }
+}
+
+.card__operator {
+  color: $prunus-avium;
+
+  .card--correct &,
+  .card--wrong & {
+    color: inherit;
+  }
+}
+
+.card__dots {
+  display: grid;
+  grid-template-columns: repeat(5, 14px);
+  gap: 6px;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: $sour-lemon;
+  border: 2px dashed $bright-yarrow;
+  transition:
+    background-color $t-med $ease-smooth,
+    border-color $t-med $ease-smooth;
+
+  .card--active.card--correct &,
+  .card--active.card--wrong & {
+    background: color.change(#fff, $alpha: 0.15);
+    border-color: color.change(#fff, $alpha: 0.6);
+  }
+
+  .card--done & {
+    background: transparent;
+    border-color: $soothing-breeze;
+  }
+
+  // Numbers above 10: rows of 10 (two groups of 5) for easier counting.
+  &--wide {
+    // 6th column is wider so there is a visible gap between the two groups of 5.
+    grid-template-columns: repeat(5, 12px) 18px repeat(4, 12px);
+    gap: 5px;
+
+    .card__dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .card__dot:nth-child(10n + 6) {
+      justify-self: end;
+    }
+  }
+}
+
+.card__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  animation: pop $t-med $ease-bounce backwards;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  transition:
+    background-color $t-med $ease-smooth,
+    border-color $t-med $ease-smooth,
+    transform $t-fast $ease-bounce;
+
+  &:hover {
+    transform: scale(1.5);
+  }
+
+  &--a {
+    background: $robins-egg;
+  }
+
+  &--b {
+    background: $bright-yarrow;
+  }
+
+  .card--active.card--correct &,
+  .card--active.card--wrong & {
+    background: #fff;
+  }
+
+  // Subtraction helper: dots that are "taken away".
+  &--taken {
+    position: relative;
+    box-sizing: border-box;
+    background: transparent;
+    border: 2px solid $pink-glamour;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -3px;
+      right: -3px;
+      height: 2px;
+      background: $chi-gong;
+      transform: rotate(-45deg);
+    }
+
+    .card--active.card--correct &,
+    .card--active.card--wrong & {
+      background: transparent;
+      border-color: #fff;
+
+      &::after {
+        background: #fff;
+      }
+    }
+  }
+}
+
+.card__answer {
+  width: 150px;
+  --mat-form-field-container-height: 80px;
+  --mat-form-field-container-vertical-padding: 10px;
+  --mat-form-field-container-text-size: 2.6rem;
+  --mat-form-field-outlined-container-shape: 20px;
+  --mat-form-field-outlined-outline-width: 3px;
+  --mat-form-field-outlined-focus-outline-width: 4px;
+  --mat-form-field-outlined-outline-color: #{$robins-egg};
+  --mat-form-field-outlined-hover-outline-color: #{$electron-blue};
+  --mat-form-field-outlined-focus-outline-color: #{$exodus-fruit};
+  --mat-form-field-outlined-caret-color: #{$exodus-fruit};
+  --mat-form-field-outlined-input-text-color: #{$exodus-fruit};
+  --mat-form-field-outlined-disabled-outline-color: #{$soothing-breeze};
+  --mat-form-field-outlined-disabled-input-text-color: #2d3436;
+
+  input {
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .card--correct &,
+  .card--wrong & {
+    --mat-form-field-outlined-disabled-outline-color: #fff;
+    --mat-form-field-outlined-disabled-input-text-color: #fff;
+  }
+
+  .card--done.card--correct &,
+  .card--done.card--wrong & {
+    --mat-form-field-outlined-disabled-outline-color: #{$soothing-breeze};
+    --mat-form-field-outlined-disabled-input-text-color: #2d3436;
+  }
+
+  .card--done.card--wrong & input {
+    text-decoration: line-through;
+    text-decoration-color: $chi-gong;
+  }
+}
+
+.card__feedback {
+  min-height: 40px;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.card__message {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  animation: slide-up $t-med $ease-bounce;
+
+  &--correct {
+    color: $mint-leaf;
+  }
+
+  &--wrong {
+    color: $chi-gong;
+  }
+
+  .card--active & {
+    color: #fff;
+  }
+}
+
+.card__hint {
+  color: #636e72;
+  animation: slide-up $t-med $ease-bounce;
+
+  kbd {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: $sour-lemon;
+    border: 2px solid $bright-yarrow;
+    font-family: inherit;
+    font-weight: 700;
+    color: #2d3436;
+    box-shadow: 0 3px 0 $bright-yarrow;
+    animation: key-press 2s ease-in-out 1s infinite;
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes celebrate {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes key-press {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  88% {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-1.5deg);
+  }
+  75% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-10px);
+  }
+  40%,
+  80% {
+    transform: translateX(10px);
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 16px;
+  }
+
+  .card__number,
+  .card__operator {
+    font-size: 2.8rem;
+    line-height: 64px;
+  }
+
+  .card__answer {
+    width: 120px;
+    --mat-form-field-container-height: 64px;
+    --mat-form-field-container-text-size: 2rem;
+  }
+}

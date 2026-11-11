@@ -1,0 +1,167 @@
+@use 'sass:color';
+@use '../../../styles/palette' as *;
+
+.setup__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $exodus-fruit;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.setup__title-icon {
+  font-size: 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: $prunus-avium;
+}
+
+.setup__content {
+  // Material caps dialog content at 65vh; allow more room so the whole form fits.
+  max-height: calc(95vh - 190px);
+}
+
+.setup__intro {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  color: #2d3436;
+}
+
+.setup__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.setup__group {
+  padding: 12px 14px;
+  border-radius: $radius-md;
+  background: $sour-lemon;
+  border: 2px dashed $bright-yarrow;
+  transition:
+    border-color $t-med $ease-smooth,
+    box-shadow $t-med $ease-smooth,
+    transform $t-med $ease-bounce;
+
+  &:hover,
+  &:focus-within {
+    border-style: solid;
+    border-color: $robins-egg;
+    box-shadow: 0 6px 16px color.change($exodus-fruit, $alpha: 0.12);
+  }
+}
+
+.setup__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $exodus-fruit;
+
+  mat-icon {
+    color: $electron-blue;
+  }
+}
+
+.setup__toggles {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  border: none;
+  overflow: visible;
+  gap: 8px;
+  background: transparent;
+
+  .mat-button-toggle {
+    flex: 1 1 0;
+    min-width: 56px;
+    border: 3px solid $robins-egg;
+    border-radius: $radius-md;
+    background: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 0 $robins-egg;
+    transition:
+      transform $t-fast $ease-bounce,
+      background-color $t-med $ease-smooth,
+      border-color $t-med $ease-smooth,
+      color $t-med $ease-smooth,
+      box-shadow $t-fast $ease-smooth;
+
+    // No scaling on hover/selected: wide toggles would grow over their neighbours.
+    &:hover {
+      border-color: $electron-blue;
+      background: color.change($robins-egg, $alpha: 0.12);
+      box-shadow: 0 6px 0 $electron-blue;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 0 $electron-blue;
+      transition-duration: 80ms;
+    }
+  }
+
+  .mat-button-toggle-checked,
+  .mat-button-toggle-checked:hover {
+    border-color: $mint-leaf;
+    background: $mint-leaf;
+    color: #fff;
+    box-shadow: 0 5px 0 color.adjust($mint-leaf, $lightness: -12%);
+  }
+}
+
+.setup__checkbox {
+  --mat-checkbox-label-text-size: 1.2rem;
+  --mat-checkbox-label-text-weight: 700;
+  --mat-checkbox-label-text-color: #2d3436;
+  --mat-checkbox-selected-icon-color: #{$mint-leaf};
+  --mat-checkbox-selected-focus-icon-color: #{$mint-leaf};
+  --mat-checkbox-selected-hover-icon-color: #{$mint-leaf};
+  --mat-checkbox-selected-pressed-icon-color: #{$mint-leaf};
+  --mat-checkbox-selected-checkmark-color: #fff;
+  --mat-checkbox-unselected-icon-color: #{$robins-egg};
+  --mat-checkbox-unselected-hover-icon-color: #{$electron-blue};
+}
+
+.setup__group--full {
+  grid-column: 1 / -1;
+}
+
+// Hint: label and checkbox on a single row.
+.setup__group--hint {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+
+  .setup__label {
+    margin: 0;
+  }
+}
+
+.setup__group--disabled {
+  opacity: 0.6;
+}
+
+.setup__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 1rem;
+  color: #636e72;
+}
+
+@media (max-width: 640px) {
+  .setup__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.setup__actions {
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 24px 24px;
+}

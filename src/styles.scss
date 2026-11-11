@@ -1,0 +1,228 @@
+@use 'sass:color';
+@use '@angular/material' as mat;
+@use './styles/palette' as *;
+
+$font-family: 'Nunito', 'Segoe UI', sans-serif;
+
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$violet-palette,
+        tertiary: mat.$cyan-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: $font-family,
+        brand-family: $font-family,
+        bold-weight: 700,
+        medium-weight: 600,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  // Map the Mate-Aventura palette onto the Material system tokens.
+  @include mat.theme-overrides(
+    (
+      primary: $exodus-fruit,
+      on-primary: #fff,
+      secondary: $robins-egg,
+      tertiary: $electron-blue,
+      error: $chi-gong,
+      surface: #fff,
+      background: $city-lights,
+    )
+  );
+
+  // Oversized, rounded buttons for little fingers.
+  --mat-button-filled-container-height: 56px;
+  --mat-button-filled-label-text-size: 1.3rem;
+  --mat-button-filled-label-text-weight: 700;
+  --mat-button-filled-horizontal-padding: 28px;
+  --mat-button-filled-container-shape: #{$radius-lg};
+  --mat-button-filled-container-color: #{$mint-leaf};
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-protected-container-height: 56px;
+  --mat-button-protected-label-text-size: 1.3rem;
+  --mat-button-protected-label-text-weight: 700;
+  --mat-button-protected-horizontal-padding: 28px;
+  --mat-button-protected-container-shape: #{$radius-lg};
+
+  // Big, colorful toggle buttons.
+  --mat-button-toggle-height: 56px;
+  --mat-button-toggle-shape: #{$radius-md};
+  --mat-button-toggle-label-text-size: 1.15rem;
+  --mat-button-toggle-label-text-weight: 700;
+  --mat-button-toggle-text-color: #{$exodus-fruit};
+  --mat-button-toggle-selected-state-background-color: #{$mint-leaf};
+  --mat-button-toggle-selected-state-text-color: #fff;
+
+  // Rounded dialogs.
+  --mat-dialog-container-shape: #{$radius-lg};
+  --mat-dialog-container-color: #fff;
+}
+
+// `min-height` (not `height`) so the background grows with long pages.
+// Not `background-attachment: fixed`: that forces Chrome to repaint the whole page on every scroll frame.
+html {
+  min-height: 100%;
+  background:
+    radial-gradient($soothing-breeze 1.5px, transparent 1.5px) 0 0 / 28px 28px,
+    linear-gradient(180deg, $city-lights 0%, $sour-lemon 100%);
+}
+
+body {
+  margin: 0;
+  font-family: $font-family;
+  color: #2d3436;
+}
+
+// ---------- Big buttons (mat-raised-button / mat-flat-button) ----------
+.mat-mdc-button-base:is(.mat-mdc-raised-button, .mat-mdc-unelevated-button) {
+  min-height: 56px;
+  height: auto;
+  padding-block: 8px;
+  font-size: 1.3rem;
+  border-radius: $radius-lg;
+  white-space: normal;
+  line-height: 1.2;
+  transition:
+    transform $t-fast $ease-bounce,
+    box-shadow $t-fast $ease-smooth,
+    background-color $t-med $ease-smooth,
+    color $t-med $ease-smooth;
+
+  > .mat-icon {
+    font-size: 1.7rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    transition: transform $t-med $ease-bounce;
+  }
+
+  // Hover/press only scale (never translate): moving the button away from the cursor
+  // makes hover flicker on/off in a loop near the edges.
+  &:not(:disabled):hover {
+    transform: scale(1.04);
+
+    > .mat-icon {
+      transform: rotate(-12deg) scale(1.2);
+    }
+  }
+
+  &:not(:disabled):active {
+    transform: scale(0.98);
+    transition-duration: 80ms;
+  }
+
+  &:focus-visible {
+    outline: 4px solid $bright-yarrow;
+    outline-offset: 3px;
+  }
+}
+
+// Round icon buttons (e.g. mute toggle).
+.mat-mdc-icon-button {
+  transition:
+    transform $t-fast $ease-bounce,
+    background-color $t-med $ease-smooth;
+
+  .mat-icon {
+    transition: transform $t-med $ease-bounce;
+  }
+
+  &:hover {
+    transform: scale(1.12);
+
+    .mat-icon {
+      transform: rotate(-10deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $bright-yarrow;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-color($bg, $text: #fff) {
+  --mat-button-filled-container-color: #{$bg};
+  --mat-button-filled-label-text-color: #{$text};
+  --mat-button-protected-container-color: #{$bg};
+  --mat-button-protected-label-text-color: #{$text};
+  box-shadow: 0 5px 0 color.adjust($bg, $lightness: -12%);
+
+  &:not(:disabled):hover {
+    box-shadow: 0 8px 0 color.adjust($bg, $lightness: -12%);
+  }
+
+  &:not(:disabled):active {
+    box-shadow: 0 1px 0 color.adjust($bg, $lightness: -12%);
+  }
+}
+
+.mat-mdc-button-base {
+  &.btn-green {
+    @include button-color($mint-leaf);
+  }
+
+  &.btn-blue {
+    @include button-color($electron-blue);
+  }
+
+  &.btn-purple {
+    @include button-color($exodus-fruit);
+  }
+
+  &.btn-pink {
+    @include button-color($prunus-avium);
+  }
+
+  &.btn-gray {
+    @include button-color($city-lights, #2d3436);
+  }
+}
+
+// ---------- Dialogs ----------
+// Bigger checkbox in the setup dialog (inner Material element, so styled globally).
+.setup__checkbox .mdc-checkbox {
+  transform: scale(1.4);
+  margin-right: 6px;
+}
+
+.kid-dialog .mat-mdc-dialog-surface {
+  border: 4px solid $robins-egg;
+  box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
+}
+
+.cdk-overlay-dark-backdrop {
+  background: color.change($exodus-fruit, $alpha: 0.45);
+}
+
+// ---------- Tooltips ----------
+.mat-mdc-tooltip {
+  --mat-tooltip-container-color: #{$exodus-fruit};
+  --mat-tooltip-supporting-text-size: 1rem;
+}
+
+// ---------- Accessibility: reduced motion ----------
+// The `reduce-motion` class is set by MotionService (system preference by default, can be toggled in the app).
+html.reduce-motion {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}

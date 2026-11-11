@@ -1,0 +1,266 @@
+@use 'sass:color';
+@use '../../../styles/palette' as *;
+
+:host {
+  display: block;
+}
+
+.board {
+  padding: 20px 24px;
+  border-radius: $radius-lg;
+  border: 3px solid $robins-egg;
+  background: #fff;
+  box-shadow: 0 8px 0 color.change($robins-egg, $alpha: 0.35);
+  animation: board-enter $t-slow $ease-bounce backwards;
+}
+
+// Inside a dialog the dialog surface already provides the frame.
+:host-context(.mat-mdc-dialog-container) .board {
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  animation: none;
+}
+
+.board__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.board__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: $exodus-fruit;
+}
+
+.board__title-icon {
+  font-size: 2.2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  color: $bright-yarrow;
+}
+
+.board__category {
+  min-width: 260px;
+  --mat-form-field-outlined-container-shape: 16px;
+  --mat-form-field-outlined-outline-color: #{$robins-egg};
+  --mat-form-field-outlined-focus-outline-color: #{$exodus-fruit};
+}
+
+.board__category-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: $sour-lemon;
+  border: 2px solid $bright-yarrow;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.board__table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.board__row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 110px 110px 110px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  border: 2px solid transparent;
+  background: $city-lights;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2d3436;
+  animation: row-enter $t-med $ease-bounce backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+  transition:
+    transform $t-fast $ease-bounce,
+    box-shadow $t-fast $ease-smooth;
+
+  &:not(.board__row--head):hover {
+    transform: scale(1.015);
+    box-shadow: 0 4px 0 color.change($exodus-fruit, $alpha: 0.15);
+  }
+
+  &--head {
+    padding-block: 4px;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #636e72;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: none;
+  }
+
+  &--gold {
+    background: $sour-lemon;
+    border: 2px solid $bright-yarrow;
+  }
+
+  &--silver {
+    background: color.change($soothing-breeze, $alpha: 0.35);
+    border: 2px solid $soothing-breeze;
+  }
+
+  &--bronze {
+    background: color.change($pink-glamour, $alpha: 0.15);
+    border: 2px solid $pink-glamour;
+  }
+
+  // The score that was just saved.
+  &--new {
+    outline: 3px solid $mint-leaf;
+    outline-offset: 2px;
+    animation:
+      row-enter $t-med $ease-bounce backwards,
+      glow 1.6s ease-in-out 3;
+  }
+}
+
+.board__rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 1.3rem;
+  color: $exodus-fruit;
+}
+
+.board__medal {
+  .board__row--gold & {
+    color: $bright-yarrow;
+  }
+
+  .board__row--silver & {
+    color: $soothing-breeze;
+  }
+
+  .board__row--bronze & {
+    color: $pink-glamour;
+  }
+}
+
+.board__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: $electron-blue;
+}
+
+.board__score,
+.board__time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  mat-icon {
+    font-size: 1.3rem;
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+}
+
+.board__score mat-icon {
+  color: $mint-leaf;
+}
+
+.board__time {
+  font-variant-numeric: tabular-nums;
+
+  mat-icon {
+    color: $electron-blue;
+  }
+}
+
+.board__date {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #636e72;
+}
+
+.board__empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: $radius-md;
+  background: $sour-lemon;
+  border: 2px dashed $bright-yarrow;
+  font-size: 1.15rem;
+  color: #2d3436;
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 2.4rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    color: $exodus-fruit;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+@keyframes board-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color.change($mint-leaf, $alpha: 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px color.change($mint-leaf, $alpha: 0.35);
+  }
+}
+
+@media (max-width: 600px) {
+  .board {
+    padding: 16px;
+  }
+
+  .board__row {
+    grid-template-columns: 56px minmax(0, 1fr) 90px 90px;
+    font-size: 1rem;
+  }
+
+  .board__date {
+    display: none;
+  }
+
+  .board__category {
+    min-width: 0;
+    width: 100%;
+  }
+}

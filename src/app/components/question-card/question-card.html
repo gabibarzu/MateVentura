@@ -1,0 +1,91 @@
+<mat-card
+  class="card"
+  appearance="outlined"
+  [class.card--active]="active()"
+  [class.card--done]="!active()"
+  [class.card--correct]="status() === 'correct'"
+  [class.card--wrong]="status() === 'wrong'"
+  [class.card--shake]="shake()"
+  [attr.aria-current]="active() ? 'step' : null"
+>
+  <div class="card__header">
+    <span class="card__badge">Exercițiul {{ index() + 1 }}</span>
+    @switch (status()) {
+      @case ('correct') {
+        <mat-icon class="card__status card__status--correct" aria-label="Corect">check_circle</mat-icon>
+      }
+      @case ('wrong') {
+        <mat-icon class="card__status card__status--wrong" aria-label="Greșit">cancel</mat-icon>
+      }
+    }
+  </div>
+
+  <div class="card__equation">
+    <span class="card__number" [class.card__number--mark-a]="showDots()">{{ question().operandA }}</span>
+
+    <span class="card__operator">{{ question().operator }}</span>
+
+    <span
+      class="card__number"
+      [class.card__number--mark-b]="showDots() && question().operator === '+'"
+      [class.card__number--mark-taken]="showDots() && question().operator === '-'"
+    >
+      {{ question().operandB }}
+    </span>
+
+    <span class="card__operator">=</span>
+
+    <div class="card__answer-col">
+      <mat-form-field appearance="outline" class="card__answer" subscriptSizing="dynamic">
+        <input
+          #answerInput
+          matInput
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          [maxLength]="maxLength"
+          [formControl]="answerControl"
+          [attr.aria-label]="'Răspuns pentru ' + question().operandA + ' ' + question().operator + ' ' + question().operandB"
+          (keydown)="onKeydown($event)"
+          (input)="sanitize()"
+        />
+      </mat-form-field>
+
+      @if (showDots()) {
+        <div class="card__dots" [class.card__dots--wide]="helperDots().length > 10" aria-hidden="true">
+          @for (kind of helperDots(); track $index) {
+            <span
+              class="card__dot"
+              [class.card__dot--a]="kind === 'a'"
+              [class.card__dot--b]="kind === 'b'"
+              [class.card__dot--taken]="kind === 'taken'"
+              [style.--i]="$index"
+            ></span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card__feedback" aria-live="polite">
+    @switch (status()) {
+      @case ('correct') {
+        <span class="card__message card__message--correct">
+          <mat-icon>check_circle</mat-icon>
+          Corect! {{ praise }}
+        </span>
+      }
+      @case ('wrong') {
+        <span class="card__message card__message--wrong">
+          <mat-icon>cancel</mat-icon>
+          Oops! Corect era: <strong>{{ question().correctAnswer }}</strong>
+        </span>
+      }
+      @default {
+        @if (active()) {
+          <span class="card__hint">Scrie răspunsul și apasă <kbd>ENTER</kbd></span>
+        }
+      }
+    }
+  </div>
+</mat-card>

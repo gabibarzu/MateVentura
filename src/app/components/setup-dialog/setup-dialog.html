@@ -1,0 +1,92 @@
+<form [formGroup]="form" (ngSubmit)="start()" class="setup">
+  <h2 mat-dialog-title class="setup__title">
+    <mat-icon class="setup__title-icon">smart_toy</mat-icon>
+    Hai să ne jucăm!
+  </h2>
+
+  <mat-dialog-content class="setup__content">
+    <p class="setup__intro">Alege cum vrei să arate aventura ta matematică:</p>
+
+    <div class="setup__grid">
+    <section class="setup__group">
+      <h3 class="setup__label" id="max-sum-label">
+        <mat-icon>stars</mat-icon>
+        Suma / Numărul maxim
+      </h3>
+      <mat-button-toggle-group
+        formControlName="maxSum"
+        class="setup__toggles"
+        aria-labelledby="max-sum-label"
+        hideSingleSelectionIndicator
+      >
+        @for (option of maxSumOptions; track option) {
+          <mat-button-toggle [value]="option">{{ option }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+
+    <section class="setup__group">
+      <h3 class="setup__label" id="count-label">
+        <mat-icon>format_list_numbered</mat-icon>
+        Număr de întrebări
+      </h3>
+      <mat-button-toggle-group
+        formControlName="questionCount"
+        class="setup__toggles"
+        aria-labelledby="count-label"
+        hideSingleSelectionIndicator
+      >
+        @for (option of questionCountOptions; track option) {
+          <mat-button-toggle [value]="option">{{ option }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+
+    <section class="setup__group setup__group--full">
+      <h3 class="setup__label" id="operation-label">
+        <mat-icon>calculate</mat-icon>
+        Tipul de operație
+      </h3>
+      <mat-button-toggle-group
+        formControlName="operation"
+        class="setup__toggles"
+        aria-labelledby="operation-label"
+        hideSingleSelectionIndicator
+      >
+        @for (option of operationOptions; track option.value) {
+          <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+
+    <section
+      class="setup__group setup__group--full setup__group--hint"
+      [class.setup__group--disabled]="!hintsAvailable()"
+    >
+      <h3 class="setup__label">
+        <mat-icon>lightbulb</mat-icon>
+        Indiciu
+      </h3>
+      <mat-checkbox formControlName="showHints" class="setup__checkbox">
+        Arată bulinuțe pentru numărat
+      </mat-checkbox>
+      @if (!hintsAvailable()) {
+        <p class="setup__note">Indiciul este disponibil doar pentru suma maximă de {{ hintsMaxSum }} sau mai mică.</p>
+      }
+    </section>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="setup__actions">
+    @if (data.canCancel) {
+      <button mat-raised-button type="button" class="big-btn btn-gray" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+        Anulează
+      </button>
+    }
+    <button mat-flat-button type="submit" class="big-btn btn-green" [disabled]="form.invalid" cdkFocusInitial>
+      <mat-icon>rocket_launch</mat-icon>
+      START JOC
+    </button>
+  </mat-dialog-actions>
+</form>
