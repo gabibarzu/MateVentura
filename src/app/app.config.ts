@@ -1,5 +1,12 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ApplicationConfig, Injectable, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  Injectable,
+  provideBrowserGlobalErrorListeners,
+  isDevMode,
+} from '@angular/core';
+import { provideIcons } from './icons';
+import { provideServiceWorker } from '@angular/service-worker';
 
 /**
  * Angular Material disables all its transitions (`_mat-animation-noopable` + `transition: none !important`)
@@ -18,5 +25,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     { provide: MediaMatcher, useClass: AnimationsAlwaysOnMediaMatcher },
-  ]
+    provideIcons(),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
 };

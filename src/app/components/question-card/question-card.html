@@ -16,10 +16,10 @@
     <span class="card__badge">Exercițiul {{ index() + 1 }}</span>
     @switch (status()) {
       @case ('correct') {
-        <mat-icon class="card__status card__status--correct" aria-label="Corect">check_circle</mat-icon>
+        <mat-icon class="card__status card__status--correct" aria-label="Corect" svgIcon="check_circle" />
       }
       @case ('wrong') {
-        <mat-icon class="card__status card__status--wrong" aria-label="Greșit">cancel</mat-icon>
+        <mat-icon class="card__status card__status--wrong" aria-label="Greșit" svgIcon="cancel" />
       }
     }
   </div>
@@ -74,13 +74,13 @@
     @switch (status()) {
       @case ('correct') {
         <span class="card__message card__message--correct">
-          <mat-icon>check_circle</mat-icon>
+          <mat-icon svgIcon="check_circle" />
           Corect! {{ praise }}
         </span>
       }
       @case ('wrong') {
         <span class="card__message card__message--wrong">
-          <mat-icon>cancel</mat-icon>
+          <mat-icon svgIcon="cancel" />
           Oops! Corect era: <strong>{{ question().correctAnswer }}</strong>
         </span>
       }

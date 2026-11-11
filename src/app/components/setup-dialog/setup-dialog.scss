@@ -16,6 +16,12 @@
   margin: -0.4rem 0;
 }
 
+// The "tune" icon keeps its 24px glyph inside the same box as the mascot (SVG icons fill their box).
+mat-icon.setup__title-icon {
+  box-sizing: border-box;
+  padding: calc((3.2rem - 24px) / 2);
+}
+
 // The custom view wraps title/content/actions in a form: keep the column layout so the content can scroll.
 .setup {
   display: flex;

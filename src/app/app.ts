@@ -17,9 +17,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { LeaderboardDialog } from './components/leaderboard-dialog/leaderboard-dialog';
+import { loadLeaderboardDialog, loadResultsDialog } from './components/lazy-dialogs';
+import type { LeaderboardDialog } from './components/leaderboard-dialog/leaderboard-dialog';
 import { QuestionCard } from './components/question-card/question-card';
-import { ResultsDialog } from './components/results-dialog/results-dialog';
+import type { ResultsDialog } from './components/results-dialog/results-dialog';
 import { SetupDialog } from './components/setup-dialog/setup-dialog';
 import { BumpOnChange } from './directives/bump-on-change';
 import {
@@ -159,14 +160,20 @@ export class App {
       });
   }
 
-  protected openLeaderboard(): void {
+  protected async openLeaderboard(): Promise<void> {
+    const component = await loadLeaderboardDialog();
+    // A double click may get here twice while the dialog code loads.
+    if (this.dialog.openDialogs.some((ref) => ref.componentInstance instanceof component)) {
+      return;
+    }
+
     const isMidGame = this.status() === 'playing';
     if (isMidGame) {
       this.pauseGame();
     }
 
     this.dialog
-      .open<LeaderboardDialog, LeaderboardDialogData>(LeaderboardDialog, {
+      .open<LeaderboardDialog, LeaderboardDialogData>(component, {
         data: { level: this.preferredLevel() },
         width: '760px',
         maxWidth: '95vw',
@@ -295,9 +302,12 @@ export class App {
     this.elapsedSeconds.set(0);
     this.status.set('playing');
     this.startTimer();
+    // Fetch what the end of the game needs while the kid plays, so it shows without delay.
+    void loadResultsDialog();
+    this.confetti.preload();
   }
 
-  private finishGame(): void {
+  private async finishGame(): Promise<void> {
     this.status.set('finished');
     this.stopTimer();
     this.confetti.celebrate();
@@ -310,8 +320,9 @@ export class App {
       settings: this.settings() ?? DEFAULT_SETTINGS,
     };
 
+    const component = await loadResultsDialog();
     this.dialog
-      .open<ResultsDialog, GameResult, ResultsDialogAction>(ResultsDialog, {
+      .open<ResultsDialog, GameResult, ResultsDialogAction>(component, {
         data: result,
         width: '680px',
         maxWidth: '95vw',

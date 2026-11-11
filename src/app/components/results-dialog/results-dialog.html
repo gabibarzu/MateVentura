@@ -1,7 +1,7 @@
 <h2 mat-dialog-title class="results__title">
-  <mat-icon class="results__title-icon results__title-icon--left">celebration</mat-icon>
+  <mat-icon class="results__title-icon results__title-icon--left" svgIcon="celebration" />
   Bravo! Ai terminat!
-  <mat-icon class="results__title-icon results__title-icon--right">stars</mat-icon>
+  <mat-icon class="results__title-icon results__title-icon--right" svgIcon="stars" />
 </h2>
 
 <mat-dialog-content class="results__content">
@@ -13,9 +13,12 @@
     <div class="results__hero-text">
       <div class="results__stars" role="img" [attr.aria-label]="'Ai obținut ' + starCount() + ' din 3 stele'">
         @for (filled of stars(); track $index) {
-          <mat-icon class="results__star" [class.results__star--filled]="filled" [style.animation-delay.ms]="$index * 180">
-            {{ filled ? 'star' : 'star_border' }}
-          </mat-icon>
+          <mat-icon
+            class="results__star"
+            [class.results__star--filled]="filled"
+            [style.animation-delay.ms]="$index * 180"
+            [svgIcon]="filled ? 'star' : 'star_border'"
+          />
         }
       </div>
 
@@ -25,11 +28,11 @@
 
   <div class="results__details">
     <div class="results__detail results__detail--score">
-      <mat-icon>check_circle</mat-icon>
+      <mat-icon svgIcon="check_circle" />
       <span>Scor: <strong>{{ result.correct }} / {{ result.total }}</strong></span>
     </div>
     <div class="results__detail results__detail--time">
-      <mat-icon>timer</mat-icon>
+      <mat-icon svgIcon="timer" />
       <span>Timp total: <strong>{{ totalTime }}</strong></span>
     </div>
   </div>
@@ -39,7 +42,7 @@
       @if (!saved()) {
         <mat-form-field appearance="outline" class="results__name" subscriptSizing="dynamic">
           <mat-label>Numele tău pentru clasament</mat-label>
-          <mat-icon matPrefix>person</mat-icon>
+          <mat-icon matPrefix svgIcon="person" />
           <input
             matInput
             [formControl]="nameControl"
@@ -50,24 +53,24 @@
           />
         </mat-form-field>
         <button mat-flat-button type="button" class="big-btn btn-blue" (click)="save()">
-          <mat-icon>emoji_events</mat-icon>
+          <mat-icon svgIcon="emoji_events" />
           Salvează
         </button>
       } @else if (rank(); as place) {
         <p class="results__rank">
-          <mat-icon>emoji_events</mat-icon>
+          <mat-icon svgIcon="emoji_events" />
           Scor salvat! Ești pe locul <strong>{{ place }}</strong> la nivelul {{ levelName }}!
         </p>
       } @else {
         <p class="results__rank results__rank--outside">
-          <mat-icon>emoji_events</mat-icon>
+          <mat-icon svgIcon="emoji_events" />
           Scor salvat! De data asta nu ai intrat în top 10 — mai încearcă!
         </p>
       }
     </section>
   } @else {
     <p class="results__no-board">
-      <mat-icon>info</mat-icon>
+      <mat-icon svgIcon="info" />
       Vrei în clasament? Alege un nivel: Ușor, Mediu sau Greu!
     </p>
   }
@@ -79,7 +82,7 @@
     Joacă din nou
   </button>
   <button mat-flat-button type="button" class="big-btn btn-green" (click)="close(retryAction)">
-    <mat-icon>replay</mat-icon>
+    <mat-icon svgIcon="replay" />
     Reîncearcă cu aceleași setări
   </button>
 </mat-dialog-actions>

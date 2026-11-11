@@ -14,7 +14,7 @@ import { LeaderboardCard } from '../leaderboard-card/leaderboard-card';
     </mat-dialog-content>
     <mat-dialog-actions class="leaderboard-dialog__actions">
       <button mat-flat-button type="button" class="big-btn btn-purple" mat-dialog-close>
-        <mat-icon>close</mat-icon>
+        <mat-icon svgIcon="close" />
         Închide
       </button>
     </mat-dialog-actions>
