@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { QuestionState } from '../../models/game.models';
+import { Cifrel, CifrelMood } from '../cifrel/cifrel';
 
 const MAX_ANSWER_LENGTH = 3;
 const EDITING_KEYS = new Set(['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Tab']);
@@ -25,7 +26,7 @@ type DotKind = 'a' | 'b' | 'taken';
 
 @Component({
   selector: 'app-question-card',
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, Cifrel],
   templateUrl: './question-card.html',
   styleUrl: './question-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +53,16 @@ export class QuestionCard {
 
   protected readonly question = computed(() => this.state().question);
   protected readonly status = computed(() => this.state().status);
+  protected readonly cifrelMood = computed<CifrelMood>(() => {
+    switch (this.status()) {
+      case 'correct':
+        return 'happy';
+      case 'wrong':
+        return 'oops';
+      default:
+        return 'neutral';
+    }
+  });
   /**
    * Counting helper shown under the answer:
    * addition = all dots of both numbers together; subtraction = first number with the last dots crossed out.

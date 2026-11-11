@@ -43,7 +43,7 @@ import { formatTime } from './utils/format-time';
 /** How long the correct/wrong highlight stays on the active card before moving on. */
 const FEEDBACK_DELAY_MS = 1200;
 /** Space kept between the active card and the header (top) / bottom of the visible area. */
-const SCROLL_MARGIN_TOP_PX = 12;
+const SCROLL_MARGIN_TOP_PX = 36;
 /** Bigger at the bottom: the card's 3D shadow (~26px) is not part of its height. */
 const SCROLL_MARGIN_BOTTOM_PX = 40;
 

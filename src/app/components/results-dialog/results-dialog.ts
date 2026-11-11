@@ -8,12 +8,21 @@ import { MatInputModule } from '@angular/material/input';
 import { GameResult, isLevel, LEVELS, MODE_LABELS, ResultsDialogAction } from '../../models/game.models';
 import { LeaderboardService, PLAYER_NAME_MAX_LENGTH } from '../../services/leaderboard.service';
 import { formatTime } from '../../utils/format-time';
+import { Cifrel } from '../cifrel/cifrel';
 
 const MAX_STARS = 3;
 
 @Component({
   selector: 'app-results-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    Cifrel,
+  ],
   templateUrl: './results-dialog.html',
   styleUrl: './results-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

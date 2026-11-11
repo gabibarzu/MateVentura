@@ -8,6 +8,10 @@
   [class.card--shake]="shake()"
   [attr.aria-current]="active() ? 'step' : null"
 >
+  @if (active()) {
+    <app-cifrel class="card__cifrel" [mood]="cifrelMood()" />
+  }
+
   <div class="card__header">
     <span class="card__badge">Exercițiul {{ index() + 1 }}</span>
     @switch (status()) {

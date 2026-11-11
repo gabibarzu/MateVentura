@@ -60,6 +60,25 @@
   }
 }
 
+// Cifrel peeks over the top-right edge of the active card.
+.card {
+  position: relative;
+  overflow: visible;
+}
+
+.card__cifrel {
+  position: absolute;
+  top: -26px;
+  right: 20px;
+  width: 72px;
+  height: 72px;
+}
+
+.card--active .card__header {
+  // Keep the status icon clear of Cifrel.
+  padding-right: 84px;
+}
+
 .card__header {
   display: flex;
   align-items: center;

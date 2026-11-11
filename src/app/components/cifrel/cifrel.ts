@@ -1,0 +1,143 @@
+import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+export type CifrelMood = 'neutral' | 'happy' | 'oops';
+
+let nextId = 0;
+
+/**
+ * Cifrel, the app mascot, as an inline SVG so its face can change with the game:
+ * `neutral` (waiting), `happy` (correct / good result), `oops` (wrong answer).
+ * `full` shows the whole robot; otherwise only the head (square, good for small sizes).
+ * Static copies of the drawing (favicon, loading screen) live in `public/mascot*.svg`.
+ */
+@Component({
+  selector: 'app-cifrel',
+  template: `
+    <svg [attr.viewBox]="full() ? '0 0 400 420' : '88 -28 224 224'" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient [attr.id]="gradientId" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#a29bfe" />
+          <stop offset="100%" stop-color="#6c5ce7" />
+        </linearGradient>
+      </defs>
+
+      @if (full()) {
+        <ellipse cx="200" cy="395" rx="85" ry="14" fill="#000000" fill-opacity="0.12" />
+        <!-- Rocket thruster -->
+        <ellipse cx="200" cy="375" rx="22" ry="8" fill="#fdcb6e" />
+        <path d="M185 375 C 185 410, 215 410, 215 375 Z" fill="#ff7675" opacity="0.85" />
+        <path d="M192 375 C 192 398, 208 398, 208 375 Z" fill="#fdcb6e" />
+        <!-- Left arm & pencil -->
+        <circle cx="105" cy="210" r="14" fill="#00b894" />
+        <path d="M100 215 L 60 255" stroke="#6c5ce7" stroke-width="16" stroke-linecap="round" />
+        <circle cx="55" cy="260" r="13" fill="#00cec9" />
+        <g transform="translate(15, 200) rotate(-25)">
+          <rect x="20" y="20" width="16" height="55" rx="3" fill="#fdcb6e" />
+          <polygon points="20,75 36,75 28,95" fill="#ff7675" />
+          <polygon points="25,87 31,87 28,95" fill="#2d3436" />
+          <rect x="20" y="12" width="16" height="10" rx="2" fill="#e84393" />
+          <rect x="20" y="20" width="16" height="4" fill="#b2bec3" />
+        </g>
+        <!-- Right arm & star -->
+        <circle cx="295" cy="210" r="14" fill="#00b894" />
+        <path d="M295 210 C 330 190, 320 150, 285 135" stroke="#6c5ce7" stroke-width="16" stroke-linecap="round" />
+        <circle cx="280" cy="132" r="13" fill="#00cec9" />
+        <path
+          d="M 285 100 L 292 118 L 311 118 L 295 129 L 301 147 L 285 135 L 269 147 L 275 129 L 259 118 L 278 118 Z"
+          fill="#fdcb6e"
+          stroke="#e17055"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+        <circle cx="318" cy="98" r="3" fill="#fdcb6e" />
+        <circle cx="255" cy="105" r="4" fill="#00cec9" />
+        <circle cx="285" cy="85" r="2.5" fill="#ff7675" />
+        <!-- Body with math screen -->
+        <rect x="120" y="170" width="160" height="180" rx="35" fill="#6c5ce7" />
+        <rect x="126" y="176" width="148" height="168" rx="29" [attr.fill]="gradientFill" />
+        <rect x="140" y="200" width="120" height="95" rx="20" fill="#ffffff" stroke="#00cec9" stroke-width="4" />
+        <rect x="150" y="210" width="100" height="75" rx="14" fill="#dfe6e9" opacity="0.4" />
+        <rect x="171" y="230" width="8" height="26" rx="4" fill="#00b894" />
+        <rect x="165" y="239" width="20" height="8" rx="4" fill="#00b894" />
+        <rect x="200" y="235" width="18" height="6" rx="3" fill="#fdcb6e" />
+        <rect x="200" y="245" width="18" height="6" rx="3" fill="#fdcb6e" />
+        <rect x="225" y="239" width="18" height="7" rx="3.5" fill="#ff7675" />
+        <circle cx="200" cy="320" r="12" fill="#fd79a8" />
+        <circle cx="200" cy="320" r="7" fill="#ff7675" />
+        <circle cx="198" cy="318" r="2" fill="#ffffff" />
+        <!-- Neck -->
+        <rect x="175" y="145" width="50" height="30" rx="8" fill="#b2bec3" />
+        <line x1="183" y1="155" x2="217" y2="155" stroke="#636e72" stroke-width="3" stroke-linecap="round" />
+        <line x1="183" y1="163" x2="217" y2="163" stroke="#636e72" stroke-width="3" stroke-linecap="round" />
+      }
+
+      <!-- Head -->
+      <rect x="194" y="22" width="12" height="35" rx="6" fill="#b2bec3" />
+      <circle cx="200" cy="20" r="15" fill="#ff7675" />
+      <circle cx="200" cy="20" r="8" fill="#fdcb6e" />
+      <rect x="110" y="50" width="180" height="110" rx="32" fill="#6c5ce7" />
+      <rect x="116" y="56" width="168" height="98" rx="26" [attr.fill]="gradientFill" />
+      <rect x="94" y="85" width="18" height="40" rx="7" fill="#00b894" />
+      <rect x="288" y="85" width="18" height="40" rx="7" fill="#00b894" />
+      <rect x="130" y="66" width="140" height="78" rx="20" fill="#2d3436" />
+
+      @switch (mood()) {
+        @case ('happy') {
+          <!-- Closed, smiling eyes + big open smile -->
+          <path d="M 150 106 Q 168 82 186 106" stroke="#00cec9" stroke-width="7" stroke-linecap="round" />
+          <path d="M 214 106 Q 232 82 250 106" stroke="#00cec9" stroke-width="7" stroke-linecap="round" />
+          <path d="M 181 118 Q 200 144 219 118 Z" fill="#fdcb6e" stroke="#fdcb6e" stroke-width="3" stroke-linejoin="round" />
+          <ellipse cx="148" cy="118" rx="9" ry="6" fill="#fd79a8" />
+          <ellipse cx="252" cy="118" rx="9" ry="6" fill="#fd79a8" />
+        }
+        @case ('oops') {
+          <!-- Worried eyebrows + small round "o" mouth -->
+          <path d="M 150 80 L 182 72" stroke="#fdcb6e" stroke-width="4" stroke-linecap="round" />
+          <path d="M 218 72 L 250 80" stroke="#fdcb6e" stroke-width="4" stroke-linecap="round" />
+          <circle cx="168" cy="102" r="17" fill="#00cec9" />
+          <circle cx="168" cy="102" r="13" fill="#0984e3" />
+          <circle cx="172" cy="97" r="5" fill="#ffffff" />
+          <circle cx="232" cy="102" r="17" fill="#00cec9" />
+          <circle cx="232" cy="102" r="13" fill="#0984e3" />
+          <circle cx="236" cy="97" r="5" fill="#ffffff" />
+          <ellipse cx="200" cy="129" rx="7" ry="8" stroke="#fdcb6e" stroke-width="4" />
+        }
+        @default {
+          <!-- Neutral: the original friendly face -->
+          <circle cx="168" cy="100" r="20" fill="#00cec9" />
+          <circle cx="168" cy="100" r="16" fill="#0984e3" />
+          <circle cx="173" cy="94" r="6" fill="#ffffff" />
+          <circle cx="163" cy="106" r="2.5" fill="#ffffff" />
+          <circle cx="232" cy="100" r="20" fill="#00cec9" />
+          <circle cx="232" cy="100" r="16" fill="#0984e3" />
+          <circle cx="237" cy="94" r="6" fill="#ffffff" />
+          <circle cx="227" cy="106" r="2.5" fill="#ffffff" />
+          <path d="M 185 122 Q 200 136 215 122" stroke="#fdcb6e" stroke-width="5" stroke-linecap="round" />
+          <ellipse cx="148" cy="116" rx="8" ry="5" fill="#fd79a8" opacity="0.7" />
+          <ellipse cx="252" cy="116" rx="8" ry="5" fill="#fd79a8" opacity="0.7" />
+        }
+      }
+    </svg>
+  `,
+  styles: `
+    :host {
+      display: inline-block;
+      line-height: 0;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  `,
+  host: { 'aria-hidden': 'true' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Cifrel {
+  readonly mood = input<CifrelMood>('neutral');
+  readonly full = input(false, { transform: booleanAttribute });
+
+  // Unique per instance: several Cifrels can be on the page at once.
+  protected readonly gradientId = `cifrel-gradient-${nextId++}`;
+  protected readonly gradientFill = `url(#${this.gradientId})`;
+}

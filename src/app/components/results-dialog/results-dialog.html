@@ -7,15 +7,21 @@
 <mat-dialog-content class="results__content">
   <span class="results__mode" [attr.data-level]="level">{{ modeLabel }}</span>
 
-  <div class="results__stars" role="img" [attr.aria-label]="'Ai obținut ' + starCount() + ' din 3 stele'">
-    @for (filled of stars(); track $index) {
-      <mat-icon class="results__star" [class.results__star--filled]="filled" [style.animation-delay.ms]="$index * 180">
-        {{ filled ? 'star' : 'star_border' }}
-      </mat-icon>
-    }
-  </div>
+  <div class="results__hero">
+    <app-cifrel class="results__cifrel" full [mood]="starCount() >= 2 ? 'happy' : 'neutral'" />
 
-  <p class="results__message">{{ message() }}</p>
+    <div class="results__hero-text">
+      <div class="results__stars" role="img" [attr.aria-label]="'Ai obținut ' + starCount() + ' din 3 stele'">
+        @for (filled of stars(); track $index) {
+          <mat-icon class="results__star" [class.results__star--filled]="filled" [style.animation-delay.ms]="$index * 180">
+            {{ filled ? 'star' : 'star_border' }}
+          </mat-icon>
+        }
+      </div>
+
+      <p class="results__message">{{ message() }}</p>
+    </div>
+  </div>
 
   <div class="results__details">
     <div class="results__detail results__detail--score">
@@ -69,7 +75,7 @@
 
 <mat-dialog-actions class="results__actions">
   <button mat-raised-button type="button" class="big-btn btn-purple" (click)="close(newGameAction)">
-    <img class="btn-mascot" src="mascot-head.svg" alt="" aria-hidden="true" />
+    <img matButtonIcon class="btn-mascot" src="mascot-head.svg" alt="" aria-hidden="true" />
     Joacă din nou
   </button>
   <button mat-flat-button type="button" class="big-btn btn-green" (click)="close(retryAction)">

@@ -65,6 +65,25 @@
   }
 }
 
+// Cifrel on the left, stars + message on the right.
+.results__hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.results__cifrel {
+  flex-shrink: 0;
+  width: 110px;
+  height: 116px;
+}
+
+.results__hero-text {
+  min-width: 0;
+}
+
 .results__stars {
   display: flex;
   justify-content: center;
@@ -196,6 +215,17 @@
 @media (max-width: 520px) {
   .results__details {
     grid-template-columns: 1fr;
+  }
+
+  .results__cifrel {
+    width: 76px;
+    height: 80px;
+  }
+
+  .results__star {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
   }
 }
 
