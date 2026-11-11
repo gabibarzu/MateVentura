@@ -3,7 +3,8 @@
 
 :host {
   display: block;
-  scroll-margin: 120px;
+  // Keep the card clear of the sticky header (top) and the window edge (bottom) when scrolled into view.
+  scroll-margin: 120px 0 24px;
   animation: card-enter $t-slow $ease-bounce backwards;
 }
 

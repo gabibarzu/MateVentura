@@ -73,9 +73,10 @@ export class QuestionCard {
       if (!this.active()) {
         return;
       }
+      // 'nearest' only scrolls when the card isn't fully visible (no artificial page padding needed).
       this.host.nativeElement.scrollIntoView({
         behavior: this.motion.enabled() ? 'smooth' : 'auto',
-        block: 'center',
+        block: 'nearest',
       });
       this.focus();
     });
