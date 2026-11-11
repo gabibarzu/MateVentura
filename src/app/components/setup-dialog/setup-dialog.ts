@@ -119,7 +119,7 @@ export class SetupDialog {
         data: { level: this.lastMode && isLevel(this.lastMode) ? this.lastMode : null },
         width: '760px',
         maxWidth: '95vw',
-        maxHeight: '95vh',
+        maxHeight: '95dvh',
         autoFocus: 'dialog',
         hasBackdrop: false,
         panelClass: 'kid-dialog',

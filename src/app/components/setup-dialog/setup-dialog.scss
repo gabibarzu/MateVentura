@@ -16,9 +16,14 @@
   margin: -0.4rem 0;
 }
 
+// The custom view wraps title/content/actions in a form: keep the column layout so the content can scroll.
+.setup {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .setup__content {
-  // Material caps dialog content at 65vh; allow more room so the whole form fits.
-  max-height: calc(95vh - 190px);
   // Room for the 3D shadows of the last row (the content area clips overflow).
   padding-bottom: 14px;
 }
@@ -291,18 +296,17 @@
     gap: 10px;
   }
 
-  // Compact horizontal cards on phones: icon on the left, text on the right.
+  // Compact horizontal cards on phones: icon on the left, name + age on one row, description below.
   .level {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto auto 1fr;
     grid-template-areas:
-      'icon name'
-      'icon age'
-      'icon description';
+      'icon name age'
+      'icon description description';
     column-gap: 12px;
-    row-gap: 0;
+    row-gap: 2px;
     align-items: center;
-    padding: 12px 14px;
+    padding: 10px 14px;
     text-align: left;
   }
 
@@ -323,6 +327,18 @@
 
   .level__description {
     grid-area: description;
+  }
+
+  .setup__title {
+    font-size: 1.6rem;
+  }
+
+  .setup__quick.mat-mdc-button-base {
+    min-height: 64px;
+  }
+
+  .setup__quick + .setup__intro {
+    margin-top: 14px;
   }
 }
 

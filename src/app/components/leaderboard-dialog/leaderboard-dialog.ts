@@ -21,7 +21,6 @@ import { LeaderboardCard } from '../leaderboard-card/leaderboard-card';
   `,
   styles: `
     .leaderboard-dialog__content {
-      max-height: calc(95vh - 120px);
       padding-top: 24px;
     }
 

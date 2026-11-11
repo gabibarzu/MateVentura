@@ -209,6 +209,12 @@ body {
   box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
 }
 
+// Material caps the content at 65vh; instead let it take whatever the title and actions leave free
+// (the dialog itself is capped by `maxHeight`), so it only scrolls when it really doesn't fit.
+.kid-dialog .mat-mdc-dialog-content {
+  max-height: none;
+}
+
 // A dialog temporarily replaced by another one (e.g. setup -> leaderboard).
 .kid-dialog--hidden {
   visibility: hidden;

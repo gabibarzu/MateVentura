@@ -113,7 +113,10 @@ export class App {
 
     // On phones the virtual keyboard opening/closing resizes the visible area (and can cancel a smooth scroll):
     // keep the active card visible whenever that happens.
-    const onViewportResize = () => this.bringActiveCardIntoView(false);
+    const onViewportResize = () => {
+      this.updateKeyboardInset();
+      this.bringActiveCardIntoView(false);
+    };
     afterNextRender(() => window.visualViewport?.addEventListener('resize', onViewportResize));
 
     inject(DestroyRef).onDestroy(() => {
@@ -140,7 +143,7 @@ export class App {
         data,
         width: '820px',
         maxWidth: '95vw',
-        maxHeight: '95vh',
+        maxHeight: '95dvh',
         disableClose: !data.canCancel,
         restoreFocus: false,
         // Focus the dialog itself: auto-focusing the first button shows a keyboard focus ring on open.
@@ -168,7 +171,7 @@ export class App {
         data: { level: this.preferredLevel() },
         width: '760px',
         maxWidth: '95vw',
-        maxHeight: '95vh',
+        maxHeight: '95dvh',
         restoreFocus: false,
         autoFocus: 'dialog',
         panelClass: 'kid-dialog',
@@ -223,6 +226,18 @@ export class App {
   private pauseGame(): void {
     this.stopTimer();
     this.clearAdvanceTimeout();
+  }
+
+  /**
+   * Browsers that draw the keyboard over the page (instead of honoring `interactive-widget=resizes-content`)
+   * don't make the page scrollable any further, so the last card can't move above the keyboard.
+   * Expose the covered height so the page can add that much room at the bottom.
+   */
+  private updateKeyboardInset(): void {
+    const viewport = window.visualViewport;
+    // Ignore pinch-zoom: the visible area is then smaller for reasons other than the keyboard.
+    const inset = viewport && viewport.scale < 1.01 ? Math.max(0, Math.round(window.innerHeight - viewport.height)) : 0;
+    document.documentElement.style.setProperty('--keyboard-inset', `${inset}px`);
   }
 
   /**
@@ -306,7 +321,7 @@ export class App {
         data: result,
         width: '680px',
         maxWidth: '95vw',
-        maxHeight: '95vh',
+        maxHeight: '95dvh',
         disableClose: true,
         restoreFocus: false,
         // Level games: focus the name field (cdkFocusInitial). Otherwise focus the dialog (no focus ring on a button).
