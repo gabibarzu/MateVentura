@@ -110,6 +110,9 @@ export class SetupDialog {
    * the setup dialog is hidden while the leaderboard is open and shown again when it closes.
    */
   protected openLeaderboard(): void {
+    // The hidden setup dialog's backdrop is still clickable: don't let it close underneath the leaderboard.
+    const disableClose = this.dialogRef.disableClose;
+    this.dialogRef.disableClose = true;
     this.dialogRef.addPanelClass(HIDDEN_PANEL_CLASS);
     this.dialog
       .open<LeaderboardDialog, LeaderboardDialogData>(LeaderboardDialog, {
@@ -122,7 +125,10 @@ export class SetupDialog {
         panelClass: 'kid-dialog',
       })
       .afterClosed()
-      .subscribe(() => this.dialogRef.removePanelClass(HIDDEN_PANEL_CLASS));
+      .subscribe(() => {
+        this.dialogRef.removePanelClass(HIDDEN_PANEL_CLASS);
+        this.dialogRef.disableClose = disableClose;
+      });
   }
 
   private syncHintsAvailability(maxSum: MaxSumOption): void {

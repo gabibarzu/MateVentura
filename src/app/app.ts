@@ -96,6 +96,9 @@ export class App {
   });
 
   private timerId: ReturnType<typeof setInterval> | null = null;
+  /** Time measured from timestamps: intervals are throttled in background tabs and would undercount. */
+  private runningSince: number | null = null;
+  private accumulatedMs = 0;
   private advanceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -278,6 +281,8 @@ export class App {
       this.generator.generate(settings).map((question): QuestionState => ({ question, userAnswer: null, status: 'pending' })),
     );
     this.currentIndex.set(0);
+    this.stopTimer();
+    this.accumulatedMs = 0;
     this.elapsedSeconds.set(0);
     this.status.set('playing');
     this.startTimer();
@@ -321,7 +326,9 @@ export class App {
 
   private startTimer(): void {
     this.stopTimer();
-    this.timerId = setInterval(() => this.elapsedSeconds.update((s) => s + 1), 1000);
+    this.runningSince = Date.now();
+    // The interval only refreshes the display; the value is always computed from timestamps.
+    this.timerId = setInterval(() => this.elapsedSeconds.set(Math.floor(this.elapsedMs() / 1000)), 250);
   }
 
   private stopTimer(): void {
@@ -329,6 +336,15 @@ export class App {
       clearInterval(this.timerId);
       this.timerId = null;
     }
+    if (this.runningSince !== null) {
+      this.accumulatedMs += Date.now() - this.runningSince;
+      this.runningSince = null;
+      this.elapsedSeconds.set(Math.floor(this.accumulatedMs / 1000));
+    }
+  }
+
+  private elapsedMs(): number {
+    return this.accumulatedMs + (this.runningSince === null ? 0 : Date.now() - this.runningSince);
   }
 
   private clearAdvanceTimeout(): void {

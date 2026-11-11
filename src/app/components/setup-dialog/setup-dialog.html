@@ -36,7 +36,7 @@
     </div>
   </mat-dialog-content>
 
-  <mat-dialog-actions class="setup__actions">
+  <mat-dialog-actions class="setup__actions setup__actions--center">
     <button mat-raised-button type="button" class="big-btn btn-blue" (click)="view.set('custom')">
       <mat-icon>tune</mat-icon>
       Personalizat
@@ -45,8 +45,6 @@
       <mat-icon>emoji_events</mat-icon>
       Clasament
     </button>
-
-    <span class="setup__spacer"></span>
 
     @if (data.canCancel) {
       <button mat-raised-button type="button" class="big-btn btn-gray" mat-dialog-close>

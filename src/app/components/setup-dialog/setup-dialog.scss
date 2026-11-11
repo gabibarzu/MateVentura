@@ -337,6 +337,10 @@
   flex: 1 1 auto;
 }
 
+.setup__actions--center {
+  justify-content: center;
+}
+
 // Phones: action buttons share the row equally instead of wrapping unevenly.
 @media (max-width: 640px) {
   .setup__actions {
