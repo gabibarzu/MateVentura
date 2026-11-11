@@ -1,6 +1,7 @@
 # Mate-Aventura
 
-A kid-friendly math practice web app (addition and subtraction) with a fully Romanian UI.
+A kid-friendly math practice web app (addition and subtraction) with a fully Romanian UI,
+hosted by **Cifrel**, the app's robot mascot (`public/mascot.svg`, head-only `public/mascot-head.svg`).
 
 Built with Angular 22 (standalone components, Signals, Reactive Forms) and Angular Material.
 

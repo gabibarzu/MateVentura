@@ -107,6 +107,14 @@ body {
     height: 1.7rem;
   }
 
+  // Mascot image used as a button icon.
+  > .btn-mascot {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 8px;
+    margin-left: -6px;
+  }
+
   &:not(:disabled):active {
     transform: scale(0.98);
   }

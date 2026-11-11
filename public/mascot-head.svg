@@ -1,0 +1,28 @@
+<svg viewBox="88 -28 224 224" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mascot head only (used as favicon / small logo); square viewBox so it fits icon slots. -->
+  <rect x="194" y="22" width="12" height="35" rx="6" fill="#b2bec3"/>
+  <circle cx="200" cy="20" r="15" fill="#ff7675"/>
+  <circle cx="200" cy="20" r="8" fill="#fdcb6e"/>
+  <rect x="110" y="50" width="180" height="110" rx="32" fill="#6c5ce7"/>
+  <rect x="116" y="56" width="168" height="98" rx="26" fill="url(#headGradient)"/>
+  <rect x="94" y="85" width="18" height="40" rx="7" fill="#00b894"/>
+  <rect x="288" y="85" width="18" height="40" rx="7" fill="#00b894"/>
+  <rect x="130" y="66" width="140" height="78" rx="20" fill="#2d3436"/>
+  <circle cx="168" cy="100" r="20" fill="#00cec9"/>
+  <circle cx="168" cy="100" r="16" fill="#0984e3"/>
+  <circle cx="173" cy="94" r="6" fill="#ffffff"/>
+  <circle cx="163" cy="106" r="2.5" fill="#ffffff"/>
+  <circle cx="232" cy="100" r="20" fill="#00cec9"/>
+  <circle cx="232" cy="100" r="16" fill="#0984e3"/>
+  <circle cx="237" cy="94" r="6" fill="#ffffff"/>
+  <circle cx="227" cy="106" r="2.5" fill="#ffffff"/>
+  <path d="M 185 122 Q 200 136 215 122" stroke="#fdcb6e" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <ellipse cx="148" cy="116" rx="8" ry="5" fill="#fd79a8" opacity="0.7"/>
+  <ellipse cx="252" cy="116" rx="8" ry="5" fill="#fd79a8" opacity="0.7"/>
+  <defs>
+    <linearGradient id="headGradient" x1="116" y1="56" x2="284" y2="154" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a29bfe"/>
+      <stop offset="100%" stop-color="#6c5ce7"/>
+    </linearGradient>
+  </defs>
+</svg>

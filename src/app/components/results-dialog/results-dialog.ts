@@ -59,11 +59,11 @@ export class ResultsDialog {
   protected readonly message = computed(() => {
     switch (this.starCount()) {
       case 3:
-        return 'Ești un adevărat campion la matematică!';
+        return 'Cifrel e super mândru: ești un campion la matematică!';
       case 2:
-        return 'Foarte bine! Încă puțin și ajungi la 3 stele!';
+        return 'Foarte bine! Cifrel zice: încă puțin și ajungi la 3 stele!';
       default:
-        return 'Bun început! Hai să mai exersăm împreună!';
+        return 'Bun început! Cifrel te ajută să mai exersezi!';
     }
   });
 

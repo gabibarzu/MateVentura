@@ -209,12 +209,10 @@
   font-size: 1.15rem;
   color: #2d3436;
 
-  mat-icon {
+  .board__mascot {
     flex-shrink: 0;
-    font-size: 2.4rem;
-    width: 2.4rem;
-    height: 2.4rem;
-    color: $exodus-fruit;
+    width: 72px;
+    height: auto;
   }
 
   p {
