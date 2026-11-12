@@ -1,7 +1,7 @@
-/** Shared responsive shell; only the content area scrolls between fixed title/actions. */
+/** Shared width and viewport limit; height follows content, which scrolls when necessary. */
 export const KID_DIALOG_CONFIG = {
   width: '880px',
-  height: 'min(800px, 95dvh)',
+  height: 'auto',
   maxWidth: '95vw',
   maxHeight: '95dvh',
   panelClass: 'kid-dialog',

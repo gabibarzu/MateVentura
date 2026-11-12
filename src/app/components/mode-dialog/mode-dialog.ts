@@ -48,8 +48,7 @@ export type PlayMode = 'learning' | 'game';
           <span class="mode-eyebrow">O poveste începută cu Matei</span>
           <h3>Eu sunt Cifrel. Facem echipă?</h3>
           <p>M-am născut din pasiunea lui Matei pentru matematică și dintr-o idee a tatălui său.
-            Acum vreau să ajut și alți copii curioși să crească, pas cu pas.
-            Învățăm, ne jucăm și mai greșim — împreună.</p>
+            Împreună ajutăm și alți copii curioși să crească, prin joacă.</p>
           <button #storyButton mat-button type="button" class="mode-story" (click)="openStory()" [disabled]="storyLoading()">
             <mat-icon svgIcon="info" />
             Hai să-l cunoaștem pe Cifrel
@@ -80,10 +79,10 @@ export type PlayMode = 'learning' | 'game';
     }
     .mode-mascot { display: block; width: 72px; height: 72px; flex-shrink: 0; }
     .mode-title small { display: inline-block; color: #007f76; font-size: 0.6em; font-weight: 700; white-space: nowrap; }
-    .mode-tagline { margin: 0 0 12px; text-align: center; color: #6c5ce7; font-size: 1.3rem; font-weight: 800; }
+    .mode-tagline { margin: 0 0 8px; text-align: center; color: #6c5ce7; font-size: 1.3rem; font-weight: 800; }
     .mode-welcome {
-      display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center;
-      gap: 20px; margin-top: 12px; padding: 18px 22px; border: 2px solid #d5ccff;
+      display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: center;
+      gap: 20px; margin-top: 8px; padding: 14px 20px; border: 2px solid #d5ccff;
       border-radius: 24px;
       background: radial-gradient(circle at 8% 50%, #fff8cc, transparent 55%), linear-gradient(120deg, #f5efff, #eefbfa);
     }
@@ -97,19 +96,19 @@ export type PlayMode = 'learning' | 'game';
       height: auto; min-height: 44px; padding-block: 8px; white-space: normal;
       --mat-button-text-label-text-size: 1.05rem; --mat-button-text-label-text-weight: 800;
     }
-    .intro { margin: 0 0 20px; text-align: center; color: #6c5ce7; font-size: 1.2rem; font-weight: 700; }
+    .intro { margin: 0 0 16px; text-align: center; color: #6c5ce7; font-size: 1.2rem; font-weight: 700; }
     .modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 4px 4px 16px; }
     .mode {
       --mode-color: #636e72; --mode-tint: #edf0f1; --mode-hover: #e2e7e9;
-      display: flex; flex-direction: column; align-items: center; gap: 12px;
-      padding: 24px 16px; border: 3px solid currentColor; border-radius: 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding: 20px 16px; border: 3px solid currentColor; border-radius: 24px;
       color: var(--mode-color); background: var(--mode-tint);
       box-shadow: 0 6px 0 var(--mode-color);
       font: inherit; text-align: center; cursor: pointer;
       transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
     }
     .mode-icon {
-      display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%;
+      display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%;
       color: white; background: var(--mode-color); flex-shrink: 0;
     }
     .mode mat-icon { width: 34px; height: 34px; }

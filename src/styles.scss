@@ -266,7 +266,7 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
   box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
 }
 
-// Every dialog component and the custom setup form fill the same fixed-size shell.
+// Let each dialog fit its content while still shrinking within the viewport limit.
 .kid-dialog .mat-mdc-dialog-component-host,
 .kid-dialog .setup {
   display: flex;
