@@ -16,6 +16,8 @@
         @let saved = adventure.getProgress(mission.id);
         @let locked = !adventure.isUnlocked(mission.id);
         <button type="button" class="map-level map-level--playable"
+          [style.--island-bg]="islandColors[mission.number - 1][0]"
+          [style.--island-edge]="islandColors[mission.number - 1][1]"
           [class.map-level--locked]="locked" [attr.aria-disabled]="locked"
           [class.map-level--available]="mission.id === 'rocket'"
           [class.map-level--forest]="mission.id === 'forest'"
@@ -30,7 +32,16 @@
       }
       <app-cifrel full mood="happy" class="world-map__cifrel" aria-hidden="true" />
     </div>
-    <p class="map-coming"><strong>Aventura abia începe!</strong> Vor apărea și alte niveluri în curând.</p>
+    @if (allComplete()) {
+      <div class="map-coming">
+        <strong>Ai luminat toată Numărilia!</strong>
+        <p>Ai terminat toate cele opt niveluri. O nouă aventură?</p>
+        <button mat-flat-button type="button" class="big-btn btn-purple" (click)="restartAdventure()">Ia aventura de la capăt</button>
+        <p class="mission__footnote">Resetează cele opt misiuni și deblocările. Învățarea și clasamentul rămân neschimbate.</p>
+      </div>
+    } @else {
+      <p class="map-coming"><strong>Aventura abia începe!</strong> Vor apărea și alte niveluri în curând.</p>
+    }
     <p class="mission__footnote">{{ levels.length }} niveluri Beta: termină o misiune ca să o deblochezi pe următoarea. Progresul se păstrează în acest browser.</p>
   </section>
 } @else {
@@ -177,7 +188,13 @@
           [attr.aria-label]="'Următorul nivel: ' + next.title" (click)="continueToNextLevel()">Următorul nivel · {{ next.title }}</button>
         <button mat-button type="button" class="mission__choose-level" (click)="replay()">{{ level().replay }}</button>
       } @else {
-        <button mat-flat-button type="button" class="big-btn btn-purple mission__choose-level" (click)="replay()">{{ level().replay }}</button>
+        @if (allComplete()) {
+          <button mat-flat-button type="button" class="big-btn btn-purple mission__choose-level" (click)="restartAdventure()">Ia aventura de la capăt</button>
+          <p class="mission__footnote">Resetează cele opt misiuni și deblocările. Învățarea și clasamentul rămân neschimbate.</p>
+          <button mat-button type="button" class="mission__choose-level" (click)="replay()">{{ level().replay }}</button>
+        } @else {
+          <button mat-flat-button type="button" class="big-btn btn-purple mission__choose-level" (click)="replay()">{{ level().replay }}</button>
+        }
       }
     }
     <button mat-button type="button" class="mission__choose-level" (click)="backToMap()">Alege alt nivel de pe hartă</button>

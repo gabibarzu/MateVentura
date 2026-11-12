@@ -23,6 +23,11 @@ export class Adventure {
   protected readonly mapRoute = signal('');
   protected readonly mapViewBox = signal('0 0 1 1');
   protected readonly levels = ADVENTURE_LEVELS;
+  protected readonly islandColors = [
+    ['#d3f7e7', '#00a88a'], ['#d3f7d8', '#268452'], ['#fff0c4', '#af732e'], ['#d6ecff', '#357cc0'],
+    ['#ffe0ed', '#c34b82'], ['#e9ddff', '#8052bf'], ['#ffdfca', '#c66a30'], ['#fff3a6', '#a88512'],
+  ];
+  protected readonly allComplete = computed(() => this.levels.every(level => this.adventure.getProgress(level.id).completed === level.tasks.length));
   protected readonly symbols: Record<AdventureLevelId, string> = { rocket: '🚀', forest: '🌳', bridge: '🌉', train: '🚂', balloons: '🎈', crystals: '💎', village: '🏡', lighthouse: '🗼' };
   protected readonly friends = ['🦔', '🐰', '🐿️', '🐻', '🦊'];
   protected readonly goods = ['🍎', '🥕', '🌰', '🧁', '🌼'];
@@ -148,6 +153,13 @@ export class Adventure {
     const next = this.nextLevel();
     if (!this.canContinue() || !next || !this.adventure.isUnlocked(next.id)) return;
     this.enterMission(next.id);
+  }
+
+  protected restartAdventure(): void {
+    if (!this.allComplete()) return;
+    this.cancelTimers();
+    this.adventure.restartAll();
+    this.enterMission('rocket');
   }
 
   protected start(): void {

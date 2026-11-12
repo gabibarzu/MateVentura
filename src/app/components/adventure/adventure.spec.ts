@@ -17,6 +17,7 @@ interface MissionActions {
   launch(): void;
   replay(): void;
   continueToNextLevel(): void;
+  restartAdventure(): void;
   selectedLevel: Signal<AdventureLevelId>;
   state: Signal<QuestionState>;
   onMap: Signal<boolean>;
@@ -138,6 +139,24 @@ describe('Adventure mission flow', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('[aria-label^="Următorul nivel:"]')).toBeNull();
     mission.continueToNextLevel();
     expect(mission.selectedLevel()).toBe('lighthouse');
+  });
+
+  it('offers a new adventure only when all eight missions are complete and returns to the rocket', () => {
+    mission.restartAdventure();
+    expect(mission.onMap()).toBe(true);
+    for (const id of ['rocket', 'forest', 'bridge', 'train', 'balloons', 'crystals', 'village', 'lighthouse'] as const) {
+      for (let step = 0; step < 10; step++) service.advance(id);
+    }
+    mission.enterMission('lighthouse');
+    fixture.detectChanges();
+    const restart = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button'))
+      .find(button => button.textContent?.includes('Ia aventura de la capăt'))!;
+    expect(restart).toBeTruthy();
+    restart.click();
+    expect(mission.selectedLevel()).toBe('rocket');
+    expect(mission.onMap()).toBe(false);
+    expect(service.repaired()).toBe(0);
+    expect(service.isUnlocked('forest')).toBe(false);
   });
 
   it('auto-progresses through five forest lanterns and reveals fireflies', () => {

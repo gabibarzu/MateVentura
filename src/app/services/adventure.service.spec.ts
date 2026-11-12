@@ -46,6 +46,21 @@ describe('AdventureService', () => {
     expect(new AdventureService().repaired()).toBe(2);
   });
 
+  it('resets all campaign progress and unlocks persistently without clearing other app data', () => {
+    const service = new AdventureService();
+    localStorage.setItem('mateventura:test-preserved', 'keep');
+    try {
+      for (const level of ADVENTURE_LEVELS) for (let i = 0; i < 10; i++) service.advance(level.id);
+      service.restartAll();
+      const restored = new AdventureService();
+      for (const level of ADVENTURE_LEVELS) {
+        expect(restored.getProgress(level.id)).toEqual({ completed: 0, step: 0 });
+        expect(restored.isUnlocked(level.id)).toBe(level.id === 'rocket');
+      }
+      expect(localStorage.getItem('mateventura:test-preserved')).toBe('keep');
+    } finally { localStorage.removeItem('mateventura:test-preserved'); }
+  });
+
   it('caps the mission at five pieces and supports explicit replay', () => {
     const service = new AdventureService();
     for (let i = 0; i < 8; i++) service.repair();

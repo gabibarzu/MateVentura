@@ -53,6 +53,11 @@ export class AdventureService {
     this.save(level, { completed: 0, step: 0 });
   }
 
+  restartAll(): void {
+    this.unlockedThrough.set(1);
+    for (const level of ADVENTURE_LEVELS) this.restart(level.id);
+  }
+
   private save(level: AdventureLevelId, value: AdventureProgress): void {
     this.current.update(progress => ({ ...progress, [level]: value }));
     if (value.completed === adventureLevel(level).tasks.length) {
