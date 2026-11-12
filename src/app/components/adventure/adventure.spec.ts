@@ -16,6 +16,8 @@ interface MissionActions {
   backToMap(): void;
   launch(): void;
   replay(): void;
+  continueToNextLevel(): void;
+  selectedLevel: Signal<AdventureLevelId>;
   state: Signal<QuestionState>;
   onMap: Signal<boolean>;
   finale: Signal<boolean>;
@@ -101,6 +103,41 @@ describe('Adventure mission flow', () => {
     expect(() => fixture.detectChanges()).not.toThrow();
     expect(() => window.dispatchEvent(new Event('resize'))).not.toThrow();
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('button.map-level')).toHaveLength(8);
+  });
+
+  it('offers the next mission after completion without resetting either saved progress', () => {
+    service.advance('bridge');
+    enter('forest');
+    mission.continueToNextLevel();
+    expect(mission.selectedLevel()).toBe('forest');
+    for (let i = 0; i < 5; i++) solve();
+    fixture.detectChanges();
+    const next = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[aria-label="Următorul nivel: Podul Numerelor"]')!;
+    expect(next).not.toBeNull();
+    next.click();
+    expect(mission.selectedLevel()).toBe('bridge');
+    expect(mission.onMap()).toBe(false);
+    expect(service.getProgress('forest').completed).toBe(5);
+    expect(service.getProgress('bridge')).toEqual({ completed: 0, step: 1 });
+  });
+
+  it('waits for the rocket landing before allowing continuation', () => {
+    enter('rocket');
+    for (let i = 0; i < 5; i++) solve();
+    mission.continueToNextLevel();
+    expect(mission.selectedLevel()).toBe('rocket');
+    vi.advanceTimersByTime(5600);
+    mission.continueToNextLevel();
+    expect(mission.selectedLevel()).toBe('forest');
+  });
+
+  it('does not offer a nonexistent ninth level after the lighthouse', () => {
+    enter('lighthouse');
+    for (let i = 0; i < 5; i++) solve();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[aria-label^="Următorul nivel:"]')).toBeNull();
+    mission.continueToNextLevel();
+    expect(mission.selectedLevel()).toBe('lighthouse');
   });
 
   it('auto-progresses through five forest lanterns and reveals fireflies', () => {

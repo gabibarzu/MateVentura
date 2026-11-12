@@ -50,6 +50,9 @@ export class Adventure {
   protected readonly mistakes = signal(0);
   protected readonly message = signal('');
   protected readonly complete = computed(() => this.progress().completed === this.level().tasks.length);
+  protected readonly nextLevel = computed(() => this.levels.find(level => level.number === this.level().number + 1));
+  protected readonly canContinue = computed(() => this.complete() && !this.solved()
+    && (this.selectedLevel() === 'rocket' ? this.landed() : this.finale()));
   private timer: ReturnType<typeof setTimeout> | undefined;
   // Keep the solved calculation visible while progress is saved and its scene updates.
   protected readonly exerciseIndex = signal(this.adventure.repaired());
@@ -139,6 +142,12 @@ export class Adventure {
     this.onMap.set(true);
     this.started.set(false);
     this.countdown.set(null);
+  }
+
+  protected continueToNextLevel(): void {
+    const next = this.nextLevel();
+    if (!this.canContinue() || !next || !this.adventure.isUnlocked(next.id)) return;
+    this.enterMission(next.id);
   }
 
   protected start(): void {

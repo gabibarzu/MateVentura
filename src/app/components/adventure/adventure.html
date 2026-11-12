@@ -163,16 +163,22 @@
       <p>{{ landed() ? 'Ai ajutat un prieten! Pe hartă te așteaptă pădurea și podul.' : 'Motor, aripi, hublou, vârf… Toate la locul lor. Privește racheta!' }}</p>
       @if (!launched() && countdown() === null) {
         <button mat-flat-button class="big-btn btn-purple" (click)="launch()"><mat-icon svgIcon="rocket_launch" />Lansează racheta</button>
-      } @else if (landed()) {
-        <button mat-flat-button class="big-btn btn-purple" (click)="replay()">Mai reparăm o dată</button>
       }
     </div>
     } @else {
       <div class="mission__brief mission__complete" aria-live="polite">
         <h3>{{ selectedLevel() === 'forest' ? 'Pădurea strălucește!' : selectedLevel() === 'bridge' ? 'Cifrel poate trece râul!' : 'Misiune îndeplinită!' }}</h3>
         <p>{{ selectedLevel() === 'forest' ? 'Cinci felinare aprinse și o mulțime de licurici! Ai găsit numerele lipsă.' : selectedLevel() === 'bridge' ? 'Cinci scânduri, pas cu pas. Ai folosit zecea ca să aduni și să scazi mai ușor!' : endings[selectedLevel()] }}</p>
-        <button mat-flat-button class="big-btn btn-purple" (click)="replay()">{{ level().replay }}</button>
       </div>
+    }
+    @if (canContinue()) {
+      @if (nextLevel(); as next) {
+        <button mat-flat-button type="button" class="big-btn btn-purple mission__choose-level"
+          [attr.aria-label]="'Următorul nivel: ' + next.title" (click)="continueToNextLevel()">Următorul nivel · {{ next.title }}</button>
+        <button mat-button type="button" class="mission__choose-level" (click)="replay()">{{ level().replay }}</button>
+      } @else {
+        <button mat-flat-button type="button" class="big-btn btn-purple mission__choose-level" (click)="replay()">{{ level().replay }}</button>
+      }
     }
     <button mat-button type="button" class="mission__choose-level" (click)="backToMap()">Alege alt nivel de pe hartă</button>
   } @else {
