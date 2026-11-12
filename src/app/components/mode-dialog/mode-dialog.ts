@@ -56,6 +56,7 @@ export type PlayMode = 'learning' | 'game';
         </div>
       </section>
     </mat-dialog-content>
+    @if (canCancel || install.method()) {
       <mat-dialog-actions align="center" class="mode-actions">
         @if (canCancel) {
           <button mat-raised-button class="big-btn btn-gray" mat-dialog-close>
@@ -70,6 +71,7 @@ export type PlayMode = 'learning' | 'game';
           </button>
         }
       </mat-dialog-actions>
+    }
   `,
   styles: `
     .mode-title {
