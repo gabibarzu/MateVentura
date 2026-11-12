@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { InstallService } from '../../services/install.service';
 import { Cifrel } from '../cifrel/cifrel';
 import { loadCifrelStoryDialog } from '../lazy-dialogs';
+import { KID_DIALOG_CONFIG } from '../dialog.config';
 
 export type PlayMode = 'learning' | 'game';
 
@@ -17,6 +18,7 @@ export type PlayMode = 'learning' | 'game';
       <span>MateVentura <small>cu Cifrel</small></span>
     </h2>
     <mat-dialog-content>
+      <p class="mode-tagline">Numere mici. Aventuri mari.</p>
       <p class="intro">Cum vrei să ne jucăm astăzi?</p>
       <div class="modes">
         <button type="button" class="mode mode--learning" [mat-dialog-close]="'learning'">
@@ -34,7 +36,7 @@ export type PlayMode = 'learning' | 'game';
         <button type="button" class="mode mode--soon" disabled>
           <span class="mode-icon"><mat-icon svgIcon="stars" /></span>
           <strong>Aventură</strong>
-          <span class="mode-description">O hartă cu noi niveluri de descoperit.</span>
+          <span class="mode-description">Explorează Numărilia, lumea roboților și a numerelor.</span>
           <small>Va apărea în curând</small>
         </button>
       </div>
@@ -43,9 +45,9 @@ export type PlayMode = 'learning' | 'game';
           <app-cifrel full mood="happy" />
         </div>
         <div class="mode-welcome-copy">
-          <span class="mode-eyebrow">Numere mici. Aventuri mari.</span>
+          <span class="mode-eyebrow">Din Numărilia, cu prietenie</span>
           <h3>Eu sunt Cifrel. Facem echipă?</h3>
-          <p>Un robot curios, câteva bulinuțe și o mulțime de „Aha!”.
+          <p>Sunt un robot curios de pe planeta Numărilia. Am adus bulinuțe și o mulțime de „Aha!”.
             Învățăm, ne jucăm și mai greșim — împreună.</p>
           <button #storyButton mat-button type="button" class="mode-story" (click)="openStory()" [disabled]="storyLoading()">
             <mat-icon svgIcon="info" />
@@ -72,11 +74,12 @@ export type PlayMode = 'learning' | 'game';
   styles: `
     .mode-title {
       display: flex; align-items: center; gap: 16px;
-      padding-block: 24px 20px; line-height: 1.25;
+      line-height: 1.25;
       color: #6c5ce7; font-size: 2rem; font-weight: 800;
     }
     .mode-mascot { display: block; width: 72px; height: 72px; flex-shrink: 0; }
-    .mode-title small { display: block; margin-top: 4px; color: #007f76; font-size: 1rem; font-weight: 700; }
+    .mode-title small { display: inline-block; color: #007f76; font-size: 0.6em; font-weight: 700; white-space: nowrap; }
+    .mode-tagline { margin: 0 0 12px; text-align: center; color: #6c5ce7; font-size: 1.3rem; font-weight: 800; }
     .mode-welcome {
       display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center;
       gap: 20px; margin-top: 12px; padding: 18px 22px; border: 2px solid #d5ccff;
@@ -87,7 +90,7 @@ export type PlayMode = 'learning' | 'game';
     .mode-eyebrow { color: #007f76; font-size: 0.9rem; font-weight: 800; }
     .mode-welcome-copy h3 { margin: 6px 0 8px; color: #6c5ce7; font-size: 1.5rem; font-weight: 800; line-height: 1.3; }
     .mode-welcome-copy p { margin: 0 0 8px; color: #2d3436; line-height: 1.6; }
-    .mode-actions { flex-direction: column; gap: 8px; padding: 8px 24px 24px; }
+    .mode-actions { flex-direction: column; }
     .mode-install { --mat-button-text-label-text-size: 1rem; }
     .mode-story {
       height: auto; min-height: 44px; padding-block: 8px; white-space: normal;
@@ -125,7 +128,7 @@ export type PlayMode = 'learning' | 'game';
     }
     @media (prefers-reduced-motion: reduce) { .mode { transition: background-color 200ms ease; } }
     @media (max-width: 650px) {
-      .mode-title { gap: 10px; font-size: 1.6rem; padding-block: 20px 16px; }
+      .mode-title { gap: 10px; }
       .mode-mascot { width: 56px; height: 56px; }
       .mode-welcome { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; padding: 14px; }
       .mode-welcome-copy h3 { font-size: 1.2rem; }
@@ -162,13 +165,10 @@ export class ModeDialog {
       this.dialogRef.disableClose = true;
       this.dialogRef.addPanelClass('kid-dialog--hidden');
       this.dialog.open(component, {
-        width: '780px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         hasBackdrop: false,
         restoreFocus: false,
         autoFocus: 'dialog',
-        panelClass: 'kid-dialog',
       }).afterClosed().subscribe(() => {
         if (this.destroyRef.destroyed) return;
         this.dialogRef.removePanelClass('kid-dialog--hidden');

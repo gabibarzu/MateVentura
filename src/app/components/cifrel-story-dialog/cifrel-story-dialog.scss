@@ -1,13 +1,6 @@
 @use '../../../styles/palette' as *;
 
 .story-title {
-  padding-block: 24px 16px;
-  margin-bottom: 0;
-  border-bottom: 2px solid #e8e2ff;
-  background: linear-gradient(110deg, #f5f1ff, #fff);
-  box-shadow: 0 4px 10px #6c5ce70a;
-  position: relative;
-  z-index: 1;
   color: $exodus-fruit;
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 800;
@@ -103,7 +96,6 @@
   }
 }
 .story-motto-label { color: #ffeaa7; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
-.story-actions { padding: 12px 24px 24px; }
 
 @media (max-width: 550px) {
   .story-hero { grid-template-columns: 1fr; gap: 8px; padding: 16px; text-align: center; }

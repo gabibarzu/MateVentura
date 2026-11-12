@@ -19,6 +19,7 @@ export class LeaderboardCard {
 
   /** Level shown first (e.g. the level of the current game). */
   readonly preferredLevel = input<LevelId | null>(null);
+  readonly showTitle = input(true);
 
   protected readonly levels = LEVELS;
   protected readonly lastSavedId = this.leaderboard.lastSavedId;

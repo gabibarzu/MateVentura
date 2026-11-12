@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-block: 24px 20px;
   line-height: 1.25;
   color: $exodus-fruit;
   font-size: 2rem;
@@ -353,7 +352,6 @@ mat-icon.setup__title-icon {
 .setup__actions {
   gap: 12px;
   flex-wrap: wrap;
-  padding: 8px 24px 24px;
 }
 
 .setup__spacer {
@@ -367,7 +365,6 @@ mat-icon.setup__title-icon {
 // Phones: action buttons share the row equally instead of wrapping unevenly.
 @media (max-width: 640px) {
   .setup__actions {
-    padding: 8px 16px 16px;
     gap: 10px;
 
     .setup__spacer {

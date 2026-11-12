@@ -24,6 +24,7 @@ import type { ResultsDialog } from './components/results-dialog/results-dialog';
 import { SetupDialog } from './components/setup-dialog/setup-dialog';
 import { ModeDialog, PlayMode } from './components/mode-dialog/mode-dialog';
 import { Learning } from './components/learning/learning';
+import { KID_DIALOG_CONFIG } from './components/dialog.config';
 import { BumpOnChange } from './directives/bump-on-change';
 import {
   DEFAULT_SETTINGS,
@@ -152,13 +153,10 @@ export class App {
     if (isMidGame) this.pauseGame();
     this.dialog.open<ModeDialog, boolean, PlayMode>(ModeDialog, {
       data: this.playMode() !== null,
-      width: '880px',
-      maxWidth: '95vw',
-      maxHeight: '95dvh',
+      ...KID_DIALOG_CONFIG,
       disableClose: this.playMode() === null,
       restoreFocus: false,
       autoFocus: 'dialog',
-      panelClass: 'kid-dialog',
     }).afterClosed().subscribe(mode => {
       if (mode === 'learning') {
         this.stopTimer();
@@ -188,14 +186,11 @@ export class App {
     this.dialog
       .open<SetupDialog, SetupDialogData, GameSettings>(SetupDialog, {
         data,
-        width: '820px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         disableClose: !data.canCancel,
         restoreFocus: false,
         // Focus the dialog itself: auto-focusing the first button shows a keyboard focus ring on open.
         autoFocus: 'dialog',
-        panelClass: 'kid-dialog',
       })
       .afterClosed()
       .subscribe((settings) => {
@@ -224,12 +219,9 @@ export class App {
     this.dialog
       .open<LeaderboardDialog, LeaderboardDialogData>(component, {
         data: { level: this.preferredLevel() },
-        width: '760px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         restoreFocus: false,
         autoFocus: 'dialog',
-        panelClass: 'kid-dialog',
       })
       .afterClosed()
       .subscribe(() => {
@@ -379,14 +371,11 @@ export class App {
     this.dialog
       .open<ResultsDialog, GameResult, ResultsDialogAction>(component, {
         data: result,
-        width: '680px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         disableClose: true,
         restoreFocus: false,
         // Level games: focus the name field (cdkFocusInitial). Otherwise focus the dialog (no focus ring on a button).
         autoFocus: isLevel(result.settings.mode) ? 'first-tabbable' : 'dialog',
-        panelClass: 'kid-dialog',
       })
       .afterClosed()
       .subscribe((action) => {

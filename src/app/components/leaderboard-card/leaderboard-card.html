@@ -1,10 +1,12 @@
 <mat-card class="board" appearance="outlined">
-  <div class="board__header">
-    <h2 class="board__title">
-      <mat-icon class="board__title-icon" svgIcon="emoji_events" />
-      Clasament
-    </h2>
-  </div>
+  @if (showTitle()) {
+    <div class="board__header">
+      <h2 class="board__title">
+        <mat-icon class="board__title-icon" svgIcon="emoji_events" />
+        Clasament
+      </h2>
+    </div>
+  }
 
   <mat-tab-group
     class="board__tabs"

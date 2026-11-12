@@ -23,6 +23,7 @@ import {
   SetupDialogData,
 } from '../../models/game.models';
 import { loadLeaderboardDialog } from '../lazy-dialogs';
+import { KID_DIALOG_CONFIG } from '../dialog.config';
 import type { LeaderboardDialog } from '../leaderboard-dialog/leaderboard-dialog';
 
 /** Global class (styles.scss) that hides a dialog panel while another dialog replaces it. */
@@ -123,12 +124,9 @@ export class SetupDialog {
     this.dialog
       .open<LeaderboardDialog, LeaderboardDialogData>(component, {
         data: { level: this.lastMode && isLevel(this.lastMode) ? this.lastMode : null },
-        width: '760px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         autoFocus: 'dialog',
         hasBackdrop: false,
-        panelClass: 'kid-dialog',
       })
       .afterClosed()
       .subscribe(() => {

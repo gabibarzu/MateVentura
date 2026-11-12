@@ -2,6 +2,7 @@ import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 import type { InstallHelpDialog } from '../components/install-help-dialog/install-help-dialog';
 import { loadInstallHelpDialog } from '../components/lazy-dialogs';
+import { KID_DIALOG_CONFIG } from '../components/dialog.config';
 
 /** Chrome/Edge/Samsung Internet event offering the install prompt (not in the standard DOM typings). */
 interface BeforeInstallPromptEvent extends Event {
@@ -61,12 +62,9 @@ export class InstallService {
       const component = await loadInstallHelpDialog();
       this.dialog.open<InstallHelpDialog, InstallMethod>(component, {
         data: method,
-        width: '560px',
-        maxWidth: '95vw',
-        maxHeight: '95dvh',
+        ...KID_DIALOG_CONFIG,
         restoreFocus: false,
         autoFocus: 'dialog',
-        panelClass: 'kid-dialog',
       });
     }
   }

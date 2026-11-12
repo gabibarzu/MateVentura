@@ -266,9 +266,70 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
   box-shadow: 0 10px 0 color.change($exodus-fruit, $alpha: 0.25);
 }
 
+// Every dialog component and the custom setup form fill the same fixed-size shell.
+.kid-dialog .mat-mdc-dialog-component-host,
+.kid-dialog .setup {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.kid-dialog .mat-mdc-dialog-title,
+.kid-dialog .mat-mdc-dialog-actions {
+  flex: 0 0 auto;
+}
+
+// Shared chrome takes precedence over component-specific title typography/layout.
+.kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-title {
+  margin: 0;
+  padding: 24px 24px 16px;
+  border-bottom: 2px solid #e8e2ff;
+  background: linear-gradient(110deg, #f5f1ff, #fff);
+  box-shadow: 0 4px 10px #6c5ce70a;
+  position: relative;
+  z-index: 1;
+  color: $exodus-fruit;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+
+  // Material's baseline spacer adds unwanted height, especially to flex titles.
+  &::before { display: none; }
+}
+
+// Override Material's zero top padding immediately after a dialog title.
+.kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-title + .mat-mdc-dialog-content {
+  padding-top: 24px;
+}
+
+.kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-actions {
+  margin: 0;
+  padding: 16px 24px 24px;
+  gap: 12px;
+  border-top: 2px solid #e8e2ff;
+  background: linear-gradient(110deg, #f5f1ff, #fff);
+  box-shadow: 0 -4px 10px #6c5ce70a;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 640px) {
+  .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-title {
+    padding: 20px 16px 16px;
+  }
+
+  .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-actions {
+    padding: 16px;
+    gap: 10px;
+  }
+}
+
 // Material caps the content at 65vh; instead let it take whatever the title and actions leave free
 // (the dialog itself is capped by `maxHeight`), so it only scrolls when it really doesn't fit.
 .kid-dialog .mat-mdc-dialog-content {
+  flex: 1 1 auto;
+  min-height: 0;
   max-height: none;
 }
 

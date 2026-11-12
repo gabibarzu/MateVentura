@@ -90,7 +90,6 @@ import type { InstallMethod } from '../../services/install.service';
 
     .install__actions {
       justify-content: center;
-      padding: 8px 24px 24px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
