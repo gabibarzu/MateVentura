@@ -8,11 +8,16 @@ Built with Angular 22 (standalone components, Signals, Reactive Forms) and Angul
 ## Features
 
 - **Start screen**: choose **Învățare** (adaptive practice with progressive help), **Joc**, or **Aventură**.
-- **Adventure · 3 levels (Beta)**: complete each mission on the Numărilia map to unlock the next. Locked destinations are grayed out; unlocked levels remain accessible when replaying earlier missions. Existing Beta progress is preserved. Compact scenes sit above the original green/red calculation card, with no counting dots or repeated Next clicks:
+- **Adventure · 8 levels (Beta)**: follow the dotted serpentine route on the responsive Numărilia map and complete each mission to unlock the next. Locked destinations are grayed out; unlocked levels remain accessible when replaying earlier missions. Existing Beta progress is preserved. Compact scenes sit above the original green/red calculation card, with no counting dots or repeated Next clicks:
   - **Atelierul de rachete**: the original five addition/subtraction exercises, rocket repair animation and launch countdown.
   - **Pădurea Adunărilor**: five missing-addend additions up to 10, with the input in either operand position; each answer lights a lantern, and fireflies appear at the finale.
   - **Podul Numerelor**: five boards, each with two guided steps through 10 (8+5, 9+4, 7+6, 6+7 and 13−5). Both steps are needed for a board; Cifrel crosses the completed bridge.
-  - Incorrect answers never remove progress. After three mistakes on a step, Cifrel demonstrates the answer and automatically continues. Each mission saves independently, including a bridge board's unfinished second step. Returning to the map cancels pending mission timers without losing saved progress. Completed missions can be replayed individually. Reduced-motion mode uses static fireflies and places Cifrel on the far bank without a crossing animation; the original reduced-motion rocket fade is retained. More levels are planned, but are not playable yet.
+  - **Gara Vagoanelor**: five two-step place-value exercises bring and couple wagons before the train departs.
+  - **Poiana Baloanelor**: five comparisons using keyboard-accessible `<`, `=`, `>` buttons raise animal balloons into a parade.
+  - **Peștera Cristalelor**: five number sequences illuminate crystals and gradually reveal a hidden landscape painting.
+  - **Satul Prietenilor**: five illustrated addition/subtraction stories deliver gifts for a village celebration.
+  - **Farul Număriliei**: five mixed addition/subtraction and missing-number exercises up to twenty light the lighthouse, followed by a sweeping beam and a boat returning home. Reduced-motion mode keeps the beam static.
+  - Incorrect answers never remove progress. After three mistakes on a step, Cifrel demonstrates the answer and automatically continues. Each mission saves independently, including unfinished bridge and train steps. Returning to the map cancels pending mission timers without losing saved progress. Completed missions can be replayed individually. All new scene animations respect reduced-motion preferences.
 - **Game setup**: one-tap **Joc rapid** (5 mixed exercises up to 20), three levels (**Ușor / Mediu / Greu**) and **Personalizat** settings.
 - **Cifrel's story**: a playful companion who comes to help Matei and other curious children discover mathematics.
 - **Question cards**: big numbers, digits-only answer input with autofocus, ENTER to submit, green/red feedback and smooth transition to the next exercise.

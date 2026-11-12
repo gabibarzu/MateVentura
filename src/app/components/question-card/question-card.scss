@@ -132,6 +132,15 @@
   gap: 10px;
 }
 
+.card__story { margin: 8px 0 16px; font-size: clamp(1rem, 3vw, 1.25rem); font-weight: 700; text-align: center; line-height: 1.5; }
+.card__illustration { text-align: center; font-size: 2rem; margin-bottom: 8px; }
+.card__choices { display: flex; justify-content: center; gap: 16px; margin: 12px 0; }
+.card__choice { min-width: 64px; min-height: 56px; border: 3px solid #6c5ce7; border-radius: 16px; background: white; color: #49349a; font: inherit; font-size: 2rem; font-weight: 900; cursor: pointer; }
+.card__choice:hover:not(:disabled), .card__choice:focus-visible { background: #eee8ff; outline: 3px solid #49349a; outline-offset: 3px; }
+.card__choice:disabled { cursor: default; opacity: .6; }
+.card__choice--correct:disabled { opacity: 1; background: #fff1a8; border-color: #704b00; }
+.card__equation--sequence { gap: 8px; .card__number, .card__operator { font-size: clamp(1.6rem, 5vw, 3rem); } }
+
 .card__number,
 .card__operator {
   display: inline-block;

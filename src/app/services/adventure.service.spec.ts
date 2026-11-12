@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdventureService } from './adventure.service';
-import { AdventureLevelId } from '../models/adventure.models';
+import { ADVENTURE_LEVELS, AdventureLevelId } from '../models/adventure.models';
 import { migrateStorageKeys } from '../utils/storage-migration';
 
 const KEY = 'mateventura:adventure:rocket';
 const LEVELS: AdventureLevelId[] = ['rocket', 'forest', 'bridge'];
 const clearProgress = () => {
-  for (const level of LEVELS) localStorage.removeItem(`mateventura:adventure:${level}`);
+  for (const level of ADVENTURE_LEVELS) localStorage.removeItem(`mateventura:adventure:${level.id}`);
   localStorage.removeItem('mateventura:adventure:unlocked');
   localStorage.removeItem('mate-aventura:adventure:rocket');
 };
@@ -81,7 +81,7 @@ describe('AdventureService', () => {
     service.advance('forest');
     service.advance('bridge');
     const restored = new AdventureService();
-    expect(restored.progress()).toEqual({
+    expect(restored.progress()).toMatchObject({
       rocket: { completed: 1, step: 0 }, forest: { completed: 2, step: 0 }, bridge: { completed: 0, step: 1 },
     });
     restored.advance('bridge');
@@ -104,6 +104,23 @@ describe('AdventureService', () => {
     expect(service.getProgress('bridge')).toEqual({ completed: 0, step: 1 });
     service.restart('bridge');
     expect(new AdventureService().getProgress('bridge')).toEqual({ completed: 0, step: 0 });
+  });
+
+  it('unlocks and restores all eight missions, including a half-coupled train wagon', () => {
+    const service = new AdventureService();
+    for (const level of ADVENTURE_LEVELS) {
+      expect(service.isUnlocked(level.id)).toBe(true);
+      for (const task of level.tasks) task.forEach(() => service.advance(level.id));
+    }
+    const restored = new AdventureService();
+    for (const level of ADVENTURE_LEVELS) {
+      expect(restored.isUnlocked(level.id)).toBe(true);
+      expect(restored.getProgress(level.id)).toEqual({ completed: 5, step: 0 });
+    }
+    restored.restart('train');
+    restored.advance('train');
+    expect(new AdventureService().getProgress('train')).toEqual({ completed: 0, step: 1 });
+    expect(new AdventureService().isUnlocked('village')).toBe(true);
   });
 
   it('rejects malformed, out-of-range and incompatible versioned saves independently', () => {

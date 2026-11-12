@@ -30,7 +30,7 @@ describe('Adventure mission flow', () => {
   let mission: MissionActions;
   let service: AdventureService;
   const clearProgress = () => {
-    for (const id of ['rocket', 'forest', 'bridge']) localStorage.removeItem(`mateventura:adventure:${id}`);
+    for (const id of ['rocket', 'forest', 'bridge', 'train', 'balloons', 'crystals', 'village', 'lighthouse']) localStorage.removeItem(`mateventura:adventure:${id}`);
     localStorage.removeItem('mateventura:adventure:unlocked');
   };
   const enter = (level: AdventureLevelId) => {
@@ -47,7 +47,8 @@ describe('Adventure mission flow', () => {
   beforeEach(async () => {
     clearProgress();
     // Exercise individual mission flows after the map has been unlocked.
-    localStorage.setItem('mateventura:adventure:unlocked', '3');
+    localStorage.setItem('mateventura:adventure:unlocked', '8');
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
     vi.stubGlobal('matchMedia', (media: string) => ({
       media, matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn(),
       addListener: vi.fn(), removeListener: vi.fn(),
@@ -71,13 +72,35 @@ describe('Adventure mission flow', () => {
 
   it('opens previously unlocked map levels and renders a missing operand with no dots', () => {
     fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelectorAll('button.map-level')).toHaveLength(3);
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('button.map-level')).toHaveLength(8);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.world-map__route')).not.toBeNull();
     enter('forest');
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('.forest-scene')).not.toBeNull();
     const field = (fixture.nativeElement as HTMLElement).querySelector('input')!;
     expect(field.getAttribute('aria-label')).toContain('2 + ? = 5');
     expect((fixture.nativeElement as HTMLElement).querySelector('.card__dots')).toBeNull();
+  });
+
+  it('keeps locked levels focusable for their explanation but prevents mission entry', () => {
+    localStorage.removeItem('mateventura:adventure:unlocked');
+    const lockedService = new AdventureService();
+    (fixture.componentInstance as any).adventure = lockedService;
+    fixture.detectChanges();
+    const forest = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.map-level--forest')!;
+    expect(forest.disabled).toBe(false);
+    expect(forest.getAttribute('aria-disabled')).toBe('true');
+    forest.focus();
+    expect(document.activeElement).toBe(forest);
+    forest.click();
+    expect(mission.onMap()).toBe(true);
+  });
+
+  it('renders the map without ResizeObserver and falls back to resize events', () => {
+    vi.stubGlobal('ResizeObserver', undefined);
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(() => window.dispatchEvent(new Event('resize'))).not.toThrow();
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('button.map-level')).toHaveLength(8);
   });
 
   it('auto-progresses through five forest lanterns and reveals fireflies', () => {
@@ -90,6 +113,26 @@ describe('Adventure mission flow', () => {
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('.lantern--lit')).toHaveLength(5);
     expect((fixture.nativeElement as HTMLElement).querySelector('.fireflies')).not.toBeNull();
   });
+
+  for (const level of ['train', 'balloons', 'crystals', 'village'] as const) {
+    it(`completes ${level} with visible progress, a finale and independent replay`, () => {
+      enter(level);
+      fixture.detectChanges();
+      if (level === 'balloons') expect((fixture.nativeElement as HTMLElement).querySelectorAll('.card__choice')).toHaveLength(3);
+      if (level === 'crystals') expect((fixture.nativeElement as HTMLElement).querySelector('.card__equation--sequence')).not.toBeNull();
+      if (level === 'village') expect((fixture.nativeElement as HTMLElement).querySelector('.card__story')?.textContent).toContain('Ariciul');
+      solve();
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).querySelector(level === 'train' ? '.scene-piece--staged' : '.scene-piece--ready')).not.toBeNull();
+      for (let i = 1; i < (level === 'train' ? 10 : 5); i++) solve();
+      fixture.detectChanges();
+      expect(service.getProgress(level)).toEqual({ completed: 5, step: 0 });
+      expect(mission.finale()).toBe(true);
+      expect((fixture.nativeElement as HTMLElement).querySelector('.new-scene--complete')).not.toBeNull();
+      mission.replay();
+      expect(service.getProgress(level)).toEqual({ completed: 0, step: 0 });
+    });
+  }
 
   it('requires both scaffold steps before mounting each board and finishes with 13−5', () => {
     enter('bridge');
@@ -109,6 +152,23 @@ describe('Adventure mission flow', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('.bridge-board--ready')).toHaveLength(5);
     expect((fixture.nativeElement as HTMLElement).querySelector('.bridge-scene--complete')).not.toBeNull();
+  });
+
+  it('lights the lighthouse progressively and reveals the finale beam without resetting other missions', () => {
+    service.repair();
+    enter('lighthouse');
+    for (let light = 0; light < 5; light++) {
+      solve();
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).querySelectorAll('.lighthouse__window--lit')).toHaveLength(light + 1);
+    }
+    expect(service.getProgress('lighthouse')).toEqual({ completed: 5, step: 0 });
+    expect(mission.finale()).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.new-scene--lighthouse.new-scene--complete .lighthouse__beam')).not.toBeNull();
+    mission.replay();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.lighthouse__window--lit')).toHaveLength(0);
+    expect(service.repaired()).toBe(1);
   });
 
   it('brings each board above the bridge after step one and mounts it after step two', () => {

@@ -73,6 +73,9 @@ const isTouchScreen = () => window.matchMedia('(pointer: coarse)').matches;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
+  private readonly destroyRef = inject(DestroyRef);
+  private leaderboardOpening = false;
+  private readonly loadLeaderboard = loadLeaderboardDialog;
   private readonly dialog = inject(MatDialog);
   private readonly generator = inject(QuestionGeneratorService);
   private readonly confetti = inject(ConfettiService);
@@ -125,6 +128,7 @@ export class App {
       const card = this.playMode() === 'learning' ? this.learningView()?.activeCard
         : this.playMode() === 'adventure' ? undefined : this.cards().at(-1)?.element;
       if (!card) return;
+      if (typeof ResizeObserver === 'undefined') return;
       let previousHeight = card.offsetHeight;
       const observer = new ResizeObserver(() => {
         const height = card.offsetHeight;
@@ -151,7 +155,7 @@ export class App {
   }
 
   protected openModeDialog(): void {
-    if (this.dialog.openDialogs.length) return;
+    if (this.dialog.openDialogs.length || this.leaderboardOpening) return;
     const isMidGame = this.playMode() === 'game' && this.status() === 'playing';
     if (isMidGame) this.pauseGame();
     this.dialog.open<ModeDialog, boolean, PlayMode>(ModeDialog, {
@@ -175,6 +179,7 @@ export class App {
   }
 
   protected openSetupDialog(): void {
+    if (this.leaderboardOpening) return;
     const isMidGame = this.status() === 'playing';
     const data: SetupDialogData = {
       settings: this.settings(),
@@ -208,18 +213,14 @@ export class App {
   }
 
   protected async openLeaderboard(): Promise<void> {
-    const component = await loadLeaderboardDialog();
-    // A double click may get here twice while the dialog code loads.
-    if (this.dialog.openDialogs.some((ref) => ref.componentInstance instanceof component)) {
-      return;
-    }
-
+    if (this.leaderboardOpening || this.dialog.openDialogs.length) return;
+    this.leaderboardOpening = true;
     const isMidGame = this.status() === 'playing';
-    if (isMidGame) {
-      this.pauseGame();
-    }
-
-    this.dialog
+    if (isMidGame) this.pauseGame();
+    try {
+      const component = await this.loadLeaderboard();
+      if (this.destroyRef.destroyed) return;
+      this.dialog
       .open<LeaderboardDialog, LeaderboardDialogData>(component, {
         data: { level: this.preferredLevel() },
         ...KID_DIALOG_CONFIG,
@@ -228,14 +229,20 @@ export class App {
       })
       .afterClosed()
       .subscribe(() => {
-        if (isMidGame) {
+        if (isMidGame && !this.destroyRef.destroyed) {
           this.resumeGame();
         }
       });
+    } catch {
+      // Offline chunk failures must not leave the current game paused forever.
+      if (isMidGame && !this.destroyRef.destroyed) this.resumeGame();
+    } finally {
+      this.leaderboardOpening = false;
+    }
   }
 
   protected onAnswered(index: number, answer: number): void {
-    if (this.status() !== 'playing' || index !== this.currentIndex()) {
+    if (this.leaderboardOpening || this.dialog.openDialogs.length || this.status() !== 'playing' || index !== this.currentIndex()) {
       return;
     }
 

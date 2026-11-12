@@ -10,7 +10,7 @@ Link: https://gabibarzu.github.io/MateVentura/
 - **Joc:** joc rapid, niveluri Ușor / Mediu / Greu și setări personalizate; rezultate și clasament local pentru nivelurile standard.
 - **Cifrel:** partenerul curios care a venit să-l ajute pe Matei și îi invită și pe alți copii să descopere matematica.
 - Adunări și scăderi, pentru copii de aproximativ 5–8 ani; gratuit, fără cont și fără reclame.
-- **Aventură · 3 niveluri Beta:** repară racheta (cinci calcule și lansare), luminează Pădurea Adunărilor (cinci felinare, adunări cu număr lipsă până la 10 și licurici la final) sau construiește Podul Numerelor (cinci scânduri, cu doi pași ghidați prin 10 pentru adunări precum 8+5, 9+4 și scăderea 13−5). Cifrel trece podul la final. Fiecare misiune terminată deblochează următorul nivel; alte niveluri sunt în pregătire.
+- **Aventură · 8 niveluri Beta:** urmează traseul punctat prin Numărilia! Repară racheta, luminează Pădurea Adunărilor și construiește Podul Numerelor, apoi pregătește trenul din Gara Vagoanelor (zeci și unități), ridică baloanele poienii (compararea numerelor), explorează Peștera Cristalelor (șiruri), ajută Satul Prietenilor (probleme ilustrate) și aprinde Farul Număriliei (recapitulare până la 20). Fiecare misiune are cinci obiective vizibile și deblochează următorul nivel.
 - **În Aventură:** fără bulinuțe, cronometru sau penalizări; cardul rămâne verde/roșu, trece automat la pasul următor și oferă rezolvarea împreună după trei greșeli. Progresul fiecărui nivel se păstrează separat, inclusiv între pașii unei scânduri. Revenirea la hartă oprește temporizările misiunii; rejucarea resetează doar nivelul ales. Sunt incluse alternative pentru mișcare redusă.
 
 ## Imagini
@@ -37,7 +37,7 @@ Imaginile promoționale se regenerează cu `npm run pr:generate`, folosind ilust
 >
 > 🌱 **Învățare:** în ritmul copilului, fără timp sau scor, cu ajutor pas cu pas.
 > 🚀 **Joc:** provocări cu adunări și scăderi, niveluri și clasament pe dispozitiv.
-> 🛠️ **Aventură · 3 niveluri Beta:** repară racheta lui Cifrel, aprinde felinarele pădurii și construiește podul, pas cu pas!
+> 🛠️ **Aventură · 8 niveluri Beta:** rachetă, pădure, pod, tren, baloane, cristale, un sat de prieteni și un far — descoperă Numărilia pas cu pas!
 > 💜 Gratuit, fără cont, fără reclame. Pentru copii de aproximativ 5–8 ani.
 >
 > **Numere mici. Aventuri mari.**
@@ -91,7 +91,7 @@ Text alternativ pentru poster: „MateVentura cu Cifrel. Numere mici. Aventuri m
 
 ## Confidențialitate și formulări corecte
 
-Progresul învățării și al celor trei niveluri de Aventură Beta, numele folosit în clasament, scorurile și preferința de sunet sunt stocate local în browser. Nu sunt sincronizate între dispozitive și se pot pierde dacă datele site-ului sunt șterse. Dacă browserul blochează stocarea, misiunile rămân jucabile, dar progresul sesiunii nu poate fi recuperat ulterior.
+Progresul învățării și al celor opt niveluri de Aventură Beta, numele folosit în clasament, scorurile și preferința de sunet sunt stocate local în browser. Nu sunt sincronizate între dispozitive și se pot pierde dacă datele site-ului sunt șterse. Dacă browserul blochează stocarea, misiunile rămân jucabile, dar progresul sesiunii nu poate fi recuperat ulterior.
 
 Nu prezenta aplicația drept „fără nicio colectare de date”: găzduirea pe GitHub Pages implică cereri de rețea și politica furnizorului. „Fără cont și fără reclame” descrie funcționalitatea aplicației, nu o garanție despre infrastructura de găzduire.
 

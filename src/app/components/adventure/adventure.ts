@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { afterRenderEffect, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { QuestionState } from '../../models/game.models';
@@ -19,7 +19,20 @@ export class Adventure {
   protected readonly adventure = inject(AdventureService);
   private readonly confetti = inject(ConfettiService);
   private readonly card = viewChild(QuestionCard);
+  private readonly map = viewChild<ElementRef<HTMLElement>>('worldMap');
+  protected readonly mapRoute = signal('');
+  protected readonly mapViewBox = signal('0 0 1 1');
   protected readonly levels = ADVENTURE_LEVELS;
+  protected readonly symbols: Record<AdventureLevelId, string> = { rocket: '🚀', forest: '🌳', bridge: '🌉', train: '🚂', balloons: '🎈', crystals: '💎', village: '🏡', lighthouse: '🗼' };
+  protected readonly friends = ['🦔', '🐰', '🐿️', '🐻', '🦊'];
+  protected readonly goods = ['🍎', '🥕', '🌰', '🧁', '🌼'];
+  protected readonly endings: Partial<Record<AdventureLevelId, string>> = {
+    train: 'Toți la bord! Trenul lui Cifrel pleacă din gară.',
+    balloons: 'Parada baloanelor colorează cerul poienii!',
+    crystals: 'Cristalele au dezvăluit pictura Număriliei!',
+    village: 'Toți prietenii sunt gata. Să înceapă sărbătoarea!',
+    lighthouse: 'Farul strălucește, corăbiile ajung acasă! Ai străbătut toate cele opt ținuturi ale Număriliei.',
+  };
   protected readonly pieces = [0, 1, 2, 3, 4];
   protected readonly fireflies = [0, 1, 2, 3, 4, 5, 6, 7];
   protected readonly selectedLevel = signal<AdventureLevelId>('rocket');
@@ -50,7 +63,9 @@ export class Adventure {
     const index = this.exerciseIndex();
     if (this.selectedLevel() === 'rocket') return `Piesa ${index + 1} / 5 · ${ROCKET_PARTS[index]}`;
     if (this.selectedLevel() === 'forest') return `Felinarul ${index + 1} / 5`;
-    return `Scândura ${index + 1} / 5 · Pasul ${this.stepIndex() + 1} / 2`;
+    const name = this.selectedLevel() === 'bridge' ? 'Scândura' : this.selectedLevel() === 'train' ? 'Vagonul'
+      : this.selectedLevel() === 'balloons' ? 'Balonul' : this.selectedLevel() === 'crystals' ? 'Cristalul' : this.selectedLevel() === 'lighthouse' ? 'Lumina' : 'Prietenul';
+    return `${name} ${index + 1} / 5` + (this.level().tasks[index]?.length === 2 ? ` · Pasul ${this.stepIndex() + 1} / 2` : '');
   });
   protected readonly instruction = computed(() => this.selectedLevel() === 'rocket'
     ? 'Scrie răspunsul și apasă Enter.' : this.exercise().hint);
@@ -64,6 +79,47 @@ export class Adventure {
 
   constructor() {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.timer));
+    afterRenderEffect(onCleanup => {
+      const map = this.map()?.nativeElement;
+      if (!map) return;
+      const draw = () => this.drawMapRoute(map);
+      if (typeof ResizeObserver === 'undefined') {
+        draw();
+        window.addEventListener('resize', draw);
+        onCleanup(() => window.removeEventListener('resize', draw));
+        return;
+      }
+      const observer = new ResizeObserver(draw);
+      observer.observe(map);
+      map.querySelectorAll('.map-level').forEach(node => observer.observe(node));
+      draw();
+      onCleanup(() => observer.disconnect());
+    });
+  }
+
+  private drawMapRoute(map: HTMLElement): void {
+    const bounds = map.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+    // Measure the islands, not the labels, so the route follows every responsive layout.
+    const points = Array.from(map.querySelectorAll('.map-level__island')).map(node => {
+      const rect = node.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2 - bounds.left - map.clientLeft,
+        y: rect.top + rect.height / 2 - bounds.top - map.clientTop };
+    });
+    let path = '';
+    points.forEach((point, index) => {
+      if (!index) { path = `M${point.x} ${point.y}`; return; }
+      const previous = points[index - 1];
+      if (Math.abs(point.x - previous.x) < 20) {
+        const bend = point.x > map.clientWidth / 2 ? Math.min(map.clientWidth - 14, point.x + 65) : Math.max(14, point.x - 65);
+        path += `C${bend} ${previous.y} ${bend} ${point.y} ${point.x} ${point.y}`;
+      } else {
+        const middle = (previous.x + point.x) / 2;
+        path += `C${middle} ${previous.y - 20} ${middle} ${point.y + 20} ${point.x} ${point.y}`;
+      }
+    });
+    this.mapViewBox.set(`0 0 ${map.clientWidth} ${map.clientHeight}`);
+    this.mapRoute.set(path);
   }
 
   protected enterMission(level: AdventureLevelId = 'rocket'): void {
@@ -116,7 +172,12 @@ export class Adventure {
     this.solved.set(true);
     this.adventure.advance(this.selectedLevel());
     const taskDone = this.progress().completed > this.exerciseIndex();
-    const success = this.selectedLevel() === 'rocket' ? `${ROCKET_PARTS[this.exerciseIndex()]}: gata!`
+    const success = this.selectedLevel() === 'train' ? taskDone ? 'Vagon cuplat!' : 'Vagonul a sosit! Acum îl cuplăm.'
+      : this.selectedLevel() === 'balloons' ? 'Balonul se ridică!'
+      : this.selectedLevel() === 'crystals' ? 'Cristal aprins! Pictura se vede tot mai bine.'
+      : this.selectedLevel() === 'village' ? 'Prieten ajutat! Darurile ajung la sărbătoare.'
+      : this.selectedLevel() === 'lighthouse' ? 'Încă o lumină aprinsă în far!'
+      : this.selectedLevel() === 'rocket' ? `${ROCKET_PARTS[this.exerciseIndex()]}: gata!`
       : this.selectedLevel() === 'forest' ? 'Felinar aprins!' : taskDone ? 'Scândura este montată!'
         : 'Am ajuns la 10 și am adus scândura! Calculăm restul ca să o fixăm.';
     this.message.set(withHelp

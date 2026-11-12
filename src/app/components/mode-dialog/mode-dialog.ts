@@ -37,7 +37,7 @@ export type PlayMode = 'learning' | 'game' | 'adventure';
           <span class="mode-icon"><mat-icon svgIcon="stars" /></span>
           <strong>Aventură <span class="beta-badge">Beta</span></strong>
           <span class="mode-description">Repară racheta lui Cifrel și pornește spre Numărilia!</span>
-          <small>Prima misiune · 5 piese de reparat</small>
+          <small>8 niveluri · Descoperă Numărilia pas cu pas</small>
         </button>
       </div>
       <section class="mode-welcome" aria-label="Despre Cifrel">

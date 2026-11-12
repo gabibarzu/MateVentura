@@ -1,12 +1,11 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { AdventureLevelId, AdventureProgress, adventureLevel } from '../models/adventure.models';
+import { ADVENTURE_LEVELS, AdventureLevelId, AdventureProgress, adventureLevel } from '../models/adventure.models';
 import { STORAGE_PREFIX } from '../utils/storage-migration';
 
 @Injectable({ providedIn: 'root' })
 export class AdventureService {
-  private readonly current = signal<Record<AdventureLevelId, AdventureProgress>>({
-    rocket: this.load('rocket'), forest: this.load('forest'), bridge: this.load('bridge'),
-  });
+  private readonly current = signal<Record<AdventureLevelId, AdventureProgress>>(
+    Object.fromEntries(ADVENTURE_LEVELS.map(level => [level.id, this.load(level.id)])) as Record<AdventureLevelId, AdventureProgress>);
   readonly progress = this.current.asReadonly();
   private readonly unlockedThrough = signal(this.loadUnlocks());
   // Retain the original rocket API and scalar storage key for existing saves.
@@ -23,15 +22,15 @@ export class AdventureService {
   private loadUnlocks(): number {
     // Existing Beta progress must remain accessible after introducing locks.
     let unlocked = 1;
-    for (const id of ['rocket', 'forest', 'bridge'] as const) {
+    for (const { id } of ADVENTURE_LEVELS) {
       const saved = this.getProgress(id);
       const level = adventureLevel(id);
       if (saved.completed || saved.step) unlocked = Math.max(unlocked, level.number);
-      if (saved.completed === level.tasks.length) unlocked = Math.max(unlocked, Math.min(3, level.number + 1));
+      if (saved.completed === level.tasks.length) unlocked = Math.max(unlocked, Math.min(ADVENTURE_LEVELS.length, level.number + 1));
     }
     try {
       const stored = localStorage.getItem(`${STORAGE_PREFIX}adventure:unlocked`);
-      if (stored && /^[1-3]$/.test(stored)) unlocked = Math.max(unlocked, Number(stored));
+      if (stored && /^[1-9]\d*$/.test(stored) && Number(stored) <= ADVENTURE_LEVELS.length) unlocked = Math.max(unlocked, Number(stored));
     } catch { /* Derive unlocks from available progress when storage is blocked. */ }
     return unlocked;
   }
@@ -57,7 +56,7 @@ export class AdventureService {
   private save(level: AdventureLevelId, value: AdventureProgress): void {
     this.current.update(progress => ({ ...progress, [level]: value }));
     if (value.completed === adventureLevel(level).tasks.length) {
-      this.unlockedThrough.update(current => Math.max(current, Math.min(3, adventureLevel(level).number + 1)));
+      this.unlockedThrough.update(current => Math.max(current, Math.min(ADVENTURE_LEVELS.length, adventureLevel(level).number + 1)));
     }
     try {
       localStorage.setItem(`${STORAGE_PREFIX}adventure:unlocked`, String(this.unlockedThrough()));

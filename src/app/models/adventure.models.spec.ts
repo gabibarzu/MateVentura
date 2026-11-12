@@ -22,6 +22,26 @@ describe('Adventure exercises', () => {
     expect(adventureLevel('rocket').tasks.every(task => task.length === 1 && task[0].answerPosition === 'result')).toBe(true);
   });
 
+  it('defines train place values, comparisons, sequence gaps and illustrated stories', () => {
+    expect(ADVENTURE_LEVELS.map(level => level.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    for (const [first, second] of adventureLevel('train').tasks) {
+      expect(first.answerPosition).toBe('operandB');
+      expect(first.question.correctAnswer).toBeLessThan(10);
+      expect(second.question.correctAnswer).toBe(10 + first.question.correctAnswer);
+    }
+    for (const [step] of adventureLevel('balloons').tasks) {
+      const [a, b] = step.comparison!;
+      expect(step.question.correctAnswer).toBe(a < b ? 0 : a === b ? 1 : 2);
+    }
+    for (const [step] of adventureLevel('crystals').tasks) {
+      const values = step.sequence!.map(n => n ?? step.question.correctAnswer);
+      expect(step.sequence!.filter(n => n === null)).toHaveLength(1);
+      expect(values[2] - values[1]).toBe(values[1] - values[0]);
+      expect(values[3] - values[2]).toBe(values[1] - values[0]);
+    }
+    expect(adventureLevel('village').tasks.every(([step]) => step.prompt && step.illustration)).toBe(true);
+  });
+
   it('uses missing addends on either side in forest additions up to ten', () => {
     const steps = adventureLevel('forest').tasks.map(task => task[0]);
     expect(new Set(steps.map(step => step.answerPosition))).toEqual(new Set(['operandA', 'operandB']));
@@ -50,5 +70,14 @@ describe('Adventure exercises', () => {
     expect(first.equation).toEqual({ operandA: 13, operandB: 3, operator: '-', result: 10 });
     expect(second.equation).toEqual({ operandA: 10, operandB: 2, operator: '-', result: 8 });
     expect(second.question.correctAnswer).toBe(8);
+  });
+
+  it('consolidates addition, subtraction and missing numbers up to twenty at the lighthouse', () => {
+    const steps = adventureLevel('lighthouse').tasks.flat();
+    expect(new Set(steps.map(step => step.equation.operator))).toEqual(new Set(['+', '-']));
+    expect(new Set(steps.map(step => step.answerPosition))).toEqual(new Set(['result', 'operandB', 'operandA']));
+    for (const step of steps) {
+      expect(Math.max(step.equation.operandA, step.equation.operandB, step.equation.result)).toBeLessThanOrEqual(20);
+    }
   });
 });

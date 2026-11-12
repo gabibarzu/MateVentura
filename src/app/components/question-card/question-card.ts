@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
@@ -46,11 +47,17 @@ export class QuestionCard {
   readonly answerLocked = input(false);
   readonly answerPosition = input<AnswerPosition>('result');
   readonly equation = input<QuestionEquation | null>(null);
+  readonly prompt = input('');
+  readonly sequence = input<readonly (number | null)[] | null>(null);
+  readonly comparison = input<readonly [number, number] | null>(null);
+  readonly illustration = input('');
+  protected readonly comparisonChoices = ['<', '=', '>'];
 
   readonly answered = output<number>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly answerInput = viewChild<ElementRef<HTMLInputElement>>('answerInput');
+  private shakeTimer: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly maxLength = MAX_ANSWER_LENGTH;
   protected readonly answerControl = new FormControl('', {
@@ -67,6 +74,7 @@ export class QuestionCard {
     operator: this.question().operator, result: this.question().correctAnswer,
   });
   protected readonly answerLabel = computed(() => {
+    if (this.sequence()) return 'Numărul lipsă din șirul ' + this.sequence()!.map(n => n === null ? '?' : n).join(', ');
     const q = this.displayedEquation();
     if (this.answerPosition() === 'result') return `Răspuns pentru ${q.operandA} ${q.operator} ${q.operandB}`;
     return `Numărul lipsă din ${this.answerPosition() === 'operandA' ? '?' : q.operandA} ${q.operator} ${this.answerPosition() === 'operandB' ? '?' : q.operandB} = ${q.result}`;
@@ -95,6 +103,7 @@ export class QuestionCard {
   });
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.shakeTimer));
     // Missing-number steps can move the input to a different embedded view.
     // Focus only after that view has been rendered, not the previous step's input.
     afterRenderEffect(() => {
@@ -128,7 +137,15 @@ export class QuestionCard {
   }
 
   focus(): void {
+    if (this.comparison()) {
+      this.host.nativeElement.querySelector<HTMLButtonElement>('.card__choice:not(:disabled)')?.focus({ preventScroll: true });
+      return;
+    }
     this.answerInput()?.nativeElement.focus({ preventScroll: true });
+  }
+
+  protected choose(value: number): void {
+    if (this.active() && !this.answerLocked() && this.status() === 'pending') this.answered.emit(value);
   }
 
   /** Accept only digits (plus editing keys); ENTER submits the answer. */
@@ -178,7 +195,8 @@ export class QuestionCard {
   }
 
   private triggerShake(): void {
+    clearTimeout(this.shakeTimer);
     this.shake.set(true);
-    setTimeout(() => this.shake.set(false), 450);
+    this.shakeTimer = setTimeout(() => this.shake.set(false), 450);
   }
 }

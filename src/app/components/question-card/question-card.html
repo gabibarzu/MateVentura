@@ -24,6 +24,28 @@
     }
   </div>
 
+  @if (prompt()) { <p class="card__story">{{ prompt() }}</p> }
+  @if (illustration()) { <div class="card__illustration" aria-hidden="true">{{ illustration() }}</div> }
+  @if (comparison(); as numbers) {
+    <div class="card__equation" [attr.aria-label]="'Compară ' + numbers[0] + ' și ' + numbers[1]">
+      <span class="card__number">{{ numbers[0] }}</span><span class="card__operator">?</span><span class="card__number">{{ numbers[1] }}</span>
+    </div>
+    <div class="card__choices" role="group" aria-label="Alege semnul potrivit">
+      @for (choice of comparisonChoices; track choice; let i = $index) {
+        <button type="button" class="card__choice" [disabled]="answerLocked() || status() !== 'pending' || !active()"
+          [attr.aria-label]="i === 0 ? 'Mai mic decât' : i === 1 ? 'Egal cu' : 'Mai mare decât'"
+          [class.card__choice--correct]="answerLocked() && question().correctAnswer === i" (click)="choose(i)">{{ choice }}</button>
+      }
+    </div>
+  } @else if (sequence(); as numbers) {
+    <div class="card__equation card__equation--sequence" aria-label="Completează șirul">
+      @for (number of numbers; track $index) {
+        @if (number === null) { <ng-container [ngTemplateOutlet]="answerField" /> }
+        @else { <span class="card__number">{{ number }}</span> }
+        @if (!$last) { <span class="card__operator">,</span> }
+      }
+    </div>
+  } @else {
   <div class="card__equation">
     @if (answerPosition() === 'operandA') {
       <ng-container [ngTemplateOutlet]="answerField" />
@@ -46,6 +68,7 @@
     }
   </div>
 
+  }
   <ng-template #answerField>
     <div class="card__answer-col">
       <mat-form-field appearance="outline" class="card__answer" subscriptSizing="dynamic">

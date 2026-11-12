@@ -1,6 +1,6 @@
 import { AnswerPosition, MathQuestion, Operator, QuestionEquation } from './game.models';
 
-export type AdventureLevelId = 'rocket' | 'forest' | 'bridge';
+export type AdventureLevelId = 'rocket' | 'forest' | 'bridge' | 'train' | 'balloons' | 'crystals' | 'village' | 'lighthouse';
 export interface AdventureProgress { completed: number; step: number; }
 export interface AdventureStep {
   question: MathQuestion;
@@ -8,6 +8,10 @@ export interface AdventureStep {
   answerPosition: AnswerPosition;
   hint: string;
   explanation: string;
+  prompt?: string;
+  sequence?: readonly (number | null)[];
+  comparison?: readonly [number, number];
+  illustration?: string;
 }
 export interface AdventureLevel {
   id: AdventureLevelId;
@@ -47,6 +51,23 @@ function bridgeAddition(a: number, b: number): readonly AdventureStep[] {
 }
 
 export const ROCKET_PARTS = ['Motorul', 'Aripa stângă', 'Aripa dreaptă', 'Hubloul', 'Vârful rachetei'];
+
+function comparison(a: number, b: number): AdventureStep {
+  const answer = a < b ? 0 : a === b ? 1 : 2;
+  return { ...exercise(answer, 0, '+'), comparison: [a, b],
+    hint: 'Alege semnul: gura deschisă privește numărul mai mare.',
+    explanation: `${a} ${['<', '=', '>'][answer]} ${b}` };
+}
+
+function sequence(numbers: readonly (number | null)[], answer: number, difference: number): AdventureStep {
+  return { ...exercise(answer, 0, '+'), sequence: numbers,
+    hint: `La fiecare pas ${difference > 0 ? 'adăugăm' : 'scădem'} ${Math.abs(difference)}.`,
+    explanation: numbers.map(n => n === null ? answer : n).join(', ') };
+}
+
+function story(a: number, b: number, operator: Operator, prompt: string, illustration: string): AdventureStep {
+  return { ...exercise(a, b, operator), prompt, illustration };
+}
 export const ADVENTURE_LEVELS: readonly AdventureLevel[] = [
   {
     id: 'rocket', number: 1, title: 'Atelierul de rachete', mission: 'Repară racheta lui Cifrel',
@@ -78,6 +99,60 @@ export const ADVENTURE_LEVELS: readonly AdventureLevel[] = [
       { ...exercise(10, 2, '-', 'result', 'Desfacem 5 în 3 și 2. Am luat deja 3; mai luăm 2 din 10.'),
         explanation: '13 − 5 = 13 − 3 − 2 = 10 − 2 = 8' },
     ]],
+  },
+  {
+    id: 'train', number: 4, title: 'Gara Vagoanelor', mission: 'Pregătește trenul lui Cifrel',
+    description: 'Cinci vagoane. Descoperim zecea și unitățile până la 20.',
+    intro: 'Trenul așteaptă în gară! Găsește unitățile ca să aduci vagonul, apoi formează numărul ca să îl cuplezi.',
+    unit: 'vagoane', start: 'Pregătim trenul!', replay: 'Mai pregătim un tren',
+    tasks: [14, 16, 12, 19, 18].map(n => [
+      { ...exercise(10, n - 10, '+', 'operandB'), prompt: `Numărul ${n} are o zece și câte unități?`,
+        hint: `Din ${n} luăm o zece. Câte unități rămân?` },
+      { ...exercise(10, n - 10, '+'), prompt: `O zece și ${n - 10} unități formează ce număr?`,
+        hint: `Pornește de la 10 și adaugă ${n - 10} unități.` },
+    ]),
+  },
+  {
+    id: 'balloons', number: 5, title: 'Poiana Baloanelor', mission: 'Ridică baloanele prietenilor',
+    description: 'Cinci baloane. Comparăm numerele cu <, = și >.',
+    intro: 'Prietenii vor să vadă poiana de sus! Alege semnul potrivit între numere și fiecare balon se ridică.',
+    unit: 'baloane', start: 'Ridicăm baloanele!', replay: 'Mai ridicăm o paradă',
+    tasks: [[comparison(8, 12)], [comparison(15, 9)], [comparison(10, 10)], [comparison(14, 17)], [comparison(20, 16)]],
+  },
+  {
+    id: 'crystals', number: 6, title: 'Peștera Cristalelor', mission: 'Descoperă pictura ascunsă',
+    description: 'Cinci cristale. Găsește numerele lipsă din șiruri.',
+    intro: 'Pictura Număriliei se ascunde în întuneric! Urmărește regula fiecărui șir și aprinde cristalele.',
+    unit: 'cristale', start: 'Explorăm peștera!', replay: 'Mai explorăm o dată',
+    tasks: [[sequence([2, 4, null, 8], 6, 2)], [sequence([5, null, 9, 11], 7, 2)],
+      [sequence([15, null, 11, 9], 13, -2)], [sequence([0, 5, null, 15], 10, 5)],
+      [sequence([20, 15, null, 5], 10, -5)]],
+  },
+  {
+    id: 'village', number: 7, title: 'Satul Prietenilor', mission: 'Pregătește sărbătoarea din sat',
+    description: 'Cinci prieteni. Rezolvăm mici povești cu numere.',
+    intro: 'Fiecare prieten pregătește ceva pentru sărbătoare. Citește povestea și ajută-i să numere!',
+    unit: 'prieteni ajutați', start: 'Ajutăm prietenii!', replay: 'Mai ajutăm o dată',
+    tasks: [
+      [story(7, 5, '+', 'Ariciul are 7 mere și primește încă 5. Câte mere are acum?', '🦔 🍎')],
+      [story(14, 4, '-', 'Iepurașul are 14 morcovi și oferă 4 prietenilor. Câți morcovi îi rămân?', '🐰 🥕')],
+      [story(6, 6, '+', 'Veverița aduce 6 nuci dimineața și încă 6 seara. Câte nuci aduce în total?', '🐿️ 🌰')],
+      [story(15, 7, '-', 'Ursulețul are 15 prăjituri. Prietenii mănâncă 7. Câte prăjituri rămân?', '🐻 🧁')],
+      [story(9, 8, '+', 'Vulpea pune 9 flori într-o vază și 8 în alta. Câte flori sunt în total?', '🦊 🌼')],
+    ],
+  },
+  {
+    id: 'lighthouse', number: 8, title: 'Farul Număriliei', mission: 'Aprinde farul de la mare',
+    description: 'Cinci lumini. Adunări, scăderi și numere lipsă până la 20.',
+    intro: 'Se lasă seara, iar corăbiile caută drumul spre casă! Folosește ce ai învățat ca să aprinzi cele cinci lumini ale farului. La final, raza lui va lumina marea.',
+    unit: 'lumini', start: 'Aprindem farul!', replay: 'Mai luminăm marea o dată',
+    tasks: [
+      [exercise(8, 7, '+', 'result', 'Completează mai întâi zecea: 8 + 2 = 10. Din 7 mai rămân 5.')],
+      [exercise(16, 6, '-', 'result', '16 înseamnă o zece și 6 unități. Luăm cele 6 unități.')],
+      [exercise(9, 5, '+', 'operandB', 'De la 9 până la 10 este un pas. De la 10 până la 14 mai sunt 4.')],
+      [exercise(13, 5, '-', 'operandA', 'Ce număr avea farul înainte să folosească 5 lumini și să rămână cu 8? Adună 8 și 5.')],
+      [exercise(20, 8, '-', 'result', 'Din 20 ia mai întâi 5, apoi încă 3: 20 − 5 = 15.')],
+    ],
   },
 ];
 

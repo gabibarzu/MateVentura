@@ -27,7 +27,7 @@
 .map-level--bridge .map-level__island { background: #fff0c4; border-color: #af732e; box-shadow: 0 10px 0 #af732e; }
 .map-level--bridge .map-level__island mat-icon { color: #85531c; }
 .map-level--locked { filter: grayscale(1); cursor: not-allowed; }
-.map-level--locked .map-level__island { opacity: .5; }
+.map-level--locked .map-level__island { background: #e8e8e8; border-color: #bcbcbc; box-shadow: 0 10px 0 #c6c6c6; }
 .map-level--locked:hover { background: transparent; }
 @media (max-width: 600px) {
   .world-map { height: 360px; }
@@ -135,3 +135,80 @@
   .launchpad--launched .rocket { animation: launch-fade 3.2s ease-out both; }
 }
 @keyframes launch-fade { 0%, 30% { opacity: 1; } 100% { opacity: 0; } }
+
+.world-map--expanded {
+  height: auto; min-height: 330px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(170px, auto); gap: 24px 8px; padding: 28px 12px 65px;
+  .world-map__route { pointer-events: none; }
+  .map-level { position: relative; inset: auto; width: auto; min-width: 0; z-index: 1; }
+  .map-level:nth-of-type(5) { grid-row: 2; grid-column: 4; }
+  .map-level:nth-of-type(6) { grid-row: 2; grid-column: 3; }
+  .map-level:nth-of-type(7) { grid-row: 2; grid-column: 2; }
+  .map-level:nth-of-type(8) { grid-row: 2; grid-column: 1; }
+  .map-level__island { width: 82px; height: 62px; }
+  .map-level__symbol { font-size: 2rem; }
+  .world-map__cifrel { width: 55px; right: 12px; bottom: 8px; }
+}
+.new-scene { position: relative; height: clamp(150px, 25dvh, 210px); overflow: hidden; border: 3px solid #9dbbb9; border-radius: 28px; background: linear-gradient(#def4ff 65%, #bee4a2 65%); }
+.scene-pieces { position: absolute; inset: 20px 5% 32px; display: flex; align-items: flex-end; justify-content: space-around; gap: 6px; }
+.scene-piece { flex: 1; min-width: 0; text-align: center; opacity: .35; transition: transform .8s ease, opacity .6s, filter .6s; }
+.scene-piece--ready, .scene-piece--staged { opacity: 1; }
+.train-engine { font-size: clamp(28px, 6vw, 55px); }
+.wagon { position: relative; display: grid; place-items: center; height: 34px; margin-bottom: 12px; border: 3px solid #9a5c2c; border-radius: 6px; background: #f7c16e; color: #633b19; font-weight: 900; box-shadow: inset 0 4px #ffe2af; }
+.wagon::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: -12px; height: 12px; background: radial-gradient(circle at 15% 50%, #423657 0 6px, transparent 7px), radial-gradient(circle at 85% 50%, #423657 0 6px, transparent 7px); }
+.new-scene--train .scene-piece { transform: translateY(-45px); }
+.new-scene--train .scene-piece--staged { transform: translateY(-28px) rotate(-5deg); filter: drop-shadow(0 0 5px #ffe89a); }
+.new-scene--train .scene-piece--ready { transform: translateY(0); }
+.new-scene--train.new-scene--complete .scene-pieces { animation: train-departure 4s ease-in both; }
+@keyframes train-departure { 0%, 20% { transform: translateX(0); } 100% { transform: translateX(-120%); } }
+.new-scene--balloons { background: linear-gradient(#c9edff, #f8e7ff); }
+.balloon { display: inline-grid; place-items: center; width: clamp(34px, 7vw, 52px); height: clamp(42px, 8vw, 62px); border-radius: 50%; background: #fa8caf; border: 2px solid #af3b72; font-size: clamp(20px, 4vw, 30px); }
+.balloon::after { content: ''; position: absolute; top: 100%; height: 24px; width: 2px; background: #745a86; }
+.new-scene--balloons .scene-piece { position: relative; transform: translateY(18px); }
+.new-scene--balloons .scene-piece--ready { transform: translateY(-32px); }
+.new-scene--balloons .scene-piece:nth-child(even) .balloon { background: #ffe192; border-color: #9c741e; }
+.new-scene--balloons.new-scene--complete .scene-piece { animation: balloon-parade 2s ease-in-out infinite alternate; animation-delay: calc(var(--piece) * -.3s); }
+@keyframes balloon-parade { from { transform: translateY(-25px); } to { transform: translateY(-42px); } }
+.new-scene--crystals { background: radial-gradient(ellipse at bottom, #574179, #191a35); }
+.new-scene--crystals .scene-pieces { align-items: flex-end; }
+.crystal { font-size: clamp(40px, 9vw, 70px); color: #a4efff; }
+.new-scene--crystals .scene-piece--ready { filter: drop-shadow(0 0 12px #9bf7ff); }
+.cave-painting { position: absolute; inset: 5px 0 auto; text-align: center; font-size: clamp(28px, 6vw, 46px); transition: opacity .8s; }
+.village-friend { display: block; font-size: clamp(28px, 6vw, 48px); }
+.village-gift { display: block; font-size: clamp(16px, 3vw, 28px); opacity: 0; transform: translateY(-25px); transition: opacity .6s, transform .8s; }
+.scene-piece--ready .village-gift { opacity: 1; transform: translateY(0); }
+.new-scene--village.new-scene--complete { background: linear-gradient(#ffe8b1 65%, #bee4a2 65%); }
+.new-scene--village.new-scene--complete .village-friend { animation: village-party .8s ease-in-out infinite alternate; }
+@keyframes village-party { to { transform: translateY(-8px) rotate(5deg); } }
+@media (max-width: 600px) {
+  .world-map--expanded {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 4px; padding: 20px 6px 55px;
+    .map-level:nth-of-type(3) { grid-row: 2; grid-column: 2; }
+    .map-level:nth-of-type(4) { grid-row: 2; grid-column: 1; }
+    .map-level:nth-of-type(5) { grid-row: 3; grid-column: 1; }
+    .map-level:nth-of-type(6) { grid-row: 3; grid-column: 2; }
+    .map-level:nth-of-type(7) { grid-row: 4; grid-column: 2; }
+    .map-level:nth-of-type(8) { grid-row: 4; grid-column: 1; }
+  }
+  .world-map--expanded .map-level__island { width: 70px; height: 50px; }
+}
+.new-scene--lighthouse { background: linear-gradient(#182943 65%, #315c7d 65%, #407d9f); border-color: #7a9ac2; }
+.lighthouse { position: absolute; left: 22%; bottom: 28px; width: 52px; }
+.lighthouse__roof { width: 0; height: 0; border-left: 32px solid transparent; border-right: 32px solid transparent; border-bottom: 20px solid #e96d83; margin-left: -6px; }
+.lighthouse__lantern { position: relative; height: 22px; background: #61728b; border: 3px solid #c9d6e7; }
+.lighthouse__lantern--lit { background: #fff1a1; box-shadow: 0 0 25px #ffe38a; }
+.lighthouse__tower { position: relative; display: flex; flex-direction: column-reverse; align-items: center; gap: 4px; padding: 6px; background: repeating-linear-gradient(#f5e9d8 0 18px, #d6687d 18px 36px); border: 2px solid #c0c6d6; }
+.lighthouse__window { width: 12px; height: 8px; border-radius: 3px; border: 1px solid #63728b; background: #273f5b; transition: background-color .6s, box-shadow .6s; }
+.lighthouse__window--lit { background: #ffe897; box-shadow: 0 0 10px 3px #ffd65b88; }
+.lighthouse__beam { position: absolute; left: 50%; top: -30px; width: 430px; height: 90px; background: linear-gradient(90deg, #fff4b7aa, #fff4b700); clip-path: polygon(0 42%, 100% 0, 100% 100%, 0 58%); opacity: 0; transform-origin: left center; }
+.new-scene--complete .lighthouse__beam { opacity: 1; animation: lighthouse-sweep 4s ease-in-out infinite alternate; }
+.lighthouse-boat { position: absolute; right: 12%; bottom: 36px; font-size: clamp(30px, 6vw, 46px); }
+.new-scene--complete .lighthouse-boat { animation: boat-home 4s ease-out both; }
+.lighthouse-cifrel { position: absolute; width: 45px; left: 5%; bottom: 30px; }
+@keyframes lighthouse-sweep { from { transform: rotate(-15deg); } to { transform: rotate(12deg); } }
+@keyframes boat-home { from { transform: translateX(60px); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .scene-piece, .village-gift, .cave-painting { transition: none; }
+  .new-scene--train.new-scene--complete .scene-pieces, .new-scene--balloons.new-scene--complete .scene-piece, .new-scene--village.new-scene--complete .village-friend { animation: none; }
+  .lighthouse__window { transition: none; }
+  .new-scene--complete .lighthouse__beam, .new-scene--complete .lighthouse-boat { animation: none; }
+}

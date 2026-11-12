@@ -5,24 +5,24 @@
       <h2 id="map-title">Bun venit în Numărilia!</h2>
       <p>Alege un nivel și pornește la drum cu Cifrel.</p>
     </header>
-    <div class="world-map">
+    <div #worldMap class="world-map world-map--expanded">
       <span class="world-map__cloud world-map__cloud--one" aria-hidden="true"></span>
       <span class="world-map__cloud world-map__cloud--two" aria-hidden="true"></span>
-      <svg class="world-map__route" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" />
-        <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#b5a2e8" stroke-width="5" stroke-dasharray="9 12" stroke-linecap="round" />
+      <svg class="world-map__route" [attr.viewBox]="mapViewBox()" preserveAspectRatio="none" aria-hidden="true">
+        <path [attr.d]="mapRoute()" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" />
+        <path [attr.d]="mapRoute()" fill="none" stroke="#b5a2e8" stroke-width="5" stroke-dasharray="9 12" stroke-linecap="round" />
       </svg>
       @for (mission of levels; track mission.id) {
         @let saved = adventure.getProgress(mission.id);
         @let locked = !adventure.isUnlocked(mission.id);
         <button type="button" class="map-level map-level--playable"
-          [class.map-level--locked]="locked" [disabled]="locked"
+          [class.map-level--locked]="locked" [attr.aria-disabled]="locked"
           [class.map-level--available]="mission.id === 'rocket'"
           [class.map-level--forest]="mission.id === 'forest'"
           [class.map-level--bridge]="mission.id === 'bridge'"
           (click)="enterMission(mission.id)"
           [attr.aria-label]="'Nivelul ' + mission.number + ': ' + mission.title + '. ' + (locked ? 'Blocat. Termină nivelul ' + (mission.number - 1) + ' pentru deblocare.' : saved.completed + ' din 5 ' + mission.unit + (saved.step ? ', pasul 2 din 2' : ''))">
-          <span class="map-level__island"><mat-icon [svgIcon]="mission.id === 'rocket' ? 'rocket_launch' : mission.id === 'forest' ? 'eco' : 'stars'" /></span>
+          <span class="map-level__island" aria-hidden="true"><span class="map-level__symbol">{{ symbols[mission.id] }}</span></span>
           <span class="map-level__number">{{ mission.number }}</span>
           <strong>{{ mission.title }}</strong>
           <span class="map-level__status">{{ locked ? 'Blocat · Termină nivelul ' + (mission.number - 1) : saved.completed === 5 ? 'Gata · 5 / 5 · Revino' : saved.completed || saved.step ? 'Continuă · ' + saved.completed + ' / 5 ' + mission.unit : 'Începe · 0 / 5 ' + mission.unit }}{{ !locked && saved.step ? ' · pasul 2 / 2' : '' }}</span>
@@ -31,7 +31,7 @@
       <app-cifrel full mood="happy" class="world-map__cifrel" aria-hidden="true" />
     </div>
     <p class="map-coming"><strong>Aventura abia începe!</strong> Vor apărea și alte niveluri în curând.</p>
-    <p class="mission__footnote">3 niveluri Beta: termină o misiune ca să o deblochezi pe următoarea. Progresul se păstrează în acest browser.</p>
+    <p class="mission__footnote">{{ levels.length }} niveluri Beta: termină o misiune ca să o deblochezi pe următoarea. Progresul se păstrează în acest browser.</p>
   </section>
 } @else {
 <section class="mission" aria-labelledby="mission-title">
@@ -87,7 +87,7 @@
       <app-cifrel full mood="happy" class="forest-scene__cifrel" aria-hidden="true" />
       <p class="scene-caption">{{ finale() ? 'Licuricii îți mulțumesc! Poteca este luminată.' : progress().completed + ' / 5 felinare aprinse' }}</p>
     </div>
-  } @else {
+  } @else if (selectedLevel() === 'bridge') {
     <div class="bridge-scene" [class.bridge-scene--complete]="finale()" role="img"
       [attr.aria-label]="'Pod: ' + progress().completed + ' din 5 scânduri montate.' + (progress().step ? ' Scândura ' + (progress().completed + 1) + ' este adusă deasupra podului, gata de montat.' : '') + (finale() ? ' Cifrel trece în siguranță râul!' : '')">
       <div class="bridge-scene__river" aria-hidden="true"></div>
@@ -104,6 +104,48 @@
     </div>
   }
 
+  @if (level().number >= 4) {
+    <div class="new-scene" [class.new-scene--train]="selectedLevel() === 'train'"
+      [class.new-scene--balloons]="selectedLevel() === 'balloons'" [class.new-scene--crystals]="selectedLevel() === 'crystals'"
+      [class.new-scene--village]="selectedLevel() === 'village'" [class.new-scene--complete]="finale()"
+      [class.new-scene--lighthouse]="selectedLevel() === 'lighthouse'"
+      role="img" [attr.aria-label]="level().title + ': ' + progress().completed + ' din 5 ' + level().unit + (progress().step ? ', următorul vagon este pregătit' : '')">
+      @if (selectedLevel() === 'crystals') {
+        <div class="cave-painting" [style.opacity]="progress().completed / 5" aria-hidden="true">🌄 🏡 🌳</div>
+      }
+      @if (selectedLevel() === 'lighthouse') {
+        <div class="lighthouse" aria-hidden="true">
+          <div class="lighthouse__roof"></div>
+          <div class="lighthouse__lantern" [class.lighthouse__lantern--lit]="complete()"><span class="lighthouse__beam"></span></div>
+          <div class="lighthouse__tower">
+            @for (piece of pieces; track piece) {
+              <span class="lighthouse__window" [class.lighthouse__window--lit]="progress().completed > piece"></span>
+            }
+          </div>
+        </div>
+        <span class="lighthouse-boat" aria-hidden="true">⛵</span>
+        <app-cifrel full mood="happy" class="lighthouse-cifrel" aria-hidden="true" />
+      }
+      @if (selectedLevel() !== 'lighthouse') {
+      <div class="scene-pieces" aria-hidden="true">
+        @if (selectedLevel() === 'train') { <span class="train-engine">🚂</span> }
+        @for (piece of pieces; track piece) {
+          <div class="scene-piece" [class.scene-piece--ready]="progress().completed > piece"
+            [class.scene-piece--staged]="progress().completed === piece && progress().step > 0"
+            [style.--piece]="piece">
+            @switch (selectedLevel()) {
+              @case ('train') { <span class="wagon">{{ piece + 1 }}</span> }
+              @case ('balloons') { <span class="balloon">{{ friends[piece] }}</span> }
+              @case ('crystals') { <span class="crystal">◆</span> }
+              @case ('village') { <span class="village-friend">{{ friends[piece] }}</span><span class="village-gift">{{ goods[piece] }} 🧺</span> }
+            }
+          </div>
+        }
+      </div>
+      }
+      <p class="scene-caption">{{ finale() ? selectedLevel() === 'lighthouse' ? 'Farul e aprins! Corăbiile vin acasă.' : endings[selectedLevel()] : progress().step ? 'Vagonul a sosit! Formează numărul ca să îl cuplezi.' : progress().completed + ' / 5 ' + level().unit }}</p>
+    </div>
+  }
   <div class="mission__panel" [class.mission__panel--exercise]="started() && (!complete() || solved())">
   @if (!started() && !complete()) {
     <div class="mission__brief">
@@ -127,8 +169,8 @@
     </div>
     } @else {
       <div class="mission__brief mission__complete" aria-live="polite">
-        <h3>{{ selectedLevel() === 'forest' ? 'Pădurea strălucește!' : 'Cifrel poate trece râul!' }}</h3>
-        <p>{{ selectedLevel() === 'forest' ? 'Cinci felinare aprinse și o mulțime de licurici! Ai găsit numerele lipsă.' : 'Cinci scânduri, pas cu pas. Ai folosit zecea ca să aduni și să scazi mai ușor!' }}</p>
+        <h3>{{ selectedLevel() === 'forest' ? 'Pădurea strălucește!' : selectedLevel() === 'bridge' ? 'Cifrel poate trece râul!' : 'Misiune îndeplinită!' }}</h3>
+        <p>{{ selectedLevel() === 'forest' ? 'Cinci felinare aprinse și o mulțime de licurici! Ai găsit numerele lipsă.' : selectedLevel() === 'bridge' ? 'Cinci scânduri, pas cu pas. Ai folosit zecea ca să aduni și să scazi mai ușor!' : endings[selectedLevel()] }}</p>
         <button mat-flat-button class="big-btn btn-purple" (click)="replay()">{{ level().replay }}</button>
       </div>
     }
@@ -136,12 +178,15 @@
   } @else {
     <app-question-card #questionCard [state]="state()" [index]="exerciseIndex()" [active]="true"
       [learning]="true" [badge]="badge()" [answerPosition]="exercise().answerPosition" [equation]="exercise().equation"
+      [prompt]="exercise().prompt ?? ''" [sequence]="exercise().sequence ?? null" [comparison]="exercise().comparison ?? null" [illustration]="exercise().illustration ?? ''"
       [showDots]="false" [retryToken]="retryToken()" [answerLocked]="solved()"
       [feedback]="message() || instruction()" (answered)="answer($event)">
+      @if (!exercise().comparison) {
       <div class="mission__controls">
         <button mat-flat-button type="button" class="big-btn btn-purple" [disabled]="solved() || wrong()"
           (click)="questionCard.submit()">{{ solved() ? 'Bravo! Continuăm…' : 'Verifică' }}</button>
       </div>
+      }
     </app-question-card>
   }
   </div>

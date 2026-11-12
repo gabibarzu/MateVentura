@@ -95,4 +95,44 @@ describe('QuestionCard equation positions', () => {
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).querySelectorAll('.card__dot')).toHaveLength(5);
   });
+
+  it('cancels a pending invalid-answer shake when destroyed', () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentInstance.submit();
+      const timer = (fixture.componentInstance as any).shakeTimer;
+      const clear = vi.spyOn(globalThis, 'clearTimeout');
+      fixture.destroy();
+      expect(clear).toHaveBeenCalledWith(timer);
+      clear.mockRestore();
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('offers accessible comparison choices and highlights the demonstrated answer', async () => {
+    fixture.componentRef.setInput('learning', true);
+    fixture.componentRef.setInput('comparison', [8, 12]);
+    const state = { ...pending, question: { ...pending.question, correctAnswer: 0 } };
+    fixture.componentRef.setInput('state', state);
+    await fixture.whenStable();
+    const answers: number[] = [];
+    fixture.componentInstance.answered.subscribe(value => answers.push(value));
+    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('.card__choice');
+    expect(buttons).toHaveLength(3);
+    expect(buttons[0].getAttribute('aria-label')).toBe('Mai mic decât');
+    expect((fixture.nativeElement as HTMLElement).querySelector('input')).toBeNull();
+    buttons[0].click();
+    expect(answers).toEqual([0]);
+    fixture.componentRef.setInput('state', { ...state, status: 'correct' });
+    fixture.componentRef.setInput('answerLocked', true);
+    await fixture.whenStable();
+    expect(buttons[0].classList.contains('card__choice--correct')).toBe(true);
+    expect(Array.from(buttons).every(button => button.disabled)).toBe(true);
+  });
+
+  it('renders the missing sequence number in a real input with a descriptive label', async () => {
+    fixture.componentRef.setInput('sequence', [15, null, 11, 9]);
+    await fixture.whenStable();
+    expect(input().getAttribute('aria-label')).toContain('15, ?, 11, 9');
+    expect((fixture.nativeElement as HTMLElement).querySelector('.card__equation--sequence')).not.toBeNull();
+  });
 });
