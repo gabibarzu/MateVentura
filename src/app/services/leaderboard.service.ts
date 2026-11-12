@@ -8,9 +8,10 @@ import {
   MaxSumOption,
   OPERATION_OPTIONS,
 } from '../models/game.models';
+import { STORAGE_PREFIX } from '../utils/storage-migration';
 
-const STORAGE_KEY = 'mate-aventura:leaderboard';
-const PLAYER_KEY = 'mate-aventura:player';
+const STORAGE_KEY = `${STORAGE_PREFIX}leaderboard`;
+const PLAYER_KEY = `${STORAGE_PREFIX}player`;
 const MAX_ENTRIES_PER_LEVEL = 10;
 export const PLAYER_NAME_MAX_LENGTH = 20;
 

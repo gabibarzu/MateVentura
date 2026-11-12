@@ -48,7 +48,7 @@ html {
     )
   );
 
-  // Map the Mate-Aventura palette onto the Material system tokens.
+  // Map the MateVentura palette onto the Material system tokens.
   @include mat.theme-overrides(
     (
       primary: $exodus-fruit,
