@@ -32,8 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build
-        # The site is served from https://<user>.github.io/<repo>/, so the base href must be the repo name.
-        run: npx ng build --base-href "/${{ github.event.repository.name }}/"
+        # Resolve assets from the current site URL, including after repository renames.
+        run: npx ng build --base-href "./"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
