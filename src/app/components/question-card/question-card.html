@@ -72,7 +72,7 @@
 
   <div class="card__feedback" aria-live="polite">
     @if (learning()) {
-      <span [class.card__hint]="status() !== 'correct'" [class.card__message]="status() === 'correct'">{{ feedback() }}</span>
+      <span [class.card__hint]="status() === 'pending'" [class.card__message]="status() !== 'pending'">{{ feedback() }}</span>
     } @else {
     @switch (status()) {
       @case ('correct') {

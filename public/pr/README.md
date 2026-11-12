@@ -10,7 +10,7 @@ Link: https://gabibarzu.github.io/MateVentura/
 - **Joc:** joc rapid, niveluri Ușor / Mediu / Greu și setări personalizate; rezultate și clasament local pentru nivelurile standard.
 - **Cifrel:** partenerul curios care a venit să-l ajute pe Matei și îi invită și pe alți copii să descopere matematica.
 - Adunări și scăderi, pentru copii de aproximativ 5–8 ani; gratuit, fără cont și fără reclame.
-- **Aventura în Numărilia este în pregătire**, nu este încă un mod disponibil.
+- **Aventură:** prima misiune, „Repară racheta lui Cifrel”, are cinci calcule, piese care se montează și o lansare la final. Progresul reparației se păstrează local. Alte misiuni în Numărilia sunt în pregătire.
 
 ## Imagini
 
@@ -36,6 +36,7 @@ Imaginile promoționale se regenerează cu `npm run pr:generate`, folosind ilust
 >
 > 🌱 **Învățare:** în ritmul copilului, fără timp sau scor, cu ajutor pas cu pas.
 > 🚀 **Joc:** provocări cu adunări și scăderi, niveluri și clasament pe dispozitiv.
+> 🛠️ **Aventură:** repară racheta lui Cifrel, piesă cu piesă, apoi lanseaz-o spre Numărilia!
 > 💜 Gratuit, fără cont, fără reclame. Pentru copii de aproximativ 5–8 ani.
 >
 > **Numere mici. Aventuri mari.**
@@ -88,7 +89,7 @@ Text alternativ pentru poster: „MateVentura cu Cifrel. Numere mici. Aventuri m
 
 ## Confidențialitate și formulări corecte
 
-Progresul, numele folosit în clasament, scorurile și preferința de sunet sunt stocate local în browser. Nu sunt sincronizate între dispozitive și se pot pierde dacă datele site-ului sunt șterse.
+Progresul învățării și al misiunii cu racheta, numele folosit în clasament, scorurile și preferința de sunet sunt stocate local în browser. Nu sunt sincronizate între dispozitive și se pot pierde dacă datele site-ului sunt șterse.
 
 Nu prezenta aplicația drept „fără nicio colectare de date”: găzduirea pe GitHub Pages implică cereri de rețea și politica furnizorului. „Fără cont și fără reclame” descrie funcționalitatea aplicației, nu o garanție despre infrastructura de găzduire.
 

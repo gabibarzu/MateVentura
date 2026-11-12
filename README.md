@@ -7,7 +7,8 @@ Built with Angular 22 (standalone components, Signals, Reactive Forms) and Angul
 
 ## Features
 
-- **Start screen**: choose **Învățare** (adaptive practice with progressive help, without a timer or score) or **Joc**. Adventure in Numărilia is coming later and is not playable yet.
+- **Start screen**: choose **Învățare** (adaptive practice with progressive help), **Joc**, or **Aventură**.
+- **First adventure mission**: a compact rocket workshop with five addition/subtraction exercises (no counting dots), automatic piece progression and launch countdown. Incorrect answers do not remove pieces; after three attempts Cifrel demonstrates the answer and helps fit the piece. Progress is saved locally. More Numărilia missions are not available yet.
 - **Game setup**: one-tap **Joc rapid** (5 mixed exercises up to 20), three levels (**Ușor / Mediu / Greu**) and **Personalizat** settings.
 - **Cifrel's story**: a playful companion who comes to help Matei and other curious children discover mathematics.
 - **Question cards**: big numbers, digits-only answer input with autofocus, ENTER to submit, green/red feedback and smooth transition to the next exercise.
@@ -59,6 +60,7 @@ src/
 | `mateventura:player`      | Last player name                 |
 | `mateventura:muted`       | Sound on/off                     |
 | `mateventura:learning`    | Adaptive learning progress       |
+| `mateventura:adventure:rocket` | Repaired rocket pieces (0–5) |
 
 Keys saved under the old name (`mate-aventura:*`) are moved to the new ones on start
 (`src/app/utils/storage-migration.ts`).

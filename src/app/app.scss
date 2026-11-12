@@ -144,6 +144,10 @@
   box-sizing: border-box;
 }
 
+.workspace--adventure {
+  padding-block: 16px;
+}
+
 // Touch screens pin the active card under the header: leave enough room below the last card to scroll it
 // up there (above where the keyboard opens).
 @media (pointer: coarse) {

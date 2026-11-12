@@ -1,0 +1,68 @@
+<section class="mission" aria-labelledby="mission-title">
+  <header class="mission__heading">
+    <span class="mission__eyebrow">NUMĂRILIA · MISIUNEA 1 <span class="mission__beta">Beta</span></span>
+    <h2 id="mission-title">Repară racheta lui Cifrel</h2>
+    <p>Cinci piese de reparat. Fără grabă, fără penalizări.</p>
+  </header>
+
+  <div class="mission__body">
+  <div class="launchpad" [class.launchpad--launched]="launched()" [class.launchpad--landed]="landed()">
+    <span class="planet planet--one" aria-hidden="true"></span>
+    <span class="planet planet--two" aria-hidden="true"></span>
+    <span class="space-star space-star--one" aria-hidden="true">✦</span>
+    <span class="space-star space-star--two" aria-hidden="true">✧</span>
+    <svg class="rocket" viewBox="0 0 240 300" role="img" [attr.aria-label]="'Racheta lui Cifrel: ' + adventure.repaired() + ' din 5 piese montate'">
+      <ellipse cx="120" cy="280" rx="85" ry="10" fill="#ffffff20" />
+      <path class="rocket__flame" d="M98 239 Q120 330 142 239Z" fill="#fdcb6e" />
+      <path class="rocket__piece" [class.rocket__piece--ready]="adventure.repaired() >= 1" d="M92 218H148L155 244H85Z" fill="#00cec9" />
+      <path class="rocket__piece" [class.rocket__piece--ready]="adventure.repaired() >= 2" d="M83 164Q42 183 49 240L92 216Z" fill="#e84393" />
+      <path class="rocket__piece" [class.rocket__piece--ready]="adventure.repaired() >= 3" d="M157 164Q198 183 191 240L148 216Z" fill="#e84393" />
+      <path d="M120 45Q72 93 83 218H157Q168 93 120 45Z" fill="#f3efff" stroke="#b9aaff" stroke-width="4" />
+      <circle class="rocket__piece" [class.rocket__piece--ready]="adventure.repaired() >= 4" cx="120" cy="140" r="26" fill="#00cec9" />
+      <circle cx="112" cy="133" r="7" fill="white" opacity=".8" />
+      <path class="rocket__piece" [class.rocket__piece--ready]="adventure.repaired() >= 5" d="M120 38Q96 62 87 90H153Q144 62 120 38Z" fill="#fd79a8" />
+      <path d="M104 192H136" stroke="#6c5ce7" stroke-width="6" stroke-linecap="round" />
+    </svg>
+    <app-cifrel full mood="happy" class="mission__cifrel" aria-hidden="true" />
+    @if (countdown() !== null) {
+      <span class="countdown" role="status">{{ countdown() }}</span>
+    }
+    <p class="launchpad__caption">{{ landed() ? 'Bun venit în Numărilia!' : launched() ? 'Decolăm! Spre Numărilia!' : adventure.repaired() + ' / 5 piese montate' }}</p>
+  </div>
+
+  <div class="mission__panel" [class.mission__panel--exercise]="started() && (!complete() || solved())">
+  @if (!started() && !complete()) {
+    <div class="mission__brief">
+      <h3>Bip! Am o mică problemă…</h3>
+      <p>Am desfăcut racheta în loc de gustare! Mă ajuți cu cinci calcule?
+        Dacă ne încurcăm, reparăm împreună. Nicio greșeală nu oprește aventura.</p>
+      <button mat-flat-button class="big-btn btn-purple" (click)="start()">
+        <mat-icon svgIcon="rocket_launch" />
+        {{ adventure.repaired() ? 'Continuă reparația' : 'Hai să reparăm!' }}
+      </button>
+    </div>
+  } @else if (complete() && !solved()) {
+    <div class="mission__brief mission__complete" aria-live="polite">
+      <h3>{{ landed() ? 'Misiune îndeplinită!' : launched() ? 'Ține-ți antena! Decolăm!' : countdown() !== null ? 'Pregătim decolarea…' : 'Racheta este gata!' }}</h3>
+      <p>{{ landed() ? 'Ai ajutat un prieten și ai mers până la capăt. Următoarele misiuni vin în curând!' : 'Motor, aripi, hublou, vârf… Toate la locul lor. Privește racheta!' }}</p>
+      @if (!launched() && countdown() === null) {
+        <button mat-flat-button class="big-btn btn-purple" (click)="launch()"><mat-icon svgIcon="rocket_launch" />Lansează racheta</button>
+      } @else if (landed()) {
+        <button mat-flat-button class="big-btn btn-purple" (click)="replay()">Mai reparăm o dată</button>
+      }
+    </div>
+  } @else {
+    <app-question-card #questionCard [state]="state()" [index]="exerciseIndex()" [active]="true"
+      [learning]="true" [badge]="'Piesa ' + (exerciseIndex() + 1) + ' / 5 · ' + parts[exerciseIndex()]"
+      [showDots]="false" [retryToken]="retryToken()" [answerLocked]="solved()"
+      [feedback]="message() || 'Scrie răspunsul și apasă Enter.'" (answered)="answer($event)">
+      <div class="mission__controls">
+        <button mat-flat-button type="button" class="big-btn btn-purple" [disabled]="solved() || wrong()"
+          (click)="questionCard.submit()">{{ solved() ? 'Piesa se montează…' : 'Verifică' }}</button>
+      </div>
+    </app-question-card>
+  }
+  </div>
+  </div>
+  <p class="mission__footnote">Greșelile nu iau piese. Progresul se păstrează local, dacă browserul permite.</p>
+</section>

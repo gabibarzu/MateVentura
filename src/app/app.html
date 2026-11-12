@@ -41,7 +41,7 @@
         </button>
       }
 
-      @if (playMode() !== 'learning') {
+      @if (playMode() === 'game' || playMode() === null) {
       <button
         mat-icon-button
         type="button"
@@ -88,9 +88,11 @@
   }
 </header>
 
-<main class="workspace" [class.workspace--playing]="status() === 'playing' || playMode() === 'learning'">
+<main class="workspace" [class.workspace--adventure]="playMode() === 'adventure'" [class.workspace--playing]="status() === 'playing' || playMode() === 'learning'">
   @if (playMode() === 'learning') {
     <app-learning />
+  } @else if (playMode() === 'adventure') {
+    <app-adventure />
   } @else if (status() !== 'idle') {
     <section class="questions" aria-label="Exerciții">
       @for (item of visibleQuestions(); track item.question.id; let i = $index) {

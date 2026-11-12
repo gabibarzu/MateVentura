@@ -24,6 +24,7 @@ import type { ResultsDialog } from './components/results-dialog/results-dialog';
 import { SetupDialog } from './components/setup-dialog/setup-dialog';
 import { ModeDialog, PlayMode } from './components/mode-dialog/mode-dialog';
 import { Learning } from './components/learning/learning';
+import { Adventure } from './components/adventure/adventure';
 import { KID_DIALOG_CONFIG } from './components/dialog.config';
 import { BumpOnChange } from './directives/bump-on-change';
 import {
@@ -64,6 +65,7 @@ const isTouchScreen = () => window.matchMedia('(pointer: coarse)').matches;
     MatProgressBarModule,
     QuestionCard,
     Learning,
+    Adventure,
     BumpOnChange,
   ],
   templateUrl: './app.html',
@@ -120,7 +122,8 @@ export class App {
       this.currentIndex();
       this.cards();
       this.bringActiveCardIntoView(true);
-      const card = this.playMode() === 'learning' ? this.learningView()?.activeCard : this.cards().at(-1)?.element;
+      const card = this.playMode() === 'learning' ? this.learningView()?.activeCard
+        : this.playMode() === 'adventure' ? undefined : this.cards().at(-1)?.element;
       if (!card) return;
       let previousHeight = card.offsetHeight;
       const observer = new ResizeObserver(() => {
@@ -158,11 +161,11 @@ export class App {
       restoreFocus: false,
       autoFocus: 'dialog',
     }).afterClosed().subscribe(mode => {
-      if (mode === 'learning') {
+      if (mode === 'learning' || mode === 'adventure') {
         this.stopTimer();
         this.clearAdvanceTimeout();
         this.status.set('idle');
-        this.playMode.set('learning');
+        this.playMode.set(mode);
       } else if (mode === 'game') {
         this.openSetupDialog();
       } else if (isMidGame) {
@@ -281,7 +284,8 @@ export class App {
    * (`scrollIntoView` treats it as visible and therefore often doesn't scroll on mobile).
    */
   private bringActiveCardIntoView(smooth: boolean): void {
-    const card = this.playMode() === 'learning' ? this.learningView()?.activeCard : this.cards().at(-1)?.element;
+    const card = this.playMode() === 'learning' ? this.learningView()?.activeCard
+      : this.playMode() === 'adventure' ? undefined : this.cards().at(-1)?.element;
     if (!card || (this.status() !== 'playing' && this.playMode() !== 'learning')) {
       return;
     }

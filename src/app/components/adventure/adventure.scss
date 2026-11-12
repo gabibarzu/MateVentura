@@ -1,0 +1,66 @@
+:host { display: block; }
+.mission { color: #2d3436; }
+.mission__heading { text-align: center; margin-bottom: 16px; h2 { margin: 6px 0; color: #6c5ce7; font-size: clamp(1.35rem, 3vw, 2rem); } p { margin: 6px 0; font-size: .95rem; } }
+.mission__eyebrow { color: #007f76; font-size: .8rem; font-weight: 800; letter-spacing: 1.5px; }
+.mission__beta { display: inline-block; padding: 3px 8px; margin-left: 6px; border-radius: 8px; background: #ffeaa7; color: #704b00; font-size: .65rem; vertical-align: middle; text-transform: uppercase; letter-spacing: .5px; }
+.mission__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px; }
+.launchpad { position: relative; display: grid; place-items: center; height: clamp(130px, 24dvh, 200px); overflow: hidden; border-radius: 28px; border: 3px solid #a99aef; background: radial-gradient(ellipse at bottom, #6c5ce7, #242044); box-shadow: 0 5px 0 #d9d2fa; }
+.rocket { width: 150px; height: 180px; max-height: 100%; position: relative; z-index: 1; }
+.rocket__piece { opacity: .14; stroke: #c7bfff; stroke-width: 2; stroke-dasharray: 4 4; transition: opacity .5s ease; }
+.rocket__piece--ready { opacity: 1; stroke: none; }
+.rocket__flame { opacity: 0; }
+.launchpad--launched .rocket { animation: liftoff 3.2s ease-in both; }
+.launchpad--launched .rocket__flame { opacity: 1; }
+.launchpad--landed::after { content: '✦'; position: absolute; color: #ffeaa7; font-size: 80px; }
+@keyframes liftoff {
+  0%, 15% { transform: translateY(0); }
+  22% { transform: translate(-3px, 0); }
+  29% { transform: translate(3px, -4px); }
+  42% { transform: translateY(-18px); }
+  100% { transform: translateY(-460px); }
+}
+.countdown { position: absolute; z-index: 3; right: 20px; top: 16px; font-size: 3.5rem; font-weight: 900; color: #ffeaa7; }
+.planet { position: absolute; border-radius: 50%; }
+.planet--one { width: 55px; height: 55px; left: 8%; top: 25px; background: #fdcb6e; box-shadow: inset -12px -6px 0 #e7ae4c; }
+.planet--two { width: 28px; height: 28px; right: 10%; top: 80px; background: #fd79a8; }
+.space-star { position: absolute; color: #ffeaa7; font-size: 26px; }
+.space-star--one { left: 35%; top: 20px; }.space-star--two { right: 18%; top: 150px; }
+.mission__cifrel { position: absolute; width: 78px; bottom: 34px; left: 3%; }
+.launchpad__caption { position: absolute; bottom: 12px; margin: 0 10px; color: #fff; font-size: .9rem; text-align: center; }
+.mission__panel { display: grid; align-items: center; min-width: 0; border: 2px solid #d5ccff; border-radius: 28px; background: #f7f4ff; padding: 22px; text-align: center; }
+.mission__panel--exercise { display: block; padding: 0; border: 0; background: transparent; text-align: initial; }
+.mission__controls { display: flex; justify-content: center; padding-top: 8px; }
+.mission__panel h3 { margin: 8px 0 16px; color: #6c5ce7; font-size: 1.4rem; }
+.mission__brief p { margin: 0 0 20px; line-height: 1.6; }
+.mission__footnote { text-align: center; font-size: .8rem; color: #636e72; line-height: 1.4; margin: 16px 0 0; }
+@media (max-width: 600px) {
+  .mission__heading { margin-bottom: 10px; p { font-size: .85rem; } }
+  .mission__body { grid-template-columns: 1fr; gap: 28px; }
+  .launchpad { min-height: 0; height: clamp(125px, 23dvh, 185px); }
+  .rocket { width: 130px; height: 160px; }
+  .mission__cifrel { width: 55px; bottom: 25px; left: 7%; }
+  .planet--one { width: 32px; height: 32px; top: 12px; }
+  .launchpad__caption { bottom: 5px; font-size: .8rem; }
+  .mission__panel { padding: 12px; border-radius: 20px; }
+  .mission__panel--exercise { padding: 0; }
+  .mission__panel h3 { font-size: 1.2rem; margin: 4px 0 8px; }
+  .mission__brief p { font-size: .9rem; line-height: 1.45; margin-bottom: 12px; }
+  .mission__footnote { font-size: .7rem; margin-top: 10px; }
+}
+@media (max-height: 500px) and (min-width: 601px) {
+  .launchpad { height: 110px; }
+  .rocket { height: 210px; width: 170px; }
+  .mission__panel { padding: 12px; }
+}
+@media (max-height: 700px) and (max-width: 600px) {
+  .mission__heading p { display: none; }
+  .launchpad { height: 120px; }
+  .rocket { width: 100px; height: 125px; }
+  .mission__panel { padding: 10px; }
+  .mission__panel--exercise { padding: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rocket__piece { transition: none; }
+  .launchpad--launched .rocket { animation: launch-fade 3.2s ease-out both; }
+}
+@keyframes launch-fade { 0%, 30% { opacity: 1; } 100% { opacity: 0; } }

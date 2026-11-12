@@ -7,7 +7,7 @@ import { Cifrel } from '../cifrel/cifrel';
 import { loadCifrelStoryDialog } from '../lazy-dialogs';
 import { KID_DIALOG_CONFIG } from '../dialog.config';
 
-export type PlayMode = 'learning' | 'game';
+export type PlayMode = 'learning' | 'game' | 'adventure';
 
 @Component({
   selector: 'app-mode-dialog',
@@ -33,11 +33,11 @@ export type PlayMode = 'learning' | 'game';
           <span class="mode-description">Alege provocarea și bate-ți recordul!</span>
           <small>Joc rapid · Niveluri · Clasament</small>
         </button>
-        <button type="button" class="mode mode--soon" disabled>
+        <button type="button" class="mode mode--adventure" [mat-dialog-close]="'adventure'">
           <span class="mode-icon"><mat-icon svgIcon="stars" /></span>
-          <strong>Aventură</strong>
-          <span class="mode-description">Explorează Numărilia, lumea roboților și a numerelor.</span>
-          <small>Va apărea în curând</small>
+          <strong>Aventură <span class="beta-badge">Beta</span></strong>
+          <span class="mode-description">Repară racheta lui Cifrel și pornește spre Numărilia!</span>
+          <small>Prima misiune · 5 piese de reparat</small>
         </button>
       </div>
       <section class="mode-welcome" aria-label="Despre Cifrel">
@@ -119,6 +119,8 @@ export type PlayMode = 'learning' | 'game';
     .mode small { padding: 6px 10px; border-radius: 12px; background: #fff; font-weight: 700; }
     .mode--learning { --mode-color: #00a88a; --mode-tint: #e5faf3; --mode-hover: #cef5e8; }
     .mode--game { --mode-color: #0984e3; --mode-tint: #eaf5ff; --mode-hover: #d7ecff; }
+    .mode--adventure { --mode-color: #8e44ad; --mode-tint: #f5ebfc; --mode-hover: #ecdbf7; }
+    .beta-badge { display: inline-block; vertical-align: middle; padding: 3px 7px; border-radius: 8px; background: #ffeaa7; color: #704b00; font-size: .65rem; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: .5px; }
     .mode:not(:disabled):hover { background: var(--mode-hover); }
     .mode:focus-visible { outline: 3px solid #0984e3; outline-offset: 4px; }
     .mode--soon { --mode-color: #8a969a; border-style: dashed; box-shadow: 0 6px 0 #c6cfd2; cursor: not-allowed; }
