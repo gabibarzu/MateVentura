@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   input,
@@ -36,6 +37,11 @@ export class QuestionCard {
   readonly index = input.required<number>();
   readonly active = input.required<boolean>();
   readonly showDots = input(false);
+  readonly learning = input(false);
+  readonly badge = input<string | null>(null);
+  readonly feedback = input('');
+  readonly retryToken = input(0);
+  readonly answerLocked = input(false);
 
   readonly answered = output<number>();
 
@@ -76,6 +82,18 @@ export class QuestionCard {
   });
 
   constructor() {
+    effect(() => {
+      if (!this.learning()) return;
+      this.retryToken();
+      if (this.answerLocked()) {
+        this.answerControl.setValue(String(this.question().correctAnswer));
+        this.answerControl.disable();
+      } else {
+        this.answerControl.reset();
+        this.answerControl.enable();
+        this.focus();
+      }
+    });
     // Each card is rendered for the first time when it becomes the active question: focus its input.
     // (Scrolling is handled by the App, which knows about the sticky header and the mobile keyboard.)
     afterNextRender(() => {
@@ -126,8 +144,8 @@ export class QuestionCard {
     }
   }
 
-  private submit(): void {
-    if (this.answerControl.disabled || this.status() !== 'pending') {
+  submit(): void {
+    if (!this.active() || this.answerLocked() || this.answerControl.disabled || this.status() !== 'pending') {
       return;
     }
     if (this.answerControl.invalid) {
@@ -135,7 +153,7 @@ export class QuestionCard {
       return;
     }
 
-    this.answerControl.disable();
+    if (!this.learning()) this.answerControl.disable();
     this.answered.emit(Number(this.answerControl.value));
   }
 

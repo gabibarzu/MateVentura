@@ -23,7 +23,6 @@ import {
   SetupDialogData,
 } from '../../models/game.models';
 import { loadLeaderboardDialog } from '../lazy-dialogs';
-import { InstallService } from '../../services/install.service';
 import type { LeaderboardDialog } from '../leaderboard-dialog/leaderboard-dialog';
 
 /** Global class (styles.scss) that hides a dialog panel while another dialog replaces it. */
@@ -46,7 +45,6 @@ const HIDDEN_PANEL_CLASS = 'kid-dialog--hidden';
 export class SetupDialog {
   private readonly dialogRef = inject<MatDialogRef<SetupDialog, GameSettings>>(MatDialogRef);
   private readonly dialog = inject(MatDialog);
-  protected readonly install = inject(InstallService);
   protected readonly data = inject<SetupDialogData>(MAT_DIALOG_DATA);
 
   /** `levels`: quick game + level cards (default). `custom`: the full settings form. */

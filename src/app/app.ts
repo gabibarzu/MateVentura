@@ -22,6 +22,8 @@ import type { LeaderboardDialog } from './components/leaderboard-dialog/leaderbo
 import { QuestionCard } from './components/question-card/question-card';
 import type { ResultsDialog } from './components/results-dialog/results-dialog';
 import { SetupDialog } from './components/setup-dialog/setup-dialog';
+import { ModeDialog, PlayMode } from './components/mode-dialog/mode-dialog';
+import { Learning } from './components/learning/learning';
 import { BumpOnChange } from './directives/bump-on-change';
 import {
   DEFAULT_SETTINGS,
@@ -60,6 +62,7 @@ const isTouchScreen = () => window.matchMedia('(pointer: coarse)').matches;
     MatTooltipModule,
     MatProgressBarModule,
     QuestionCard,
+    Learning,
     BumpOnChange,
   ],
   templateUrl: './app.html',
@@ -75,9 +78,11 @@ export class App {
   protected readonly install = inject(InstallService);
 
   private readonly cards = viewChildren(QuestionCard);
+  private readonly learningView = viewChild(Learning);
   private readonly header = viewChild.required<ElementRef<HTMLElement>>('header');
 
   protected readonly settings = signal<GameSettings | null>(null);
+  protected readonly playMode = signal<PlayMode | null>(null);
   protected readonly questions = signal<QuestionState[]>([]);
   protected readonly currentIndex = signal(0);
   protected readonly status = signal<GameStatus>('idle');
@@ -107,13 +112,26 @@ export class App {
   private advanceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    afterNextRender(() => this.openSetupDialog());
+    afterNextRender(() => this.openModeDialog());
 
-    // Bring the new active card into view once it has been rendered.
-    afterRenderEffect(() => {
+    // Follow both new exercises and cards expanding with learning hints/solutions.
+    afterRenderEffect((onCleanup) => {
       this.currentIndex();
       this.cards();
       this.bringActiveCardIntoView(true);
+      const card = this.playMode() === 'learning' ? this.learningView()?.activeCard : this.cards().at(-1)?.element;
+      if (!card) return;
+      let previousHeight = card.offsetHeight;
+      const observer = new ResizeObserver(() => {
+        const height = card.offsetHeight;
+        if (height !== previousHeight) {
+          previousHeight = height;
+          // Follow the CSS expansion frame by frame without restarting smooth scrolls.
+          this.bringActiveCardIntoView(false);
+        }
+      });
+      observer.observe(card);
+      onCleanup(() => observer.disconnect());
     });
 
     // On phones the virtual keyboard opening/closing resizes the visible area (and can cancel a smooth scroll):
@@ -128,11 +146,38 @@ export class App {
     });
   }
 
+  protected openModeDialog(): void {
+    if (this.dialog.openDialogs.length) return;
+    const isMidGame = this.playMode() === 'game' && this.status() === 'playing';
+    if (isMidGame) this.pauseGame();
+    this.dialog.open<ModeDialog, boolean, PlayMode>(ModeDialog, {
+      data: this.playMode() !== null,
+      width: '880px',
+      maxWidth: '95vw',
+      maxHeight: '95dvh',
+      disableClose: this.playMode() === null,
+      restoreFocus: false,
+      autoFocus: 'dialog',
+      panelClass: 'kid-dialog',
+    }).afterClosed().subscribe(mode => {
+      if (mode === 'learning') {
+        this.stopTimer();
+        this.clearAdvanceTimeout();
+        this.status.set('idle');
+        this.playMode.set('learning');
+      } else if (mode === 'game') {
+        this.openSetupDialog();
+      } else if (isMidGame) {
+        this.resumeGame();
+      }
+    });
+  }
+
   protected openSetupDialog(): void {
     const isMidGame = this.status() === 'playing';
     const data: SetupDialogData = {
       settings: this.settings(),
-      canCancel: isMidGame,
+      canCancel: true,
     };
 
     // Pause the running game while the kid is choosing new settings.
@@ -158,6 +203,8 @@ export class App {
           this.startGame(settings);
         } else if (isMidGame) {
           this.resumeGame();
+        } else {
+          this.openModeDialog();
         }
       });
   }
@@ -242,8 +289,8 @@ export class App {
    * (`scrollIntoView` treats it as visible and therefore often doesn't scroll on mobile).
    */
   private bringActiveCardIntoView(smooth: boolean): void {
-    const card = this.cards().at(-1)?.element;
-    if (!card || this.status() !== 'playing') {
+    const card = this.playMode() === 'learning' ? this.learningView()?.activeCard : this.cards().at(-1)?.element;
+    if (!card || (this.status() !== 'playing' && this.playMode() !== 'learning')) {
       return;
     }
 
@@ -266,7 +313,12 @@ export class App {
     // the whole window for the keyboard without telling the page, so the keyboard can't be measured; at the
     // top of the screen the card stays clear of it anyway.
     // Elsewhere: never scroll so far that the top of the card (the exercise) goes under the header.
-    const delta = isTouchScreen()
+    // Long learning explanations may not fit at once: reveal their bottom/actions rather
+    // than pinning the equation at the top and leaving the new content below the viewport.
+    const longLearningCard = this.playMode() === 'learning' && card.offsetHeight > visibleBottom - visibleTop;
+    const delta = longLearningCard
+      ? Math.max(bottomOverflow, 0)
+      : isTouchScreen()
       ? topOverflow
       : topOverflow < 0
         ? topOverflow
@@ -294,6 +346,7 @@ export class App {
 
   private startGame(settings: GameSettings): void {
     this.clearAdvanceTimeout();
+    this.playMode.set('game');
     this.settings.set(settings);
     this.questions.set(
       this.generator.generate(settings).map((question): QuestionState => ({ question, userAnswer: null, status: 'pending' })),

@@ -1,0 +1,71 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.learning {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.learning__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.learning__help {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.learning__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 280ms ease,
+    opacity 200ms ease,
+    visibility 280ms;
+
+  &--open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.learning__reveal-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learning__reveal {
+    transition: none;
+  }
+}
+
+.learning__steps {
+  width: fit-content;
+  margin: 12px auto;
+  padding-left: 24px;
+  text-align: left;
+}
+
+.learning__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  text-align: center;
+  color: #636e72;
+}

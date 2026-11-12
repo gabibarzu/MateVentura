@@ -1,0 +1,75 @@
+<section class="learning" aria-label="Învățare cu Cifrel">
+  @for (completed of history(); track completed.state.question.id; let i = $index) {
+    <app-question-card
+      [state]="completed.state"
+      [index]="i"
+      [active]="false"
+      [learning]="true"
+      [badge]="'Învățare · ' + completed.label"
+      [feedback]="completed.feedback"
+      [answerLocked]="true"
+      [showDots]="completed.helped"
+    />
+  }
+  @for (exercise of [state()]; track exercise.question.id) {
+    <app-question-card
+      #exerciseCard
+      [state]="exercise"
+      [index]="history().length"
+      [active]="true"
+      [learning]="true"
+      [badge]="'Învățare · ' + (warmup() ? 'Încălzire' : label())"
+      [feedback]="message()"
+      [retryToken]="mistakes()"
+      [answerLocked]="solved() || revealed()"
+      [showDots]="helped()"
+      (answered)="submit($event)"
+    >
+      <div class="learning__reveal" [class.learning__reveal--open]="helped()">
+        <div class="learning__reveal-inner">
+        <div class="learning__help">
+          @if (question().operator === '+') {
+            <p>Adunăm cele două grupuri. Numără toate bulinuțele.</p>
+          } @else {
+            <p>Din {{ question().operandA }} bulinuțe tăiem {{ question().operandB }}. Numără câte rămân.</p>
+          }
+          <div class="learning__reveal" [class.learning__reveal--open]="mistakes() >= 2 || revealed()">
+            <div class="learning__reveal-inner">
+            <p>
+              Pornim de la {{ question().operandA }} și
+              {{ question().operator === '+' ? 'mai numărăm' : 'luăm câte o bulinuță, de' }}
+              {{ question().operandB }}{{ question().operator === '-' ? ' ori' : '' }}.
+            </p>
+            </div>
+          </div>
+          <div class="learning__reveal" [class.learning__reveal--open]="revealed()">
+            <div class="learning__reveal-inner">
+            <ol class="learning__steps" aria-label="Rezolvare pas cu pas">
+              @for (step of solutionSteps(); track $index) {
+                <li>{{ question().operator === '+' ? 'Mai adăugăm o bulinuță' : 'Luăm o bulinuță' }} → <strong>{{ step }}</strong></li>
+              }
+            </ol>
+            <p><strong>Rezultatul este {{ question().correctAnswer }}.</strong> Încercăm apoi un exercițiu asemănător.</p>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="learning__actions">
+        @if (revealed()) {
+          <button mat-flat-button type="button" class="big-btn" (click)="next()">
+            Mai încercăm împreună
+          </button>
+        } @else if (!solved()) {
+          <button mat-flat-button type="button" class="big-btn" (click)="exerciseCard.submit()">Verifică</button>
+          @if (!helped()) {
+            <button mat-button type="button" (click)="hint()">Ajută-mă cu bulinuțe</button>
+          }
+        }
+      </div>
+    </app-question-card>
+  }
+  <footer class="learning__footer">
+    <small>Fără grabă. Progresul tău se păstrează pe acest dispozitiv.</small>
+  </footer>
+</section>

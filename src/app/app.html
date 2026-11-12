@@ -8,7 +8,7 @@
 
     <span class="topbar__spacer"></span>
 
-    @if (status() !== 'idle') {
+    @if (playMode() === 'game' && status() !== 'idle') {
       <div class="topbar__stats">
         <span class="pill pill--timer">
           <mat-icon svgIcon="timer" />
@@ -41,6 +41,7 @@
         </button>
       }
 
+      @if (playMode() !== 'learning') {
       <button
         mat-icon-button
         type="button"
@@ -51,6 +52,7 @@
       >
         <mat-icon svgIcon="emoji_events" />
       </button>
+      }
 
       <button
         mat-icon-button
@@ -71,23 +73,25 @@
         mat-flat-button
         type="button"
         class="big-btn btn-pink topbar__new"
-        (click)="openSetupDialog()"
-        matTooltip="Joc Nou"
+        (click)="openModeDialog()"
+        matTooltip="Alege modul"
         matTooltipShowDelay="600"
       >
         <mat-icon svgIcon="rocket_launch" />
-        <span class="topbar__new-label">Joc Nou</span>
+        <span class="topbar__new-label">Moduri</span>
       </button>
     </div>
   </mat-toolbar>
 
-  @if (status() !== 'idle') {
+  @if (playMode() === 'game' && status() !== 'idle') {
     <mat-progress-bar class="progress" mode="determinate" [value]="progress()" aria-label="Progresul jocului" />
   }
 </header>
 
-<main class="workspace" [class.workspace--playing]="status() === 'playing'">
-  @if (status() !== 'idle') {
+<main class="workspace" [class.workspace--playing]="status() === 'playing' || playMode() === 'learning'">
+  @if (playMode() === 'learning') {
+    <app-learning />
+  } @else if (status() !== 'idle') {
     <section class="questions" aria-label="Exerciții">
       @for (item of visibleQuestions(); track item.question.id; let i = $index) {
         <app-question-card

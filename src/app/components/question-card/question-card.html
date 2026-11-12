@@ -13,7 +13,7 @@
   }
 
   <div class="card__header">
-    <span class="card__badge">Exercițiul {{ index() + 1 }}</span>
+    <span class="card__badge">{{ badge() ?? 'Exercițiul ' + (index() + 1) }}</span>
     @switch (status()) {
       @case ('correct') {
         <mat-icon class="card__status card__status--correct" aria-label="Corect" svgIcon="check_circle" />
@@ -71,6 +71,9 @@
   </div>
 
   <div class="card__feedback" aria-live="polite">
+    @if (learning()) {
+      <span [class.card__hint]="status() !== 'correct'" [class.card__message]="status() === 'correct'">{{ feedback() }}</span>
+    } @else {
     @switch (status()) {
       @case ('correct') {
         <span class="card__message card__message--correct">
@@ -90,5 +93,7 @@
         }
       }
     }
+    }
   </div>
+  <ng-content />
 </mat-card>
