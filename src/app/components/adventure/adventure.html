@@ -12,29 +12,26 @@
         <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" />
         <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#b5a2e8" stroke-width="5" stroke-dasharray="9 12" stroke-linecap="round" />
       </svg>
-      <button type="button" class="map-level map-level--available" (click)="enterMission()"
-        [attr.aria-label]="'Nivelul 1: Repară racheta lui Cifrel. ' + adventure.repaired() + ' din 5 piese montate'">
-        <span class="map-level__island"><mat-icon svgIcon="rocket_launch" /></span>
-        <span class="map-level__number">1</span>
-        <strong>Atelierul de rachete</strong>
-        <span class="map-level__status">{{ complete() ? 'Rachetă reparată · Revino la lansare' : adventure.repaired() ? 'Continuă · ' + adventure.repaired() + ' / 5 piese' : 'Repară racheta lui Cifrel' }}</span>
-      </button>
-      <div class="map-level map-level--forest" aria-label="Nivelul 2: Pădurea Adunărilor. În curând, indisponibil">
-        <span class="map-level__island"><mat-icon svgIcon="eco" /></span>
-        <span class="map-level__number">2</span>
-        <strong>Pădurea Adunărilor</strong>
-        <span class="map-level__status">În curând</span>
-      </div>
-      <div class="map-level map-level--bridge" aria-label="Nivelul 3: Podul Numerelor. În curând, indisponibil">
-        <span class="map-level__island"><mat-icon svgIcon="stars" /></span>
-        <span class="map-level__number">3</span>
-        <strong>Podul Numerelor</strong>
-        <span class="map-level__status">În curând</span>
-      </div>
+      @for (mission of levels; track mission.id) {
+        @let saved = adventure.getProgress(mission.id);
+        @let locked = !adventure.isUnlocked(mission.id);
+        <button type="button" class="map-level map-level--playable"
+          [class.map-level--locked]="locked" [disabled]="locked"
+          [class.map-level--available]="mission.id === 'rocket'"
+          [class.map-level--forest]="mission.id === 'forest'"
+          [class.map-level--bridge]="mission.id === 'bridge'"
+          (click)="enterMission(mission.id)"
+          [attr.aria-label]="'Nivelul ' + mission.number + ': ' + mission.title + '. ' + (locked ? 'Blocat. Termină nivelul ' + (mission.number - 1) + ' pentru deblocare.' : saved.completed + ' din 5 ' + mission.unit + (saved.step ? ', pasul 2 din 2' : ''))">
+          <span class="map-level__island"><mat-icon [svgIcon]="mission.id === 'rocket' ? 'rocket_launch' : mission.id === 'forest' ? 'eco' : 'stars'" /></span>
+          <span class="map-level__number">{{ mission.number }}</span>
+          <strong>{{ mission.title }}</strong>
+          <span class="map-level__status">{{ locked ? 'Blocat · Termină nivelul ' + (mission.number - 1) : saved.completed === 5 ? 'Gata · 5 / 5 · Revino' : saved.completed || saved.step ? 'Continuă · ' + saved.completed + ' / 5 ' + mission.unit : 'Începe · 0 / 5 ' + mission.unit }}{{ !locked && saved.step ? ' · pasul 2 / 2' : '' }}</span>
+        </button>
+      }
       <app-cifrel full mood="happy" class="world-map__cifrel" aria-hidden="true" />
     </div>
     <p class="map-coming"><strong>Aventura abia începe!</strong> Vor apărea și alte niveluri în curând.</p>
-    <p class="mission__footnote">Deocamdată poți juca nivelul 1. Progresul rachetei se păstrează în acest browser.</p>
+    <p class="mission__footnote">3 niveluri Beta: termină o misiune ca să o deblochezi pe următoarea. Progresul se păstrează în acest browser.</p>
   </section>
 } @else {
 <section class="mission" aria-labelledby="mission-title">
@@ -42,12 +39,13 @@
     <mat-icon svgIcon="arrow_back" />Harta Număriliei
   </button>
   <header class="mission__heading">
-    <span class="mission__eyebrow">NUMĂRILIA · NIVELUL 1 <span class="mission__beta">Beta</span></span>
-    <h2 id="mission-title">Repară racheta lui Cifrel</h2>
-    <p>Cinci piese de reparat. Fără grabă, fără penalizări.</p>
+    <span class="mission__eyebrow">NUMĂRILIA · NIVELUL {{ level().number }} <span class="mission__beta">Beta</span></span>
+    <h2 id="mission-title">{{ level().mission }}</h2>
+    <p>{{ level().description }}</p>
   </header>
 
   <div class="mission__body">
+  @if (selectedLevel() === 'rocket') {
   <div class="launchpad" [class.launchpad--launched]="launched()" [class.launchpad--landed]="landed()">
     <span class="planet planet--one" aria-hidden="true"></span>
     <span class="planet planet--two" aria-hidden="true"></span>
@@ -71,41 +69,83 @@
     }
     <p class="launchpad__caption">{{ landed() ? 'Bun venit în Numărilia!' : launched() ? 'Decolăm! Spre Numărilia!' : adventure.repaired() + ' / 5 piese montate' }}</p>
   </div>
+  } @else if (selectedLevel() === 'forest') {
+    <div class="forest-scene" [class.forest-scene--complete]="finale()"
+      role="img" [attr.aria-label]="'Pădure: ' + progress().completed + ' din 5 felinare aprinse.' + (finale() ? ' Licuricii luminează poteca!' : '')">
+      <div class="forest-scene__trees" aria-hidden="true"><span>♠</span><span>♠</span><span>♠</span><span>♠</span></div>
+      <div class="forest-scene__path" aria-hidden="true"></div>
+      <div class="lanterns" aria-hidden="true">
+        @for (piece of pieces; track piece) {
+          <span class="lantern" [class.lantern--lit]="progress().completed > piece"><span>{{ piece + 1 }}</span></span>
+        }
+      </div>
+      @if (finale()) {
+        <div class="fireflies" aria-hidden="true">
+          @for (fly of fireflies; track fly) { <span [style.--i]="fly">✦</span> }
+        </div>
+      }
+      <app-cifrel full mood="happy" class="forest-scene__cifrel" aria-hidden="true" />
+      <p class="scene-caption">{{ finale() ? 'Licuricii îți mulțumesc! Poteca este luminată.' : progress().completed + ' / 5 felinare aprinse' }}</p>
+    </div>
+  } @else {
+    <div class="bridge-scene" [class.bridge-scene--complete]="finale()" role="img"
+      [attr.aria-label]="'Pod: ' + progress().completed + ' din 5 scânduri montate.' + (progress().step ? ' Scândura ' + (progress().completed + 1) + ' este adusă deasupra podului, gata de montat.' : '') + (finale() ? ' Cifrel trece în siguranță râul!' : '')">
+      <div class="bridge-scene__river" aria-hidden="true"></div>
+      <div class="bridge-scene__bank bridge-scene__bank--left" aria-hidden="true"></div>
+      <div class="bridge-scene__bank bridge-scene__bank--right" aria-hidden="true"></div>
+      <div class="bridge-boards" aria-hidden="true">
+        @for (piece of pieces; track piece) {
+          <span class="bridge-board" [class.bridge-board--ready]="progress().completed > piece"
+            [class.bridge-board--staged]="progress().completed === piece && progress().step > 0">{{ piece + 1 }}</span>
+        }
+      </div>
+      <app-cifrel full mood="happy" class="bridge-scene__cifrel" aria-hidden="true" />
+      <p class="scene-caption">{{ finale() ? 'Podul e gata! Cifrel trece râul în siguranță.' : progress().step ? 'Scândura ' + (progress().completed + 1) + ' e aici! Încă un pas și o fixăm.' : progress().completed + ' / 5 scânduri montate' }}</p>
+    </div>
+  }
 
   <div class="mission__panel" [class.mission__panel--exercise]="started() && (!complete() || solved())">
   @if (!started() && !complete()) {
     <div class="mission__brief">
       <h3>Bip! Am o mică problemă…</h3>
-      <p>Am desfăcut racheta în loc de gustare! Mă ajuți cu cinci calcule?
-        Dacă ne încurcăm, reparăm împreună. Nicio greșeală nu oprește aventura.</p>
+      <p>{{ level().intro }} Nicio greșeală nu oprește aventura.</p>
       <button mat-flat-button class="big-btn btn-purple" (click)="start()">
-        <mat-icon svgIcon="rocket_launch" />
-        {{ adventure.repaired() ? 'Continuă reparația' : 'Hai să reparăm!' }}
+        <mat-icon [svgIcon]="selectedLevel() === 'rocket' ? 'rocket_launch' : 'stars'" />
+        {{ progress().completed || progress().step ? 'Continuă misiunea' : level().start }}
       </button>
     </div>
   } @else if (complete() && !solved()) {
+    @if (selectedLevel() === 'rocket') {
     <div class="mission__brief mission__complete" aria-live="polite">
       <h3>{{ landed() ? 'Misiune îndeplinită!' : launched() ? 'Ține-ți antena! Decolăm!' : countdown() !== null ? 'Pregătim decolarea…' : 'Racheta este gata!' }}</h3>
-      <p>{{ landed() ? 'Ai ajutat un prieten și ai mers până la capăt. Următoarele misiuni vin în curând!' : 'Motor, aripi, hublou, vârf… Toate la locul lor. Privește racheta!' }}</p>
+      <p>{{ landed() ? 'Ai ajutat un prieten! Pe hartă te așteaptă pădurea și podul.' : 'Motor, aripi, hublou, vârf… Toate la locul lor. Privește racheta!' }}</p>
       @if (!launched() && countdown() === null) {
         <button mat-flat-button class="big-btn btn-purple" (click)="launch()"><mat-icon svgIcon="rocket_launch" />Lansează racheta</button>
       } @else if (landed()) {
         <button mat-flat-button class="big-btn btn-purple" (click)="replay()">Mai reparăm o dată</button>
       }
     </div>
+    } @else {
+      <div class="mission__brief mission__complete" aria-live="polite">
+        <h3>{{ selectedLevel() === 'forest' ? 'Pădurea strălucește!' : 'Cifrel poate trece râul!' }}</h3>
+        <p>{{ selectedLevel() === 'forest' ? 'Cinci felinare aprinse și o mulțime de licurici! Ai găsit numerele lipsă.' : 'Cinci scânduri, pas cu pas. Ai folosit zecea ca să aduni și să scazi mai ușor!' }}</p>
+        <button mat-flat-button class="big-btn btn-purple" (click)="replay()">{{ level().replay }}</button>
+      </div>
+    }
+    <button mat-button type="button" class="mission__choose-level" (click)="backToMap()">Alege alt nivel de pe hartă</button>
   } @else {
     <app-question-card #questionCard [state]="state()" [index]="exerciseIndex()" [active]="true"
-      [learning]="true" [badge]="'Piesa ' + (exerciseIndex() + 1) + ' / 5 · ' + parts[exerciseIndex()]"
+      [learning]="true" [badge]="badge()" [answerPosition]="exercise().answerPosition" [equation]="exercise().equation"
       [showDots]="false" [retryToken]="retryToken()" [answerLocked]="solved()"
-      [feedback]="message() || 'Scrie răspunsul și apasă Enter.'" (answered)="answer($event)">
+      [feedback]="message() || instruction()" (answered)="answer($event)">
       <div class="mission__controls">
         <button mat-flat-button type="button" class="big-btn btn-purple" [disabled]="solved() || wrong()"
-          (click)="questionCard.submit()">{{ solved() ? 'Piesa se montează…' : 'Verifică' }}</button>
+          (click)="questionCard.submit()">{{ solved() ? 'Bravo! Continuăm…' : 'Verifică' }}</button>
       </div>
     </app-question-card>
   }
   </div>
   </div>
-  <p class="mission__footnote">Greșelile nu iau piese. Progresul se păstrează local, dacă browserul permite.</p>
+  <p class="mission__footnote">Greșelile nu iau progresul. După trei încercări, rezolvăm împreună. Progresul se păstrează local, dacă browserul permite.</p>
 </section>
 }

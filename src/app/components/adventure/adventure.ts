@@ -2,19 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signa
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { QuestionState } from '../../models/game.models';
+import { ADVENTURE_LEVELS, AdventureLevelId, adventureLevel, ROCKET_PARTS } from '../../models/adventure.models';
 import { AdventureService } from '../../services/adventure.service';
 import { ConfettiService } from '../../services/confetti.service';
 import { Cifrel } from '../cifrel/cifrel';
 import { QuestionCard } from '../question-card/question-card';
-
-const PARTS = ['Motorul', 'Aripa stângă', 'Aripa dreaptă', 'Hubloul', 'Vârful rachetei'];
-const EXERCISES = [
-  { a: 2, b: 3, subtract: false },
-  { a: 4, b: 2, subtract: false },
-  { a: 7, b: 3, subtract: true },
-  { a: 5, b: 4, subtract: false },
-  { a: 10, b: 2, subtract: true },
-];
 
 @Component({
   selector: 'app-adventure',
@@ -27,27 +19,44 @@ export class Adventure {
   protected readonly adventure = inject(AdventureService);
   private readonly confetti = inject(ConfettiService);
   private readonly card = viewChild(QuestionCard);
-  protected readonly parts = PARTS;
+  protected readonly levels = ADVENTURE_LEVELS;
+  protected readonly pieces = [0, 1, 2, 3, 4];
+  protected readonly fireflies = [0, 1, 2, 3, 4, 5, 6, 7];
+  protected readonly selectedLevel = signal<AdventureLevelId>('rocket');
+  protected readonly level = computed(() => adventureLevel(this.selectedLevel()));
+  protected readonly progress = computed(() => this.adventure.getProgress(this.selectedLevel()));
   protected readonly onMap = signal(true);
   protected readonly started = signal(false);
   protected readonly solved = signal(false);
   protected readonly launched = signal(false);
   protected readonly countdown = signal<number | null>(null);
   protected readonly landed = signal(false);
+  protected readonly finale = signal(false);
   protected readonly wrong = signal(false);
   protected readonly retryToken = signal(0);
   protected readonly mistakes = signal(0);
   protected readonly message = signal('');
-  protected readonly complete = computed(() => this.adventure.repaired() === PARTS.length);
+  protected readonly complete = computed(() => this.progress().completed === this.level().tasks.length);
   private timer: ReturnType<typeof setTimeout> | undefined;
-  // Keep the solved calculation visible briefly while its piece is being fitted.
+  // Keep the solved calculation visible while progress is saved and its scene updates.
   protected readonly exerciseIndex = signal(this.adventure.repaired());
+  protected readonly stepIndex = signal(0);
+  protected readonly exercise = computed(() => {
+    const tasks = this.level().tasks;
+    const task = tasks[Math.min(this.exerciseIndex(), tasks.length - 1)];
+    return task[Math.min(this.stepIndex(), task.length - 1)];
+  });
+  protected readonly badge = computed(() => {
+    const index = this.exerciseIndex();
+    if (this.selectedLevel() === 'rocket') return `Piesa ${index + 1} / 5 · ${ROCKET_PARTS[index]}`;
+    if (this.selectedLevel() === 'forest') return `Felinarul ${index + 1} / 5`;
+    return `Scândura ${index + 1} / 5 · Pasul ${this.stepIndex() + 1} / 2`;
+  });
+  protected readonly instruction = computed(() => this.selectedLevel() === 'rocket'
+    ? 'Scrie răspunsul și apasă Enter.' : this.exercise().hint);
   protected readonly state = computed<QuestionState>(() => {
-    const index = Math.min(this.exerciseIndex(), EXERCISES.length - 1);
-    const { a, b, subtract } = EXERCISES[index];
     return {
-      question: { id: index + 1, operandA: a, operandB: b, operator: subtract ? '-' : '+',
-        correctAnswer: subtract ? a - b : a + b },
+      question: { ...this.exercise().question, id: this.level().number * 100 + this.exerciseIndex() * 2 + this.stepIndex() },
       status: this.solved() ? 'correct' : this.wrong() ? 'wrong' : 'pending',
       userAnswer: null,
     };
@@ -57,18 +66,23 @@ export class Adventure {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.timer));
   }
 
-  protected enterMission(): void {
+  protected enterMission(level: AdventureLevelId = 'rocket'): void {
+    if (!this.adventure.isUnlocked(level)) return;
+    this.cancelTimers();
+    this.selectedLevel.set(level);
     this.onMap.set(false);
     this.started.set(false);
-    this.launched.set(false);
-    this.landed.set(false);
-    this.countdown.set(null);
+    this.resetScene();
     this.next();
+    // Completed missions remain independently replayable without resetting their saves.
+    this.finale.set(this.complete() && level !== 'rocket');
   }
 
   protected backToMap(): void {
-    clearTimeout(this.timer);
+    this.cancelTimers();
     this.onMap.set(true);
+    this.started.set(false);
+    this.countdown.set(null);
   }
 
   protected start(): void {
@@ -77,17 +91,17 @@ export class Adventure {
   }
 
   protected answer(value: number): void {
-    if (this.solved() || this.wrong() || this.exerciseIndex() >= PARTS.length) return;
+    if (this.onMap() || !this.started() || this.solved() || this.wrong() || this.complete()) return;
+    if (!Number.isSafeInteger(value) || value < 0) return;
     if (value !== this.state().question.correctAnswer) {
       this.mistakes.update(n => n + 1);
       this.wrong.set(true);
       if (this.mistakes() >= 3) {
-        this.message.set('Reparăm împreună. Cifrel îți arată calculul.');
-        this.later(() => { this.wrong.set(false); this.repair(true); }, 900);
+        this.message.set('Rezolvăm împreună. Cifrel îți arată calculul.');
+        this.later(() => { this.wrong.set(false); this.finishStep(true); }, 900);
       } else {
-        this.message.set(this.mistakes() === 1 ? 'Mai încercăm! Nu pierzi nicio piesă.'
-          : 'Cifrel te ajută: ' + this.state().question.operandA + (this.state().question.operator === '+'
-            ? ' și încă ' : ' din care iei ') + this.state().question.operandB + '. Ia-o încet.');
+        this.message.set(this.mistakes() === 1 ? 'Mai încercăm! Nu pierzi progresul.'
+          : 'Cifrel te ajută: ' + this.exercise().hint);
         this.later(() => {
           this.wrong.set(false);
           this.retryToken.update(n => n + 1);
@@ -95,23 +109,31 @@ export class Adventure {
       }
       return;
     }
-    this.repair(false);
+    this.finishStep(false);
   }
 
-  private repair(withHelp: boolean): void {
+  private finishStep(withHelp: boolean): void {
     this.solved.set(true);
-    this.adventure.repair();
+    this.adventure.advance(this.selectedLevel());
+    const taskDone = this.progress().completed > this.exerciseIndex();
+    const success = this.selectedLevel() === 'rocket' ? `${ROCKET_PARTS[this.exerciseIndex()]}: gata!`
+      : this.selectedLevel() === 'forest' ? 'Felinar aprins!' : taskDone ? 'Scândura este montată!'
+        : 'Am ajuns la 10 și am adus scândura! Calculăm restul ca să o fixăm.';
     this.message.set(withHelp
-      ? `Reparăm împreună: ${this.state().question.operandA} ${this.state().question.operator} ${this.state().question.operandB} = ${this.state().question.correctAnswer}. Piesa este montată!`
-      : `${PARTS[this.exerciseIndex()]}: gata!`);
+      ? `Împreună: ${this.exercise().explanation}. ${success}`
+      : `${this.selectedLevel() === 'rocket' ? '' : this.exercise().explanation + '. '}${success}`);
     this.later(() => {
       this.next();
-      if (this.complete()) this.launch();
+      if (this.complete()) {
+        if (this.selectedLevel() === 'rocket') this.launch();
+        else this.finale.set(true);
+      }
     }, withHelp ? 2600 : 1100);
   }
 
   private next(): void {
-    this.exerciseIndex.set(this.adventure.repaired());
+    this.exerciseIndex.set(this.progress().completed);
+    this.stepIndex.set(this.progress().step);
     this.solved.set(false);
     this.wrong.set(false);
     this.mistakes.set(0);
@@ -120,7 +142,7 @@ export class Adventure {
   }
 
   protected launch(): void {
-    if (this.launched() || this.countdown() !== null) return;
+    if (this.onMap() || this.selectedLevel() !== 'rocket' || !this.complete() || this.launched() || this.countdown() !== null) return;
     this.countdown.set(3);
     const tick = () => {
       const count = this.countdown()!;
@@ -140,13 +162,22 @@ export class Adventure {
   }
 
   protected replay(): void {
-    this.adventure.restart();
-    clearTimeout(this.timer);
+    this.cancelTimers();
+    this.adventure.restart(this.selectedLevel());
+    this.resetScene();
+    this.next();
+    this.started.set(true);
+  }
+
+  private resetScene(): void {
     this.launched.set(false);
     this.landed.set(false);
     this.countdown.set(null);
-    this.next();
-    this.started.set(true);
+    this.finale.set(false);
+  }
+
+  private cancelTimers(): void {
+    clearTimeout(this.timer);
   }
 
   private later(action: () => void, delay: number): void {

@@ -1,5 +1,7 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   afterNextRender,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -16,7 +18,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { QuestionState } from '../../models/game.models';
+import { AnswerPosition, QuestionEquation, QuestionState } from '../../models/game.models';
 import { Cifrel, CifrelMood } from '../cifrel/cifrel';
 
 const MAX_ANSWER_LENGTH = 3;
@@ -27,7 +29,7 @@ type DotKind = 'a' | 'b' | 'taken';
 
 @Component({
   selector: 'app-question-card',
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, Cifrel],
+  imports: [NgTemplateOutlet, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, Cifrel],
   templateUrl: './question-card.html',
   styleUrl: './question-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +44,8 @@ export class QuestionCard {
   readonly feedback = input('');
   readonly retryToken = input(0);
   readonly answerLocked = input(false);
+  readonly answerPosition = input<AnswerPosition>('result');
+  readonly equation = input<QuestionEquation | null>(null);
 
   readonly answered = output<number>();
 
@@ -58,6 +62,15 @@ export class QuestionCard {
   protected readonly praise = PRAISES[Math.floor(Math.random() * PRAISES.length)];
 
   protected readonly question = computed(() => this.state().question);
+  protected readonly displayedEquation = computed<QuestionEquation>(() => this.equation() ?? {
+    operandA: this.question().operandA, operandB: this.question().operandB,
+    operator: this.question().operator, result: this.question().correctAnswer,
+  });
+  protected readonly answerLabel = computed(() => {
+    const q = this.displayedEquation();
+    if (this.answerPosition() === 'result') return `Răspuns pentru ${q.operandA} ${q.operator} ${q.operandB}`;
+    return `Numărul lipsă din ${this.answerPosition() === 'operandA' ? '?' : q.operandA} ${q.operator} ${this.answerPosition() === 'operandB' ? '?' : q.operandB} = ${q.result}`;
+  });
   protected readonly status = computed(() => this.state().status);
   protected readonly cifrelMood = computed<CifrelMood>(() => {
     switch (this.status()) {
@@ -82,6 +95,13 @@ export class QuestionCard {
   });
 
   constructor() {
+    // Missing-number steps can move the input to a different embedded view.
+    // Focus only after that view has been rendered, not the previous step's input.
+    afterRenderEffect(() => {
+      this.retryToken();
+      this.answerPosition();
+      if (this.learning() && this.active() && !this.answerLocked()) this.focus();
+    });
     effect(() => {
       if (!this.learning()) return;
       this.retryToken();

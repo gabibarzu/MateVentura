@@ -100,6 +100,15 @@ export interface MathQuestion {
   correctAnswer: number;
 }
 
+/** Opt-in equation presentation for missing-number exercises. */
+export type AnswerPosition = 'result' | 'operandA' | 'operandB';
+export interface QuestionEquation {
+  operandA: number;
+  operandB: number;
+  operator: Operator;
+  result: number;
+}
+
 export type AnswerStatus = 'pending' | 'correct' | 'wrong';
 
 export interface QuestionState {

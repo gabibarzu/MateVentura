@@ -5,7 +5,7 @@
 .world-map__cloud { position: absolute; width: 110px; height: 35px; border-radius: 50%; background: #ffffffa6; }
 .world-map__cloud--one { left: 7%; top: 30px; }.world-map__cloud--two { right: 12%; top: 30px; width: 80px; }
 .map-level { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 30%; padding: 8px; border: 0; background: transparent; color: #69607a; font: inherit; text-align: center; }
-.map-level strong { font-size: 1rem; line-height: 1.3; }
+.map-level strong { position: relative; max-width: 100%; padding: 4px 10px; border-radius: 12px; background: #fff; color: #49349a; box-shadow: 0 2px 6px #49349a12; font-size: 1rem; line-height: 1.3; }
 .map-level__island { display: grid; place-items: center; width: 100px; height: 76px; border-radius: 50%; border: 3px solid #b3bfc1; background: #e4e9e9; box-shadow: 0 10px 0 #c0cbcb; }
 .map-level__island mat-icon { width: 42px; height: 42px; color: #78878a; }
 .map-level__number { display: grid; place-items: center; width: 30px; height: 30px; margin-top: -22px; z-index: 1; border-radius: 50%; background: #fff; color: #6c5ce7; font-weight: 900; box-shadow: 0 2px 6px #0002; }
@@ -19,6 +19,16 @@
 .world-map__cifrel { position: absolute; width: 85px; right: 34%; bottom: 12px; }
 .map-coming { margin: 24px 0 0; text-align: center; color: #6c5ce7; line-height: 1.6; strong { display: block; font-size: 1.2rem; } }
 .mission__back { margin-bottom: 4px; }
+.map-level--playable { cursor: pointer; border-radius: 24px; color: #5842b9; transition: background-color .2s; }
+.map-level--playable:hover { background: #ffffff70; }
+.map-level--playable:focus-visible { outline: 3px solid #6c5ce7; outline-offset: -2px; }
+.map-level--forest .map-level__island { background: #d3f7d8; border-color: #268452; box-shadow: 0 10px 0 #268452; }
+.map-level--forest .map-level__island mat-icon { color: #17613a; }
+.map-level--bridge .map-level__island { background: #fff0c4; border-color: #af732e; box-shadow: 0 10px 0 #af732e; }
+.map-level--bridge .map-level__island mat-icon { color: #85531c; }
+.map-level--locked { filter: grayscale(1); cursor: not-allowed; }
+.map-level--locked .map-level__island { opacity: .5; }
+.map-level--locked:hover { background: transparent; }
 @media (max-width: 600px) {
   .world-map { height: 360px; }
   .map-level { width: 44%; gap: 5px; }
@@ -62,9 +72,35 @@
 .mission__panel { display: grid; align-items: center; min-width: 0; border: 2px solid #d5ccff; border-radius: 28px; background: #f7f4ff; padding: 22px; text-align: center; }
 .mission__panel--exercise { display: block; padding: 0; border: 0; background: transparent; text-align: initial; }
 .mission__controls { display: flex; justify-content: center; padding-top: 8px; }
+.mission__choose-level { justify-self: center; max-width: 100%; margin-top: 16px; }
 .mission__panel h3 { margin: 8px 0 16px; color: #6c5ce7; font-size: 1.4rem; }
 .mission__brief p { margin: 0 0 20px; line-height: 1.6; }
 .mission__footnote { text-align: center; font-size: .8rem; color: #636e72; line-height: 1.4; margin: 16px 0 0; }
+.forest-scene, .bridge-scene { position: relative; height: clamp(140px, 24dvh, 200px); overflow: hidden; border-radius: 28px; border: 3px solid #7bb6a0; }
+.scene-caption { position: absolute; z-index: 4; bottom: 0; left: 0; right: 0; margin: 0; padding: 6px 8px; background: #142e35e8; color: white; text-align: center; font-size: clamp(.75rem, 2vw, .9rem); }
+.forest-scene { background: linear-gradient(#142b40, #245848); transition: background-color .8s; }
+.forest-scene--complete { background: linear-gradient(#254151, #347657); }
+.forest-scene__trees { position: absolute; inset: -50px 0 20px; display: flex; justify-content: space-around; align-items: center; color: #0c362a; font-size: clamp(140px, 24vw, 220px); line-height: 1; }
+.forest-scene__path { position: absolute; bottom: 15px; left: 8%; right: 6%; height: 45px; border-radius: 50%; background: #8c8360; transform: rotate(-4deg); }
+.lanterns { position: absolute; left: 12%; right: 8%; top: 24%; display: flex; justify-content: space-between; }
+.lantern { position: relative; display: grid; place-items: center; width: clamp(24px, 6vw, 40px); height: clamp(32px, 7vw, 46px); border: 3px solid #b1aa8d; border-radius: 8px; background: #374c4d; color: #e2e7dd; font-weight: 800; transition: background-color .6s, box-shadow .6s; }
+.lantern::before { content: ''; position: absolute; bottom: 100%; width: 10px; height: 12px; border: 2px solid #c5bea1; border-radius: 8px 8px 0 0; }
+.lantern--lit { background: #ffe79a; border-color: #f2c65d; color: #654214; box-shadow: 0 0 20px 10px #ffe88755; }
+.forest-scene__cifrel { position: absolute; left: 2%; bottom: 28px; width: clamp(46px, 9vw, 66px); }
+.fireflies { position: absolute; inset: 5px 5% 30px; pointer-events: none; }
+.fireflies span { position: absolute; left: calc(5% + var(--i) * 12%); top: calc(10% + var(--i) * 7%); color: #fff4ad; font-size: 15px; text-shadow: 0 0 9px #fff38c; animation: firefly-drift 2.8s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -0.3s); }
+@keyframes firefly-drift { from { transform: translate(0, 0); opacity: .5; } to { transform: translate(6px, -18px); opacity: 1; } }
+.bridge-scene { background: #d8f3f5; border-color: #79b4bd; }
+.bridge-scene__river { position: absolute; inset: 0 15%; background: repeating-linear-gradient(175deg, #70d7e4 0 18px, #a4edf2 19px 22px, #70d7e4 23px 42px); }
+.bridge-scene__bank { position: absolute; top: 0; bottom: 0; width: 17%; background: #a4cd88; border: 4px solid #729b5c; border-radius: 35%; }
+.bridge-scene__bank--left { left: -3%; }.bridge-scene__bank--right { right: -3%; }
+.bridge-boards { position: absolute; top: 60%; left: 13%; right: 13%; display: flex; gap: 4px; height: 28px; border-top: 3px solid #956338; border-bottom: 3px solid #956338; }
+.bridge-board { flex: 1; display: grid; place-items: center; color: #704620; border: 2px dashed #956338; border-radius: 4px; background: #f4d0a128; font-weight: 800; opacity: .4; transform: translateY(0) rotate(0); transition: opacity .6s, background-color .6s, transform .7s ease-in-out, box-shadow .6s; }
+.bridge-board--staged { opacity: 1; z-index: 1; background: #f4c888; border: 2px solid #956338; transform: translateY(-38px) rotate(-8deg); box-shadow: inset 0 3px 0 #ffe6bc, 0 0 0 4px #fff3bd, 0 8px 12px #70462035; }
+.bridge-board--ready { opacity: 1; background: #e4b372; border: 2px solid #956338; box-shadow: inset 0 3px 0 #f7d5a5; }
+.bridge-scene__cifrel { position: absolute; z-index: 2; width: clamp(44px, 9vw, 64px); left: 1%; bottom: 40%; }
+.bridge-scene--complete .bridge-scene__cifrel { left: calc(90% - 32px); animation: bridge-crossing 3s ease-in-out both; }
+@keyframes bridge-crossing { from { left: 1%; } to { left: calc(90% - 32px); } }
 @media (max-width: 600px) {
   .mission__heading { margin-bottom: 10px; p { font-size: .85rem; } }
   .mission__body { grid-template-columns: 1fr; gap: 28px; }
@@ -92,6 +128,9 @@
   .mission__panel--exercise { padding: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .map-level--playable, .lantern, .bridge-board, .forest-scene { transition: none; }
+  .fireflies span { animation: none; opacity: 1; }
+  .bridge-scene--complete .bridge-scene__cifrel { animation: none; }
   .rocket__piece { transition: none; }
   .launchpad--launched .rocket { animation: launch-fade 3.2s ease-out both; }
 }

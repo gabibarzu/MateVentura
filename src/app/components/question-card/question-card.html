@@ -25,20 +25,28 @@
   </div>
 
   <div class="card__equation">
-    <span class="card__number" [class.card__number--mark-a]="showDots()">{{ question().operandA }}</span>
-
-    <span class="card__operator">{{ question().operator }}</span>
-
-    <span
-      class="card__number"
-      [class.card__number--mark-b]="showDots() && question().operator === '+'"
-      [class.card__number--mark-taken]="showDots() && question().operator === '-'"
-    >
-      {{ question().operandB }}
-    </span>
-
+    @if (answerPosition() === 'operandA') {
+      <ng-container [ngTemplateOutlet]="answerField" />
+    } @else {
+      <span class="card__number" [class.card__number--mark-a]="showDots()">{{ displayedEquation().operandA }}</span>
+    }
+    <span class="card__operator">{{ displayedEquation().operator }}</span>
+    @if (answerPosition() === 'operandB') {
+      <ng-container [ngTemplateOutlet]="answerField" />
+    } @else {
+      <span class="card__number"
+        [class.card__number--mark-b]="showDots() && displayedEquation().operator === '+'"
+        [class.card__number--mark-taken]="showDots() && displayedEquation().operator === '-'">{{ displayedEquation().operandB }}</span>
+    }
     <span class="card__operator">=</span>
+    @if (answerPosition() === 'result') {
+      <ng-container [ngTemplateOutlet]="answerField" />
+    } @else {
+      <span class="card__number">{{ displayedEquation().result }}</span>
+    }
+  </div>
 
+  <ng-template #answerField>
     <div class="card__answer-col">
       <mat-form-field appearance="outline" class="card__answer" subscriptSizing="dynamic">
         <input
@@ -49,7 +57,7 @@
           autocomplete="off"
           [maxLength]="maxLength"
           [formControl]="answerControl"
-          [attr.aria-label]="'Răspuns pentru ' + question().operandA + ' ' + question().operator + ' ' + question().operandB"
+          [attr.aria-label]="answerLabel()"
           (keydown)="onKeydown($event)"
           (input)="sanitize()"
         />
@@ -68,7 +76,7 @@
         </div>
       }
     </div>
-  </div>
+  </ng-template>
 
   <div class="card__feedback" aria-live="polite">
     @if (learning()) {
