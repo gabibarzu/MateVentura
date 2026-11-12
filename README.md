@@ -7,10 +7,12 @@ Built with Angular 22 (standalone components, Signals, Reactive Forms) and Angul
 
 ## Features
 
-- **Start screen**: one-tap **Joc rapid** (5 mixed exercises up to 20), three levels (**Ușor / Mediu / Greu**) and a **Personalizat** mode with all settings (max sum, operation, number of questions, counting-dot hint).
+- **Start screen**: choose **Învățare** (adaptive practice with progressive help, without a timer or score) or **Joc**. Adventure in Numărilia is coming later and is not playable yet.
+- **Game setup**: one-tap **Joc rapid** (5 mixed exercises up to 20), three levels (**Ușor / Mediu / Greu**) and **Personalizat** settings.
+- **Cifrel's story**: a playful companion who comes to help Matei and other curious children discover mathematics.
 - **Question cards**: big numbers, digits-only answer input with autofocus, ENTER to submit, green/red feedback and smooth transition to the next exercise.
 - **Counting dots hint** (max sum ≤ 20): joined dots for addition, crossed-out dots for subtraction.
-- **Top bar**: timer, progress, correct answers, leaderboard, sound toggle, "Joc Nou".
+- **Top bar**: mode selection and sound toggle; timed-game progress and leaderboard when applicable.
 - **Results dialog**: 1–3 stars by accuracy, score and total time, confetti, save to leaderboard.
 - **Leaderboard (Clasament)**: stored in `localStorage`, one list per level (top 10), ranked by correct answers then time. Quick and custom games are not ranked.
 - **Sound effects** generated with the Web Audio API (no audio files).
@@ -33,6 +35,7 @@ Open `http://localhost:4200/`.
 | `npm start`     | Dev server with live reload          |
 | `npm run build` | Production build into `dist/`        |
 | `npm test`      | Unit tests (Vitest)                  |
+| `npm run pr:generate` | Regenerate social images and link preview |
 
 ## Project structure
 
@@ -55,6 +58,13 @@ src/
 | `mateventura:leaderboard` | Saved scores                     |
 | `mateventura:player`      | Last player name                 |
 | `mateventura:muted`       | Sound on/off                     |
+| `mateventura:learning`    | Adaptive learning progress       |
 
 Keys saved under the old name (`mate-aventura:*`) are moved to the new ones on start
 (`src/app/utils/storage-migration.ts`).
+
+## Sharing and promotional material
+
+See [public/pr/README.md](public/pr/README.md) for Romanian copy, asset sizes and deployment/preview checks.
+Sharing metadata is static in the HTML head so crawlers do not need to run Angular.
+The preview uses a versioned image URL; regenerating images does not deploy the site.
