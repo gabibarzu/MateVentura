@@ -9,10 +9,11 @@
       <app-cifrel full mood="happy" />
     </div>
     <div class="story-hello">
-      <span class="story-eyebrow">Din Numărilia, cu prietenie</span>
+      <span class="story-eyebrow">O poveste începută cu Matei</span>
       <h3>Salut! Eu sunt Cifrel.</h3>
-      <p>Explorator de numere, colecționar de „Aha!” și campion la încurcat șosete.</p>
-      <p class="story-aside">Da, am șosete. Nu, nu am picioare. E o poveste lungă.</p>
+      <p>Sunt un roboțel curios, născut din dragul unui băiețel pentru matematică
+        și din ideea tatălui său de a transforma învățarea într-o joacă.</p>
+      <p class="story-aside">Nu m-am născut într-o fabrică de roboți. Povestea mea începe pe o foaie de hârtie!</p>
     </div>
   </div>
 
@@ -26,35 +27,43 @@
     <section class="story-chapter story-chapter--space" aria-labelledby="story-origin">
       <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="rocket_launch" /></span>
       <div>
-        <h3 id="story-origin">O aterizare cu… firimituri</h3>
-        <p>Pe planeta Numărilia, roboții au antene curioase, case cu ferestre în formă de cifre
-          și o mare problemă: nimeni nu știe cine tot încurcă șosetele!</p>
-        <p>Acolo, Cifrel pregătea o rachetă pentru o misiune foarte serioasă:
-          să afle dacă <strong>două fursecuri plus un fursec</strong> sunt suficiente pentru o călătorie.</p>
-        <p>A apăsat pe „LANSARE” în loc de „GUSTARE”. Fâââș! A aterizat direct în MateVentura.
-          Fursecurile? Dispărute. Misterul? Delicios.</p>
+        <h3 id="story-origin">Mai întâi au fost Matei și numerele</h3>
+        <p>Înainte să am antenă, rotițe sau măcar un nume, era Matei:
+          un băiețel pasionat de matematică. Făcea calcule pe foaie,
+          iar când avea nevoie de ajutor, își punea degețelele la treabă.</p>
+        <p>Apoi au apărut numerele cu două cifre. Calculele au devenit mai grele,
+          iar degețelele nu mai erau de ajuns.
+          <strong>Curiozitatea lui Matei, însă, avea loc să crească.</strong></p>
       </div>
     </section>
 
     <section class="story-chapter story-chapter--count" aria-labelledby="story-job">
       <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="calculate" /></span>
       <div>
-        <h3 id="story-job">Ce face un robot matematician?</h3>
-        <p>Adună stele, scade grijile și pune bulinuțele la treabă.
-          Uneori le aliniază atât de frumos, încât uită ce voia să numere.</p>
-        <p>Cu tine, descoperă adunări și scăderi, exersează fără grabă și pornește la joc.
-          <strong>Tu scrii răspunsul. El ține pumnii.</strong> Mă rog… șurubelele.</p>
+        <h3 id="story-job">O seară, un document și o idee</h3>
+        <p>Într-o seară, tatăl lui Matei a deschis Microsoft Word și a început să-i scrie adunări.
+          Matei scria răspunsurile acolo, la calculator. Exersa două lucruri deodată:
+          <strong>adunarea și folosirea tastaturii.</strong></p>
+        <p>Din acel început simplu, tatălui său i-a venit o idee: să facă o aplicație
+          în care Matei să poată exersa prin joacă. Așa a apărut MateVentura.
+          Și tot așa m-am născut eu, Cifrel!</p>
+        <p>N-am făcut „Uaaa!” când am apărut. Fiind robot, probabil am făcut „Bip!”.
+          Dar eram gata să fac echipă.</p>
       </div>
     </section>
 
     <section class="story-chapter story-chapter--heart" aria-labelledby="story-mistakes">
       <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="eco" /></span>
       <div>
-        <h3 id="story-mistakes">Și Cifrel mai greșește!</h3>
-        <p>Odată a numărat aceeași banană de trei ori. „Seamănă toate!”, a explicat el.
-          Era o singură banană.</p>
-        <p>De atunci știe că un răspuns greșit nu înseamnă „nu pot”, ci
-          <strong>„hai să mai încercăm”</strong>. Îți arată bulinuțe, numără cu tine și se bucură când înțelegi.</p>
+        <h3 id="story-mistakes">De la un prieten, la mulți prieteni</h3>
+        <p>Povestea mea a început cu Matei, dar mi-ar plăcea să crească alături de tine
+          și de alți copii curioși. Vreau să vă ajut să descoperiți matematica,
+          să încercați lucruri noi și să prindeți încredere, pas cu pas.</p>
+        <p>Nu trebuie să răspunzi repede ca să fim prieteni. Numărăm cu bulinuțe,
+          desfacem calculele în pași mici și încercăm din nou când ne încurcăm.
+          <strong>Un răspuns greșit nu închide aventura.</strong> Ne arată unde mai avem de explorat.</p>
+        <p>Iar lumea numerelor pe care o vom descoperi împreună are și un nume: Numărilia.
+          Eu țin pumnii pentru tine. Mă rog… șurubelele. Facem echipă?</p>
       </div>
     </section>
   </div>
@@ -65,7 +74,7 @@
       {{ secretIndex() < 0 ? 'Cifrel, spune-ne un secret!' : 'Încă un secret!' }}
     </button>
     <p class="story-secret-text" aria-live="polite" aria-atomic="true">
-      {{ secretIndex() < 0 ? 'Psst… antena lui prinde și glume, nu doar semnal!' : secrets[secretIndex()] }}
+      {{ secretIndex() < 0 ? 'Psst… întreabă-mă! Antena mea prinde și glume, nu doar semnal.' : secrets[secretIndex()] }}
     </p>
   </section>
 

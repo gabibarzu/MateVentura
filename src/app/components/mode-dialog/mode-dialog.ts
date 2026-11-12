@@ -45,9 +45,10 @@ export type PlayMode = 'learning' | 'game';
           <app-cifrel full mood="happy" />
         </div>
         <div class="mode-welcome-copy">
-          <span class="mode-eyebrow">Din Numărilia, cu prietenie</span>
+          <span class="mode-eyebrow">O poveste începută cu Matei</span>
           <h3>Eu sunt Cifrel. Facem echipă?</h3>
-          <p>Sunt un robot curios de pe planeta Numărilia. Am adus bulinuțe și o mulțime de „Aha!”.
+          <p>M-am născut din pasiunea lui Matei pentru matematică și dintr-o idee a tatălui său.
+            Acum vreau să ajut și alți copii curioși să crească, pas cu pas.
             Învățăm, ne jucăm și mai greșim — împreună.</p>
           <button #storyButton mat-button type="button" class="mode-story" (click)="openStory()" [disabled]="storyLoading()">
             <mat-icon svgIcon="info" />
