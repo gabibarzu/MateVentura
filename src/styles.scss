@@ -104,6 +104,28 @@ body {
   color: #2d3436;
 }
 
+// Keep all three difficulty tabs visible even in narrow mobile dialogs.
+app-leaderboard-card .board__tabs .mat-mdc-tab {
+  min-width: 0;
+  padding-inline: 8px;
+}
+
+// Replace the gray hover layer, keeping Material's keyboard-focus and click feedback.
+app-leaderboard-card .board__tabs .mat-mdc-tab:hover:not(:focus-visible) .mdc-tab__ripple::before {
+  opacity: 0;
+}
+
+app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
+  text-decoration-color: currentColor;
+  filter: brightness(0.8);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
+    transform: translateY(-2px);
+  }
+}
+
 // ---------- All Material buttons: smooth hover ----------
 // Material's hover tint (state layer) appears instantly by default; fade it in/out instead.
 .mat-mdc-button-base .mat-mdc-button-persistent-ripple::before {

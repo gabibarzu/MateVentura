@@ -1,15 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal } from '@angular/core';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 import { LEVELS, LevelId } from '../../models/game.models';
 import { LeaderboardService } from '../../services/leaderboard.service';
 import { formatTime } from '../../utils/format-time';
 
 @Component({
   selector: 'app-leaderboard-card',
-  imports: [DatePipe, MatButtonToggleModule, MatCardModule, MatIconModule],
+  imports: [DatePipe, MatCardModule, MatIconModule, MatTabsModule],
   templateUrl: './leaderboard-card.html',
   styleUrl: './leaderboard-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,11 +33,13 @@ export class LeaderboardCard {
     return LEVELS.find((level) => withScores.has(level.id))?.id ?? LEVELS[0].id;
   });
 
-  protected readonly selectedLevelName = computed(
-    () => LEVELS.find((level) => level.id === this.selectedLevel())?.name ?? '',
+  protected readonly selectedLevelIndex = computed(
+    () => LEVELS.findIndex((level) => level.id === this.selectedLevel()),
   );
 
-  protected readonly rows = computed(() => this.leaderboard.ranked(this.selectedLevel()));
+  protected readonly levelBoards = computed(() =>
+    LEVELS.map((level) => ({ ...level, rows: this.leaderboard.ranked(level.id) })),
+  );
 
   protected readonly formatTime = formatTime;
 }

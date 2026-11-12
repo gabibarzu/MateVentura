@@ -46,43 +46,30 @@
   color: $bright-yarrow;
 }
 
-.board__levels {
-  display: flex;
+.board__tab-label {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-  border: none;
-  overflow: visible;
-  background: transparent;
-}
-
-// Nested under `.board__levels` to beat Material's `.mat-button-toggle + .mat-button-toggle`
-// divider rule, which otherwise replaces the left border with a thin gray line.
-.board__levels .board__level {
-  border: 3px solid $city-lights;
-  border-radius: 999px;
-  background: #fff;
+  font-size: 1.15rem;
   font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  transition:
+    text-decoration-color 200ms ease,
+    filter 200ms ease,
+    transform 200ms ease;
 
   mat-icon {
-    margin-right: 4px;
-    font-size: 1.2rem;
     width: 1.2rem;
     height: 1.2rem;
-    vertical-align: middle;
+    flex-shrink: 0;
   }
 
   @each $level, $color in $level-colors {
     &[data-level='#{$level}'] {
       color: $color;
-
-      &:hover {
-        border-color: $color;
-      }
-
-      &.mat-button-toggle-checked {
-        border-color: $color;
-        background: $color;
-        color: #fff;
-      }
     }
   }
 }
@@ -93,7 +80,7 @@
   gap: 8px;
   // Room for the "just saved" row outline (it sits 5px outside the row); the dialog's
   // scrolling content area would otherwise clip it.
-  padding: 6px;
+  padding: 16px 6px 6px;
 }
 
 .board__row {
@@ -205,6 +192,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 16px;
   padding: 16px;
   border-radius: $radius-md;
   background: $sour-lemon;
@@ -235,13 +223,5 @@
 
   .board__date {
     display: none;
-  }
-
-  .board__levels {
-    width: 100%;
-
-    .board__level {
-      flex: 1 1 0;
-    }
   }
 }
