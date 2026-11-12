@@ -1,6 +1,48 @@
+@if (onMap()) {
+  <section class="adventure-map" aria-labelledby="map-title">
+    <header class="mission__heading">
+      <span class="mission__eyebrow">AVENTURĂ <span class="mission__beta">Beta</span></span>
+      <h2 id="map-title">Bun venit în Numărilia!</h2>
+      <p>Alege un nivel și pornește la drum cu Cifrel.</p>
+    </header>
+    <div class="world-map">
+      <span class="world-map__cloud world-map__cloud--one" aria-hidden="true"></span>
+      <span class="world-map__cloud world-map__cloud--two" aria-hidden="true"></span>
+      <svg class="world-map__route" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" />
+        <path d="M130 265C280 340 240 50 390 120S530 290 650 100" fill="none" stroke="#b5a2e8" stroke-width="5" stroke-dasharray="9 12" stroke-linecap="round" />
+      </svg>
+      <button type="button" class="map-level map-level--available" (click)="enterMission()"
+        [attr.aria-label]="'Nivelul 1: Repară racheta lui Cifrel. ' + adventure.repaired() + ' din 5 piese montate'">
+        <span class="map-level__island"><mat-icon svgIcon="rocket_launch" /></span>
+        <span class="map-level__number">1</span>
+        <strong>Atelierul de rachete</strong>
+        <span class="map-level__status">{{ complete() ? 'Rachetă reparată · Revino la lansare' : adventure.repaired() ? 'Continuă · ' + adventure.repaired() + ' / 5 piese' : 'Repară racheta lui Cifrel' }}</span>
+      </button>
+      <div class="map-level map-level--forest" aria-label="Nivelul 2: Pădurea Adunărilor. În curând, indisponibil">
+        <span class="map-level__island"><mat-icon svgIcon="eco" /></span>
+        <span class="map-level__number">2</span>
+        <strong>Pădurea Adunărilor</strong>
+        <span class="map-level__status">În curând</span>
+      </div>
+      <div class="map-level map-level--bridge" aria-label="Nivelul 3: Podul Numerelor. În curând, indisponibil">
+        <span class="map-level__island"><mat-icon svgIcon="stars" /></span>
+        <span class="map-level__number">3</span>
+        <strong>Podul Numerelor</strong>
+        <span class="map-level__status">În curând</span>
+      </div>
+      <app-cifrel full mood="happy" class="world-map__cifrel" aria-hidden="true" />
+    </div>
+    <p class="map-coming"><strong>Aventura abia începe!</strong> Vor apărea și alte niveluri în curând.</p>
+    <p class="mission__footnote">Deocamdată poți juca nivelul 1. Progresul rachetei se păstrează în acest browser.</p>
+  </section>
+} @else {
 <section class="mission" aria-labelledby="mission-title">
+  <button mat-button type="button" class="mission__back" (click)="backToMap()">
+    <mat-icon svgIcon="arrow_back" />Harta Număriliei
+  </button>
   <header class="mission__heading">
-    <span class="mission__eyebrow">NUMĂRILIA · MISIUNEA 1 <span class="mission__beta">Beta</span></span>
+    <span class="mission__eyebrow">NUMĂRILIA · NIVELUL 1 <span class="mission__beta">Beta</span></span>
     <h2 id="mission-title">Repară racheta lui Cifrel</h2>
     <p>Cinci piese de reparat. Fără grabă, fără penalizări.</p>
   </header>
@@ -66,3 +108,4 @@
   </div>
   <p class="mission__footnote">Greșelile nu iau piese. Progresul se păstrează local, dacă browserul permite.</p>
 </section>
+}

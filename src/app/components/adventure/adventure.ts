@@ -28,6 +28,7 @@ export class Adventure {
   private readonly confetti = inject(ConfettiService);
   private readonly card = viewChild(QuestionCard);
   protected readonly parts = PARTS;
+  protected readonly onMap = signal(true);
   protected readonly started = signal(false);
   protected readonly solved = signal(false);
   protected readonly launched = signal(false);
@@ -54,6 +55,20 @@ export class Adventure {
 
   constructor() {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.timer));
+  }
+
+  protected enterMission(): void {
+    this.onMap.set(false);
+    this.started.set(false);
+    this.launched.set(false);
+    this.landed.set(false);
+    this.countdown.set(null);
+    this.next();
+  }
+
+  protected backToMap(): void {
+    clearTimeout(this.timer);
+    this.onMap.set(true);
   }
 
   protected start(): void {
