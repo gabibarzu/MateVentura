@@ -79,7 +79,7 @@ export type PlayMode = 'learning' | 'game';
       line-height: 1.25;
       color: #6c5ce7; font-size: 2rem; font-weight: 800;
     }
-    .mode-mascot { display: block; width: 72px; height: 72px; flex-shrink: 0; }
+    .mode-mascot { display: block; width: 56px; height: 56px; flex-shrink: 0; }
     .mode-title small { display: inline-block; color: #007f76; font-size: 0.6em; font-weight: 700; white-space: nowrap; }
     .mode-tagline { margin: 0 0 8px; text-align: center; color: #6c5ce7; font-size: 1.3rem; font-weight: 800; }
     .mode-welcome {

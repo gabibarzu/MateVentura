@@ -283,7 +283,7 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
 // Shared chrome takes precedence over component-specific title typography/layout.
 .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-title {
   margin: 0;
-  padding: 24px 24px 16px;
+  padding: 16px 24px;
   border-bottom: 2px solid #e8e2ff;
   background: linear-gradient(110deg, #f5f1ff, #fff);
   box-shadow: 0 4px 10px #6c5ce70a;
@@ -305,7 +305,8 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
 
 .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-actions {
   margin: 0;
-  padding: 16px 24px 24px;
+  padding: 16px 24px;
+  align-items: center;
   gap: 12px;
   border-top: 2px solid #e8e2ff;
   background: linear-gradient(110deg, #f5f1ff, #fff);
@@ -316,7 +317,7 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
 
 @media (max-width: 640px) {
   .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-title {
-    padding: 20px 16px 16px;
+    padding: 12px 16px;
   }
 
   .kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-actions {
@@ -327,10 +328,11 @@ app-leaderboard-card .board__tabs .mat-mdc-tab:hover .board__tab-label {
 
 // Material caps the content at 65vh; instead let it take whatever the title and actions leave free
 // (the dialog itself is capped by `maxHeight`), so it only scrolls when it really doesn't fit.
-.kid-dialog .mat-mdc-dialog-content {
+.kid-dialog .mat-mdc-dialog-surface .mat-mdc-dialog-content {
   flex: 1 1 auto;
   min-height: 0;
   max-height: none;
+  padding-bottom: 24px;
 }
 
 // A dialog temporarily replaced by another one (e.g. setup -> leaderboard).
