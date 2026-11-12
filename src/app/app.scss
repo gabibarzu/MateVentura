@@ -67,6 +67,7 @@
 }
 
 .topbar__sound,
+.topbar__install,
 .topbar__trophy {
   --mat-icon-button-icon-color: #fff;
   --mat-icon-button-state-layer-size: 52px;
@@ -227,6 +228,7 @@
   }
 
   .topbar__sound,
+  .topbar__install,
   .topbar__trophy {
     --mat-icon-button-state-layer-size: 40px;
   }

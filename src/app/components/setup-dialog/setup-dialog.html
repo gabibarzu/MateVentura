@@ -6,7 +6,7 @@
 
   <mat-dialog-content class="setup__content">
     <button mat-flat-button type="button" class="big-btn btn-green setup__quick" (click)="play(quickGame)">
-      <mat-icon>bolt</mat-icon>
+      <mat-icon svgIcon="bolt" />
       <span class="setup__quick-text">
         <span class="setup__quick-title">JOC RAPID</span>
         <span class="setup__quick-subtitle">Surpriză! 5 exerciții amestecate până la 20</span>
@@ -27,7 +27,7 @@
           @if (lastMode === level.id) {
             <span class="level__badge">Ultimul joc</span>
           }
-          <span class="level__icon"><mat-icon>{{ level.icon }}</mat-icon></span>
+          <span class="level__icon"><mat-icon [svgIcon]="level.icon" /></span>
           <span class="level__name">{{ level.name }}</span>
           <span class="level__age">{{ level.age }}</span>
           <span class="level__description">{{ level.description }}</span>
@@ -38,25 +38,33 @@
 
   <mat-dialog-actions class="setup__actions setup__actions--center">
     <button mat-raised-button type="button" class="big-btn btn-blue" (click)="view.set('custom')">
-      <mat-icon>tune</mat-icon>
+      <mat-icon svgIcon="tune" />
       Personalizat
     </button>
     <button mat-raised-button type="button" class="big-btn btn-purple" (click)="openLeaderboard()">
-      <mat-icon>emoji_events</mat-icon>
+      <mat-icon svgIcon="emoji_events" />
       Clasament
     </button>
 
     @if (data.canCancel) {
       <button mat-raised-button type="button" class="big-btn btn-gray" mat-dialog-close>
-        <mat-icon>close</mat-icon>
+        <mat-icon svgIcon="close" />
         Anulează
+      </button>
+    }
+
+    @if (install.method()) {
+      <span class="setup__row-break"></span>
+      <button mat-button type="button" class="setup__install" (click)="install.install()">
+        <mat-icon svgIcon="install_mobile" />
+        Instalează aplicația pe telefon
       </button>
     }
   </mat-dialog-actions>
 } @else {
   <form [formGroup]="form" (ngSubmit)="startCustom()" class="setup">
     <h2 mat-dialog-title class="setup__title">
-      <mat-icon class="setup__title-icon">tune</mat-icon>
+      <mat-icon class="setup__title-icon" svgIcon="tune" />
       Joc personalizat
     </h2>
 
@@ -66,7 +74,7 @@
       <div class="setup__grid">
         <section class="setup__group">
           <h3 class="setup__label" id="max-sum-label">
-            <mat-icon>stars</mat-icon>
+            <mat-icon svgIcon="stars" />
             Suma / Numărul maxim
           </h3>
           <mat-button-toggle-group
@@ -83,7 +91,7 @@
 
         <section class="setup__group">
           <h3 class="setup__label" id="count-label">
-            <mat-icon>format_list_numbered</mat-icon>
+            <mat-icon svgIcon="format_list_numbered" />
             Număr de întrebări
           </h3>
           <mat-button-toggle-group
@@ -100,7 +108,7 @@
 
         <section class="setup__group setup__group--full">
           <h3 class="setup__label" id="operation-label">
-            <mat-icon>calculate</mat-icon>
+            <mat-icon svgIcon="calculate" />
             Tipul de operație
           </h3>
           <mat-button-toggle-group
@@ -120,7 +128,7 @@
           [class.setup__group--disabled]="!hintsAvailable()"
         >
           <h3 class="setup__label">
-            <mat-icon>lightbulb</mat-icon>
+            <mat-icon svgIcon="lightbulb" />
             Indiciu
           </h3>
           <mat-checkbox formControlName="showHints" class="setup__checkbox">
@@ -135,21 +143,21 @@
       </div>
 
       <p class="setup__note setup__note--leaderboard">
-        <mat-icon>info</mat-icon>
+        <mat-icon svgIcon="info" />
         Jocurile personalizate nu intră în clasament.
       </p>
     </mat-dialog-content>
 
     <mat-dialog-actions class="setup__actions">
       <button mat-raised-button type="button" class="big-btn btn-gray" (click)="view.set('levels')">
-        <mat-icon>arrow_back</mat-icon>
+        <mat-icon svgIcon="arrow_back" />
         Înapoi
       </button>
 
       <span class="setup__spacer"></span>
 
       <button mat-flat-button type="submit" class="big-btn btn-green" [disabled]="form.invalid">
-        <mat-icon>rocket_launch</mat-icon>
+        <mat-icon svgIcon="rocket_launch" />
         START JOC
       </button>
     </mat-dialog-actions>

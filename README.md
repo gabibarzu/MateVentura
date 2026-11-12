@@ -1,4 +1,4 @@
-# Mate-Aventura
+# MateVentura
 
 A kid-friendly math practice web app (addition and subtraction) with a fully Romanian UI,
 hosted by **Cifrel**, the app's robot mascot (`public/mascot.svg`, head-only `public/mascot-head.svg`).
@@ -50,8 +50,11 @@ src/
 
 ## Local storage keys
 
-| Key                         | Content                          |
-| --------------------------- | -------------------------------- |
-| `mate-aventura:leaderboard` | Saved scores                     |
-| `mate-aventura:player`      | Last player name                 |
-| `mate-aventura:muted`       | Sound on/off                     |
+| Key                       | Content                          |
+| ------------------------- | -------------------------------- |
+| `mateventura:leaderboard` | Saved scores                     |
+| `mateventura:player`      | Last player name                 |
+| `mateventura:muted`       | Sound on/off                     |
+
+Keys saved under the old name (`mate-aventura:*`) are moved to the new ones on start
+(`src/app/utils/storage-migration.ts`).

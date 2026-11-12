@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
-import confetti from 'canvas-confetti';
 
 const COLORS = ['#00b894', '#00cec9', '#0984e3', '#6c5ce7', '#fdcb6e', '#ff7675', '#fd79a8', '#e84393'];
 
+// Only needed at the end of a game: kept out of the initial bundle.
+const loadConfetti = () => import('canvas-confetti').then((m) => m.default);
+
 @Injectable({ providedIn: 'root' })
 export class ConfettiService {
-  celebrate(durationMs = 2500): void {
+  /** Starts downloading the library ahead of the celebration. */
+  preload(): void {
+    void loadConfetti();
+  }
+
+  async celebrate(durationMs = 2500): Promise<void> {
+    const confetti = await loadConfetti();
     const end = Date.now() + durationMs;
 
     confetti({ particleCount: 140, spread: 100, origin: { y: 0.6 }, colors: COLORS });

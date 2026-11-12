@@ -1,9 +1,9 @@
-# Kit de promovare – Mate-Aventura cu Cifrel
+# Kit de promovare – MateVentura cu Cifrel
 
-Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
+Link aplicație: **https://gabibarzu.github.io/MateVentura/**
 
 > Fișierele din `public/` se publică împreună cu aplicația, deci fiecare imagine are și un link direct, de exemplu
-> `https://gabibarzu.github.io/mate-aventura/pr/post-1080x1080.png`.
+> `https://gabibarzu.github.io/MateVentura/pr/post-1080x1080.png`.
 
 ## Imagini
 
@@ -15,7 +15,7 @@ Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
 | `profil-1080x1080.png` | Poză de profil (Cifrel); Facebook o decupează rotund, capul rămâne întreg |
 | `app-joc.png` | Captură reală: exercițiu cu bulinuțe și Cifrel |
 | `app-corect.png` | Captură reală: răspuns corect, Cifrel fericit |
-| `../og-image.png` | Previzualizarea automată când se trimite linkul (nu trebuie atașată) |
+| `../og-image.jpg` | Previzualizarea automată când se trimite linkul (nu trebuie atașată) |
 
 ## Texte gata de postat
 
@@ -23,7 +23,7 @@ Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
 
 > Am făcut o aplicație de matematică pentru copii! 🤖➕
 >
-> Se numește **Mate-Aventura** și îi ajută pe cei mici (5–8 ani) să exerseze adunări și scăderi, alături de **Cifrel**, un robot care se bucură cu ei la fiecare răspuns corect.
+> Se numește **MateVentura** și îi ajută pe cei mici (5–8 ani) să exerseze adunări și scăderi, alături de **Cifrel**, un robot care se bucură cu ei la fiecare răspuns corect.
 >
 > ✅ 3 niveluri: Ușor, Mediu, Greu
 > ✅ bulinuțe ajutătoare pentru numărat
@@ -34,23 +34,23 @@ Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
 >
 > Linkul e în primul comentariu 👇
 
-**Primul comentariu:** `Aici puteți juca: https://gabibarzu.github.io/mate-aventura/ 🚀`
+**Primul comentariu:** `Aici puteți juca: https://gabibarzu.github.io/MateVentura/ 🚀`
 
 ### 2. Pentru grupuri de părinți
 
 > Bună tuturor! 👋 Pentru părinții cu copii de grădiniță / clasa pregătitoare / clasa I:
 >
-> Am făcut o aplicație gratuită în care copiii exersează adunări și scăderi prin joacă: **Mate-Aventura**. Are un robot simpatic, Cifrel, care îi încurajează, bulinuțe pentru numărat la nivelul Ușor și stele la final.
+> Am făcut o aplicație gratuită în care copiii exersează adunări și scăderi prin joacă: **MateVentura**. Are un robot simpatic, Cifrel, care îi încurajează, bulinuțe pentru numărat la nivelul Ușor și stele la final.
 >
 > Nu cere cont, nu are reclame, scorurile rămân doar pe telefonul/calculatorul vostru.
 >
 > Dacă o încercați, mi-ar prinde foarte bine un feedback: cum vi s-a părut, ce nivel a ales copilul? 😊
 >
-> 👉 https://gabibarzu.github.io/mate-aventura/
+> 👉 https://gabibarzu.github.io/MateVentura/
 
 ### 3. Pentru învățători și educatori
 
-> Doamnelor și domnilor învățători, vă propun un instrument gratuit pentru exersarea adunării și scăderii (până la 10, 20 și 100): **Mate-Aventura**.
+> Doamnelor și domnilor învățători, vă propun un instrument gratuit pentru exersarea adunării și scăderii (până la 10, 20 și 100): **MateVentura**.
 >
 > • 3 niveluri de dificultate + mod personalizat (sumă maximă, tip de operație, număr de exerciții)
 > • bulinuțe vizuale pentru numărat
@@ -58,23 +58,23 @@ Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
 > • clasament pe niveluri, bun pentru mici concursuri în clasă
 > • funcționează în browser, pe tablă interactivă, tabletă sau telefon, fără instalare și fără cont
 >
-> 👉 https://gabibarzu.github.io/mate-aventura/
+> 👉 https://gabibarzu.github.io/MateVentura/
 >
 > Orice sugestie de la clasă este binevenită!
 
 ### 4. Variante scurte (Instagram, Story, WhatsApp)
 
-- `Matematica devine joacă cu Cifrel! 🤖 Adunări și scăderi pentru copii de 5–8 ani, gratuit 👉 gabibarzu.github.io/mate-aventura`
-- `Cine ia 3 stele la nivelul Greu? ⭐⭐⭐ Provoacă-ți copilul pe Mate-Aventura!`
-- `5 minute pe zi de matematică, fără lacrimi 😄 Încercați Mate-Aventura!`
+- `Matematica devine joacă cu Cifrel! 🤖 Adunări și scăderi pentru copii de 5–8 ani, gratuit 👉 gabibarzu.github.io/MateVentura`
+- `Cine ia 3 stele la nivelul Greu? ⭐⭐⭐ Provoacă-ți copilul pe MateVentura!`
+- `5 minute pe zi de matematică, fără lacrimi 😄 Încercați MateVentura!`
 
 ### Hashtag-uri
 
-`#MateAventura #Cifrel #matematica #copii #parinti #clasapregatitoare #claseaIa #invatamantprimar #educatie #jocuriEducative #romania`
+`#MateVentura #Cifrel #matematica #copii #parinti #clasapregatitoare #claseaIa #invatamantprimar #educatie #jocuriEducative #romania`
 
 ### Text alternativ pentru imagini (accesibilitate)
 
-`Cifrel, un robot mov cu ochi albaștri, ține un creion. Text: Mate-Aventura, matematica devine joacă, pentru copii de 5–8 ani.`
+`Cifrel, un robot mov cu ochi albaștri, ține un creion. Text: MateVentura, matematica devine joacă, pentru copii de 5–8 ani.`
 
 ## Cum să fie cât mai vizibil
 
@@ -89,7 +89,7 @@ Link aplicație: **https://gabibarzu.github.io/mate-aventura/**
 9. **Fă o serie, nu o singură postare.** De exemplu „Provocarea săptămânii” cu o captură (`app-joc.png`) și „Cine rezolvă mai repede?”.
 10. **LinkedIn / comunități de programatori:** povestea „am făcut o aplicație pentru copilul meu” cu Angular funcționează bine pentru publicul tehnic.
 11. **Opțional, pe termen lung:**
-    - un domeniu scurt (ex. `mateaventura.ro`), mai ușor de reținut decât `github.io`;
+    - un domeniu scurt (ex. `mateventura.ro`), mai ușor de reținut decât `github.io`;
     - un cod QR spre aplicație, pentru afișe la școală sau la grădiniță;
     - înscrierea site-ului în Google Search Console, ca să apară în căutări;
     - o statistică de vizite care respectă confidențialitatea (ex. GoatCounter), ca să vezi ce postare a adus oameni.

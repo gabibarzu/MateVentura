@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { STORAGE_PREFIX } from '../utils/storage-migration';
 
 interface ToneOptions {
   frequency: number;
@@ -9,7 +10,7 @@ interface ToneOptions {
   volume?: number;
 }
 
-const MUTED_STORAGE_KEY = 'mate-aventura:muted';
+const MUTED_STORAGE_KEY = `${STORAGE_PREFIX}muted`;
 
 /** Generates cheerful feedback sounds with the Web Audio API (no audio files needed). */
 @Injectable({ providedIn: 'root' })

@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "mate-aventura": {
+    "mateventura": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -30,9 +30,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -48,7 +46,8 @@
                   "maximumError": "16kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -62,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "mate-aventura:build:production"
+              "buildTarget": "mateventura:build:production"
             },
             "development": {
-              "buildTarget": "mate-aventura:build:development"
+              "buildTarget": "mateventura:build:development"
             }
           },
           "defaultConfiguration": "development"

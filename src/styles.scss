@@ -4,6 +4,29 @@
 
 $font-family: 'Nunito', 'Segoe UI', sans-serif;
 
+// Nunito (SIL OFL 1.1, see fonts/OFL.txt), self-hosted: no requests to Google (faster, and no visitor IPs
+// sent to a third party). One variable file per subset covers all weights used (400-800); the browser only
+// downloads latin-ext when it meets ă / ș / ț.
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('./fonts/nunito-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('./fonts/nunito-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 html {
   color-scheme: light;
 
@@ -25,7 +48,7 @@ html {
     )
   );
 
-  // Map the Mate-Aventura palette onto the Material system tokens.
+  // Map the MateVentura palette onto the Material system tokens.
   @include mat.theme-overrides(
     (
       primary: $exodus-fruit,
@@ -195,6 +218,12 @@ body {
   &.btn-gray {
     @include button-color($city-lights, #2d3436);
   }
+}
+
+// SVG icons have an explicit size; Material's `min-height: fit-content` for button icons (meant for font
+// icons) would make them taller than wide and shift them up.
+.mat-mdc-button-base .mat-icon[data-mat-icon-type='svg'] {
+  min-height: 0;
 }
 
 // ---------- Dialogs ----------

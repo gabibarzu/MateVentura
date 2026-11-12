@@ -2,8 +2,8 @@
   <mat-toolbar class="topbar">
     <div class="topbar__brand">
       <img class="topbar__logo topbar__logo--robot" src="mascot-head.svg" alt="Cifrel" title="Cifrel" />
-      <h1 class="topbar__title">Mate-Aventura</h1>
-      <mat-icon class="topbar__logo topbar__logo--rocket">rocket_launch</mat-icon>
+      <h1 class="topbar__title">MateVentura</h1>
+      <mat-icon class="topbar__logo topbar__logo--rocket" svgIcon="rocket_launch" />
     </div>
 
     <span class="topbar__spacer"></span>
@@ -11,16 +11,16 @@
     @if (status() !== 'idle') {
       <div class="topbar__stats">
         <span class="pill pill--timer">
-          <mat-icon>timer</mat-icon>
+          <mat-icon svgIcon="timer" />
           <span class="pill__label">Timp: </span>{{ formattedTime() }}
         </span>
         <span class="pill pill--progress">
-          <mat-icon>stars</mat-icon>
+          <mat-icon svgIcon="stars" />
           <span class="pill__label">Exercițiul </span>
           <span [appBumpOnChange]="exerciseNumber()">{{ exerciseNumber() }}</span>&nbsp;/ {{ total() }}
         </span>
         <span class="pill pill--score">
-          <mat-icon>check_circle</mat-icon>
+          <mat-icon svgIcon="check_circle" />
           <span class="pill__label">Corecte: </span>
           <span [appBumpOnChange]="correctCount()">{{ correctCount() }}</span>
         </span>
@@ -28,6 +28,19 @@
     }
 
     <div class="topbar__actions">
+      @if (install.method()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="topbar__install"
+          (click)="install.install()"
+          matTooltip="Instalează aplicația"
+          aria-label="Instalează aplicația"
+        >
+          <mat-icon svgIcon="install_mobile" />
+        </button>
+      }
+
       <button
         mat-icon-button
         type="button"
@@ -36,7 +49,7 @@
         matTooltip="Clasament"
         aria-label="Clasament"
       >
-        <mat-icon>emoji_events</mat-icon>
+        <mat-icon svgIcon="emoji_events" />
       </button>
 
       <button
@@ -48,9 +61,9 @@
         [attr.aria-label]="sound.muted() ? 'Pornește sunetul' : 'Oprește sunetul'"
       >
         @if (sound.muted()) {
-          <mat-icon>volume_off</mat-icon>
+          <mat-icon svgIcon="volume_off" />
         } @else {
-          <mat-icon>volume_up</mat-icon>
+          <mat-icon svgIcon="volume_up" />
         }
       </button>
 
@@ -62,7 +75,7 @@
         matTooltip="Joc Nou"
         matTooltipShowDelay="600"
       >
-        <mat-icon>rocket_launch</mat-icon>
+        <mat-icon svgIcon="rocket_launch" />
         <span class="topbar__new-label">Joc Nou</span>
       </button>
     </div>

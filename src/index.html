@@ -1,67 +1,76 @@
 <!doctype html>
 <html lang="ro">
-<head>
-  <meta charset="utf-8">
-  <title>Mate-Aventura cu Cifrel – adunări și scăderi pentru copii</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-  <meta name="theme-color" content="#6c5ce7">
-  <meta name="description" content="Mate-Aventura: exersează adunări și scăderi cu Cifrel, robotul matematician. Pentru copii de 5–8 ani.">
+  <head>
+    <meta charset="utf-8" />
+    <title>MateVentura cu Cifrel – adunări și scăderi pentru copii</title>
+    <base href="/" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#6c5ce7" />
+    <meta
+      name="description"
+      content="MateVentura: exersează adunări și scăderi cu Cifrel, robotul matematician. Pentru copii de 5–8 ani."
+    />
 
-  <!-- Link previews (WhatsApp, Facebook, Messenger...). Image URLs must be absolute. -->
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Mate-Aventura">
-  <meta property="og:locale" content="ro_RO">
-  <meta property="og:url" content="https://gabibarzu.github.io/mate-aventura/">
-  <meta property="og:title" content="Mate-Aventura cu Cifrel – adunări și scăderi pentru copii">
-  <meta property="og:description" content="Adunări și scăderi distractive pentru copii de 5–8 ani, cu Cifrel, robotul matematician.">
-  <meta property="og:image" content="https://gabibarzu.github.io/mate-aventura/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Cifrel, robotul Mate-Aventura">
-  <meta name="twitter:card" content="summary_large_image">
+    <!-- Link previews (WhatsApp, Facebook, Messenger...). Image URLs must be absolute. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MateVentura" />
+    <meta property="og:locale" content="ro_RO" />
+    <meta property="og:url" content="https://gabibarzu.github.io/MateVentura/" />
+    <meta property="og:title" content="MateVentura cu Cifrel – adunări și scăderi pentru copii" />
+    <meta
+      property="og:description"
+      content="Adunări și scăderi distractive pentru copii de 5–8 ani, cu Cifrel, robotul matematician."
+    />
+    <meta property="og:image" content="https://gabibarzu.github.io/MateVentura/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Cifrel, robotul MateVentura" />
+    <meta name="twitter:card" content="summary_large_image" />
 
-  <link rel="icon" href="favicon.ico" sizes="48x48">
-  <link rel="icon" href="mascot-head.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="48x48" />
+    <link rel="icon" href="mascot-head.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-  <!-- Loading screen: shown until Angular replaces the content of <app-root>. -->
-  <style>
-    .boot {
-      min-height: 100vh;
-      display: grid;
-      place-content: center;
-      justify-items: center;
-      gap: 16px;
-      font-family: 'Nunito', 'Segoe UI', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #6c5ce7;
-      background: linear-gradient(180deg, #dfe6e9 0%, #ffeaa7 100%);
-    }
-
-    .boot img {
-      width: 160px;
-      height: 168px;
-      animation: boot-bob 0.9s ease-in-out infinite alternate;
-    }
-
-    @keyframes boot-bob {
-      to {
-        transform: translateY(-12px);
+    <!-- Loading screen: shown until Angular replaces the content of <app-root>. -->
+    <style>
+      .boot {
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 16px;
+        font-family: 'Nunito', 'Segoe UI', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #6c5ce7;
+        background: linear-gradient(180deg, #dfe6e9 0%, #ffeaa7 100%);
       }
-    }
-  </style>
-</head>
-<body>
-  <app-root>
-    <div class="boot">
-      <img src="mascot.svg" alt="">
-      <span>Cifrel pregătește exercițiile…</span>
-    </div>
-  </app-root>
-</body>
+
+      .boot img {
+        width: 160px;
+        height: 168px;
+        animation: boot-bob 0.9s ease-in-out infinite alternate;
+      }
+
+      @keyframes boot-bob {
+        to {
+          transform: translateY(-12px);
+        }
+      }
+    </style>
+    <link rel="manifest" href="manifest.webmanifest" />
+  </head>
+  <body>
+    <app-root>
+      <div class="boot">
+        <img src="mascot.svg" alt="" />
+        <span>Cifrel pregătește exercițiile…</span>
+      </div>
+    </app-root>
+    <noscript>MateVentura are nevoie de JavaScript. Te rog activează-l în browser.</noscript>
+  </body>
 </html>

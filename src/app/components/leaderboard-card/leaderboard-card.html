@@ -1,7 +1,7 @@
 <mat-card class="board" appearance="outlined">
   <div class="board__header">
     <h2 class="board__title">
-      <mat-icon class="board__title-icon">emoji_events</mat-icon>
+      <mat-icon class="board__title-icon" svgIcon="emoji_events" />
       Clasament
     </h2>
 
@@ -14,7 +14,7 @@
     >
       @for (level of levels; track level.id) {
         <mat-button-toggle [value]="level.id" class="board__level" [attr.data-level]="level.id">
-          <mat-icon>{{ level.icon }}</mat-icon>
+          <mat-icon [svgIcon]="level.icon" />
           {{ level.name }}
         </mat-button-toggle>
       }
@@ -42,17 +42,17 @@
         >
           <span class="board__rank" role="cell">
             @if (i < 3) {
-              <mat-icon class="board__medal">emoji_events</mat-icon>
+              <mat-icon class="board__medal" svgIcon="emoji_events" />
             }
             {{ i + 1 }}
           </span>
           <span class="board__name" role="cell">{{ entry.name }}</span>
           <span class="board__score" role="cell">
-            <mat-icon>check_circle</mat-icon>
+            <mat-icon svgIcon="check_circle" />
             {{ entry.correct }} / {{ entry.total }}
           </span>
           <span class="board__time" role="cell">
-            <mat-icon>timer</mat-icon>
+            <mat-icon svgIcon="timer" />
             {{ formatTime(entry.elapsedSeconds) }}
           </span>
           <span class="board__date" role="cell">{{ entry.date | date: 'dd.MM.yyyy, HH:mm' }}</span>

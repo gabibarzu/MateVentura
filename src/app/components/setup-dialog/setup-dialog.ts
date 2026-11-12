@@ -22,7 +22,9 @@ import {
   QuestionCountOption,
   SetupDialogData,
 } from '../../models/game.models';
-import { LeaderboardDialog } from '../leaderboard-dialog/leaderboard-dialog';
+import { loadLeaderboardDialog } from '../lazy-dialogs';
+import { InstallService } from '../../services/install.service';
+import type { LeaderboardDialog } from '../leaderboard-dialog/leaderboard-dialog';
 
 /** Global class (styles.scss) that hides a dialog panel while another dialog replaces it. */
 const HIDDEN_PANEL_CLASS = 'kid-dialog--hidden';
@@ -44,6 +46,7 @@ const HIDDEN_PANEL_CLASS = 'kid-dialog--hidden';
 export class SetupDialog {
   private readonly dialogRef = inject<MatDialogRef<SetupDialog, GameSettings>>(MatDialogRef);
   private readonly dialog = inject(MatDialog);
+  protected readonly install = inject(InstallService);
   protected readonly data = inject<SetupDialogData>(MAT_DIALOG_DATA);
 
   /** `levels`: quick game + level cards (default). `custom`: the full settings form. */
@@ -109,13 +112,18 @@ export class SetupDialog {
    * Shows the leaderboard instead of the setup dialog (no stacked dialogs/backdrops):
    * the setup dialog is hidden while the leaderboard is open and shown again when it closes.
    */
-  protected openLeaderboard(): void {
+  protected async openLeaderboard(): Promise<void> {
+    const component = await loadLeaderboardDialog();
+    // A double click may get here twice while the dialog code loads.
+    if (this.dialog.openDialogs.some((ref) => ref.componentInstance instanceof component)) {
+      return;
+    }
     // The hidden setup dialog's backdrop is still clickable: don't let it close underneath the leaderboard.
     const disableClose = this.dialogRef.disableClose;
     this.dialogRef.disableClose = true;
     this.dialogRef.addPanelClass(HIDDEN_PANEL_CLASS);
     this.dialog
-      .open<LeaderboardDialog, LeaderboardDialogData>(LeaderboardDialog, {
+      .open<LeaderboardDialog, LeaderboardDialogData>(component, {
         data: { level: this.lastMode && isLevel(this.lastMode) ? this.lastMode : null },
         width: '760px',
         maxWidth: '95vw',
