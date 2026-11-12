@@ -47,8 +47,8 @@ export type PlayMode = 'learning' | 'game';
         <div class="mode-welcome-copy">
           <span class="mode-eyebrow">O poveste începută cu Matei</span>
           <h3>Eu sunt Cifrel. Facem echipă?</h3>
-          <p>M-am născut din pasiunea lui Matei pentru matematică și dintr-o idee a tatălui său.
-            Împreună ajutăm și alți copii curioși să crească, prin joacă.</p>
+          <p>Am auzit că lui Matei îi plac numerele și am venit să-i fiu partener de aventură!
+            Acum sunt aici și pentru tine. Creștem împreună, prin joacă.</p>
           <button #storyButton mat-button type="button" class="mode-story" (click)="openStory()" [disabled]="storyLoading()">
             <mat-icon svgIcon="info" />
             Hai să-l cunoaștem pe Cifrel
