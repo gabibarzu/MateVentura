@@ -7,3 +7,6 @@ export const loadResultsDialog = () => import('./results-dialog/results-dialog')
 
 export const loadInstallHelpDialog = () =>
   import('./install-help-dialog/install-help-dialog').then((m) => m.InstallHelpDialog);
+
+export const loadCifrelStoryDialog = () =>
+  import('./cifrel-story-dialog/cifrel-story-dialog').then((m) => m.CifrelStoryDialog);

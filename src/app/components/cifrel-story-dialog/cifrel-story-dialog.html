@@ -1,0 +1,77 @@
+<h2 mat-dialog-title class="story-title">Hai să-l cunoaștem pe Cifrel!</h2>
+
+<mat-dialog-content class="story-content">
+  <div class="story-hero">
+    <div class="story-portrait" aria-hidden="true">
+      <span class="story-spark story-spark--one">+</span>
+      <span class="story-spark story-spark--two">7</span>
+      <span class="story-spark story-spark--three">★</span>
+      <app-cifrel full mood="happy" />
+    </div>
+    <div class="story-hello">
+      <span class="story-eyebrow">Robot mic. Curiozitate uriașă.</span>
+      <h3>Salut! Eu sunt Cifrel.</h3>
+      <p>Explorator de numere, colecționar de „Aha!” și campion la încurcat șosete.</p>
+      <p class="story-aside">Da, am șosete. Nu, nu am picioare. E o poveste lungă.</p>
+    </div>
+  </div>
+
+  <figure class="story-motto">
+    <span class="story-motto-label">Motto-ul lui Cifrel</span>
+    <blockquote>„Nu trebuie să știi tot.<br />Trebuie doar să fii curios!”</blockquote>
+    <figcaption>— Cifrel <span>Prietenul tău din MateVentura</span></figcaption>
+  </figure>
+
+  <div class="story-chapters">
+    <section class="story-chapter story-chapter--space" aria-labelledby="story-origin">
+      <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="rocket_launch" /></span>
+      <div>
+        <h3 id="story-origin">O aterizare cu… firimituri</h3>
+        <p>Pe planeta Numărilia, Cifrel pregătea o rachetă pentru o misiune foarte serioasă:
+          să afle dacă <strong>două fursecuri plus un fursec</strong> sunt suficiente pentru o călătorie.</p>
+        <p>A apăsat pe „LANSARE” în loc de „GUSTARE”. Fâââș! A aterizat direct în MateVentura.
+          Fursecurile? Dispărute. Misterul? Delicios.</p>
+      </div>
+    </section>
+
+    <section class="story-chapter story-chapter--count" aria-labelledby="story-job">
+      <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="calculate" /></span>
+      <div>
+        <h3 id="story-job">Ce face un robot matematician?</h3>
+        <p>Adună stele, scade grijile și pune bulinuțele la treabă.
+          Uneori le aliniază atât de frumos, încât uită ce voia să numere.</p>
+        <p>Cu tine, descoperă adunări și scăderi, exersează fără grabă și pornește la joc.
+          <strong>Tu scrii răspunsul. El ține pumnii.</strong> Mă rog… șurubelele.</p>
+      </div>
+    </section>
+
+    <section class="story-chapter story-chapter--heart" aria-labelledby="story-mistakes">
+      <span class="story-chapter-icon" aria-hidden="true"><mat-icon svgIcon="eco" /></span>
+      <div>
+        <h3 id="story-mistakes">Și Cifrel mai greșește!</h3>
+        <p>Odată a numărat aceeași banană de trei ori. „Seamănă toate!”, a explicat el.
+          Era o singură banană.</p>
+        <p>De atunci știe că un răspuns greșit nu înseamnă „nu pot”, ci
+          <strong>„hai să mai încercăm”</strong>. Îți arată bulinuțe, numără cu tine și se bucură când înțelegi.</p>
+      </div>
+    </section>
+  </div>
+
+  <section class="story-secret" aria-label="Secretele lui Cifrel">
+    <button mat-stroked-button type="button" class="story-secret-button" (click)="tellSecret()">
+      <mat-icon svgIcon="lightbulb" />
+      {{ secretIndex() < 0 ? 'Cifrel, spune-ne un secret!' : 'Încă un secret!' }}
+    </button>
+    <p class="story-secret-text" aria-live="polite" aria-atomic="true">
+      {{ secretIndex() < 0 ? 'Psst… antena lui prinde și glume, nu doar semnal!' : secrets[secretIndex()] }}
+    </p>
+  </section>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="center" class="story-actions">
+  <button mat-flat-button type="button" class="big-btn btn-purple" mat-dialog-close>
+    <mat-icon svgIcon="arrow_back" />
+    Înapoi la aventuri
+  </button>
+</mat-dialog-actions>
