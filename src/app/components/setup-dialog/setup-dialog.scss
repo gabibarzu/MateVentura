@@ -362,6 +362,19 @@ mat-icon.setup__title-icon {
   justify-content: center;
 }
 
+// Small, parent-oriented: on its own row (see `.setup__row-break`) under the main buttons.
+.setup__row-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+.setup__install.mat-mdc-button-base {
+  margin: 0;
+  --mat-button-text-label-text-color: #{$exodus-fruit};
+  --mat-button-text-label-text-size: 1rem;
+  --mat-button-text-label-text-weight: 700;
+}
+
 // Phones: action buttons share the row equally instead of wrapping unevenly.
 @media (max-width: 640px) {
   .setup__actions {

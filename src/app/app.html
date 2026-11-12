@@ -28,6 +28,19 @@
     }
 
     <div class="topbar__actions">
+      @if (install.method()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="topbar__install"
+          (click)="install.install()"
+          matTooltip="Instalează aplicația"
+          aria-label="Instalează aplicația"
+        >
+          <mat-icon svgIcon="install_mobile" />
+        </button>
+      }
+
       <button
         mat-icon-button
         type="button"

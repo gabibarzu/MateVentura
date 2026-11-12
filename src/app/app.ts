@@ -38,6 +38,7 @@ import {
 import { ConfettiService } from './services/confetti.service';
 import { LeaderboardService } from './services/leaderboard.service';
 import { QuestionGeneratorService } from './services/question-generator.service';
+import { InstallService } from './services/install.service';
 import { SoundService } from './services/sound.service';
 import { formatTime } from './utils/format-time';
 
@@ -71,6 +72,7 @@ export class App {
   private readonly confetti = inject(ConfettiService);
   private readonly leaderboard = inject(LeaderboardService);
   protected readonly sound = inject(SoundService);
+  protected readonly install = inject(InstallService);
 
   private readonly cards = viewChildren(QuestionCard);
   private readonly header = viewChild.required<ElementRef<HTMLElement>>('header');

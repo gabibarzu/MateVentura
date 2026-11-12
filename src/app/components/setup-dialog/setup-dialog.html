@@ -52,6 +52,14 @@
         Anulează
       </button>
     }
+
+    @if (install.method()) {
+      <span class="setup__row-break"></span>
+      <button mat-button type="button" class="setup__install" (click)="install.install()">
+        <mat-icon svgIcon="install_mobile" />
+        Instalează aplicația pe telefon
+      </button>
+    }
   </mat-dialog-actions>
 } @else {
   <form [formGroup]="form" (ngSubmit)="startCustom()" class="setup">
